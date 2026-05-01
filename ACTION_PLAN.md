@@ -55,7 +55,7 @@
 **Penyebab Root:**  
 ORCID endpoint `/v3.0/{orcid}/works` hanya mengembalikan `work-summary` (judul + DOI + put-code). Data lengkap hanya tersedia via endpoint terpisah `/v3.0/{orcid}/work/{put-code}` yang belum diimplementasikan. Crossref API (`/works/{doi}`) juga bisa mengisi data bibliografi lengkap.
 
-**Fix yang Diperlukan di `api/sdgs.php`:**
+**Fix yang Diperlukan di `api/SDG_Classification_API.php`:**
 
 ```
 handleOrcidInitRequest()
@@ -70,8 +70,6 @@ handleOrcidBatchRequest()
      3. Merge hasil keduanya: ORCID sebagai primary, Crossref sebagai enrichment
      4. Simpan semua field lengkap ke processed_works[]
 ```
-
-**Estimasi:** 2–3 hari  
 **Branch:** `fix/orcid-work-metadata`
 
 ---
@@ -83,7 +81,7 @@ handleOrcidBatchRequest()
 **Penyebab Root:**  
 Crossref API mengembalikan HTML error page dalam kondisi: DOI tidak valid, rate limit (HTTP 429), atau server error. Fungsi `fetchDoiData()` langsung `json_decode($response)` tanpa validasi `Content-Type` response terlebih dahulu.
 
-**Fix yang Diperlukan di `api/sdgs.php`:**
+**Fix yang Diperlukan di `api/SDG_Classification_API.php`:**
 
 ```
 fetchDoiData($doi)
@@ -98,8 +96,6 @@ fetchAbstractFromAlternativeSource($doi)
   → Tambahkan fallback ke OpenAlex: https://api.openalex.org/works/doi:{doi}
   → OpenAlex mengembalikan abstract_inverted_index yang perlu di-reconstruct
 ```
-
-**Estimasi:** 1 hari  
 **Branch:** `fix/doi-json-parse-error`
 
 ---
