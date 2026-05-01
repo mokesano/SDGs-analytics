@@ -21,7 +21,7 @@
 // Menangani request AJAX dari JavaScript untuk ORCID sequential
 // Direct PHP include – tidak ada HTTP request, tidak kena WAF
 // ================================================================
-define('API_FILE_PATH', __DIR__ . '/api/SDGsClassification_v518E.php');
+define('API_FILE_PATH', __DIR__ . '/api/SDG_Classification_API.php');
 define('AJAX_BATCH_SIZE', 3);
 
 // Cek POST dulu (AJAX), lalu GET (direct/legacy)
@@ -1320,6 +1320,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    // Tampilkan pesan error langsung di halaman (bukan alert)
+    function ajaxShowError(message) {
+        const progressSection = document.getElementById('ajaxProgressSection');
+        if (!progressSection) { console.error('AJAX Error:', message); return; }
+        progressSection.style.display = 'block';
+        progressSection.innerHTML = `
+            <div style="display:flex;align-items:flex-start;gap:16px;padding:20px;">
+                <div style="width:44px;height:44px;background:#fff0f0;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid #fca5a5;">
+                    <i class="fas fa-exclamation-triangle" style="color:#dc2626;font-size:18px;"></i>
+                </div>
+                <div>
+                    <h3 style="color:#dc2626;margin:0 0 6px;font-size:1rem;">Analysis Failed</h3>
+                    <p style="color:#555;margin:0;font-size:0.9rem;line-height:1.5;">${escH(message)}</p>
+                    <button onclick="document.getElementById('ajaxProgressSection').style.display='none';"
+                        style="margin-top:12px;padding:6px 14px;background:#dc2626;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">
+                        Close
+                    </button>
+                </div>
+            </div>`;
+    }
+
+    // ── DOI: AJAX (tidak lagi via PHP form) ──
+    async function startDoiAjax(doi, forceRefresh) {
+        orcidAbortCtrl = new AbortController();
+        document.getElementById('ajaxResultsSection').innerHTML = '';
+        document.getElementById('ajaxResultsSection').style.display = 'none';
+        try {
+            ajaxShowProgress('Fetching article data…', 'Retrieving metadata from Crossref for DOI: ' + escH(doi));
+            const rfParam = forceRefresh ? { refresh: 'true' } : {};
+            const data = await ajaxCall('doi', Object.assign({ doi }, rfParam));
+            ajaxRenderDoiResult(data);
+            ajaxHideProgress();
+            setTimeout(() => { document.getElementById('ajaxResultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 400);
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                document.getElementById('ajaxProgressSection').style.display = 'none';
+                ajaxShowError(err.message);
+            }
+        } finally {
+            resetSubmitButton();
+        }
+    }
+
+    function ajaxRenderDoiResult(data) {
+        const el = document.getElementById('ajaxResultsSection');
+        if (!el) return;
+        if (!data || data.status !== 'success') {
+            ajaxShowError(data && data.message ? data.message : 'Unknown error from API');
+            return;
+        }
+        const title   = escH(data.title   || '(No title)');
+        const doi     = escH(data.doi     || '');
+        const journal = escH(data.journal || '');
+        const year    = escH(data.year    || '');
+        const authors = Array.isArray(data.authors) ? data.authors.map(a => escH(a)).join(', ') : '';
+        const abstract= data.abstract ? escH(data.abstract.slice(0, 500)) + (data.abstract.length > 500 ? '…' : '') : '';
+        const scores  = data.sdg_scores || {};
+        const sorted  = Object.entries(scores).sort((a,b) => b[1] - a[1]).filter(([,v]) => v >= 0.20);
+        const sdgTagsHtml = sorted.map(([sdg, score]) => {
+            const def = SDG_DEFS[sdg] || { color:'#666', title: sdg, svg_url:'' };
+            return `<div class="work-sdg-tag" style="background:${def.color}">
+                <div class="sdg-mini-icon"><img src="${escH(def.svg_url)}" alt="${escH(def.title)}" width="20" height="20"></div>
+                <span>${escH(sdg)}: ${escH(def.title)} <span class="sdg-confidence-info">(${(score*100).toFixed(1)}%)</span></span>
+            </div>`;
+        }).join('');
+        el.innerHTML = `
+        <div class="info-general">
+            <div class="personal-info" style="align-items:flex-start;">
+                <div class="avatar" style="font-size:1.5rem;"><i class="fas fa-file-alt"></i></div>
+                <div>
+                    <h2 style="font-size:1.1rem;line-height:1.4;">${title}</h2>
+                    ${authors ? `<p><i class="fas fa-users"></i> ${authors}</p>` : ''}
+                    ${journal  ? `<p><i class="fas fa-book"></i> ${journal}${year ? ' (' + year + ')' : ''}</p>` : ''}
+                    ${doi ? `<p><i class="fas fa-link"></i> <a href="https://doi.org/${doi}" target="_blank" rel="noopener">https://doi.org/${doi}</a></p>` : ''}
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">${sorted.length}</div><div class="stat-label">Identified SDGs</div></div>
+                <div class="stat-card"><div class="stat-number">${sorted.length > 0 ? (sorted[0][1]*100).toFixed(0)+'%' : '–'}</div><div class="stat-label">Top Score</div></div>
+            </div>
+        </div>
+        ${abstract ? `<div class="info-general" style="margin-top:16px;"><h4 style="margin-bottom:8px;"><i class="fas fa-align-left"></i> Abstract</h4><p style="color:#555;line-height:1.7;">${abstract}</p></div>` : ''}
+        ${sorted.length ? `<div class="info-general" style="margin-top:16px;"><h4 style="margin-bottom:12px;"><i class="fas fa-tags"></i> SDG Classification</h4><div class="work-sdgs" style="flex-wrap:wrap;">${sdgTagsHtml}</div></div>` : `<div class="none-SDG"><i class="fas fa-info-circle"></i> No SDGs identified with sufficient confidence for this article.</div>`}`;
+        el.style.display = 'block';
+    }
+
     function ajaxRenderPersonal(info, total) {
         if (!info) return;
         const initials = (info.name||'NN').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
@@ -1529,7 +1615,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (err) {
             if (err.name !== 'AbortError') {
                 document.getElementById('ajaxProgressSection').style.display = 'none';
-                alert('Error ORCID AJAX: ' + err.message);
+                ajaxShowError(err.message);
             }
         } finally {
             resetSubmitButton();
@@ -1556,27 +1642,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isSubmitting) { e.preventDefault(); return false; }
 
                 const inputValue = document.getElementById('input_value').value.trim();
-                if (!inputValue) { e.preventDefault(); alert('Please enter a valid ORCID ID or DOI.'); return false; }
+                if (!inputValue) {
+                    e.preventDefault();
+                    ajaxShowError('Please enter a valid ORCID ID (0000-0000-0000-0000) or DOI (10.xxxx/xxxxx).');
+                    return false;
+                }
 
                 const detectedType = detectInputType(inputValue);
-                if (!detectedType) { e.preventDefault(); alert('The input format is not recognized. Please enter a valid ORCID ID or DOI.'); return false; }
+                if (!detectedType) {
+                    e.preventDefault();
+                    ajaxShowError('Input format not recognized. Enter a valid ORCID ID (format: 0000-0000-0000-0000) or DOI (format: 10.xxxx/xxxxx).');
+                    return false;
+                }
 
                 const isValid = validateInput(inputValue, detectedType);
                 if (!isValid) {
                     e.preventDefault();
-                    if (detectedType === 'orcid') alert('ORCID ID is invalid. Please check your ORCID checksum.');
-                    else if (detectedType === 'doi') alert('DOI is invalid. Please check the format of your DOI.');
+                    if (detectedType === 'orcid') {
+                        ajaxShowError('Invalid ORCID ID. The correct format is: 0000-0000-0000-0000 with a valid checksum digit. Please verify your ORCID at orcid.org.');
+                    } else if (detectedType === 'doi') {
+                        ajaxShowError('Invalid DOI. Please use the format: 10.xxxx/xxxxx (e.g. 10.1038/nature12373).');
+                    }
                     return false;
                 }
 
-                // ── ORCID: intercept dan gunakan AJAX (anti-timeout) ──
+                const forceRefresh = document.getElementById('force_refresh').checked;
+
+                // ── ORCID: intercept dan gunakan AJAX sequential (anti-timeout) ──
                 if (detectedType === 'orcid') {
                     e.preventDefault();
                     let cleanOrcid = inputValue.trim();
                     const m = cleanOrcid.match(/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i);
                     if (m) cleanOrcid = m[1];
                     cleanOrcid = cleanOrcid.replace(/[^\d\-X]/gi, '');
-                    const forceRefresh = document.getElementById('force_refresh').checked;
 
                     isSubmitting = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analysing...';
@@ -1586,19 +1684,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     return false;
                 }
 
-                // ── DOI: biarkan form submit normal ke PHP ──
-                isSubmitting = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-                submitBtn.disabled = true;
-                document.getElementById('loadingOverlay').style.display = 'flex';
-                startProgressCounter();
+                // ── DOI: intercept dan gunakan AJAX (tidak lagi via PHP form) ──
+                if (detectedType === 'doi') {
+                    e.preventDefault();
+                    let cleanDoi = inputValue.trim();
+                    cleanDoi = cleanDoi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '');
 
-                const timeoutId = setTimeout(function() {
-                    resetSubmitButton();
-                    if (document.getElementById('loadingOverlay').style.display === 'flex')
-                        alert('Timeout: The analysis process is taking longer than expected. Please try again later.');
-                }, 130000);
-                window.currentTimeoutId = timeoutId;
+                    isSubmitting = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                    submitBtn.disabled = true;
+
+                    startDoiAjax(cleanDoi, forceRefresh);
+                    return false;
+                }
             });
         }
 
