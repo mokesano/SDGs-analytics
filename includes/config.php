@@ -15,8 +15,14 @@
 // Informasi situs
 define('SITE_NAME', 'SDGs Classification Analysis');
 define('SITE_URL', 'https://www.wizdam.sangia.org'); // Sesuaikan domain
-define('VERSION', '5.1.8');
-define('API_VERSION', 'v5_1_8');
+define('VERSION', '5.2.0');
+define('API_VERSION', 'v5_2_0');
+
+// Path absolut ke file-file kritis (aman di semua konfigurasi server)
+if (!defined('PROJECT_ROOT')) {
+    define('PROJECT_ROOT', dirname(__DIR__));
+}
+define('SDG_API_FILE', PROJECT_ROOT . '/api/SDG_Classification_API.php');
 
 // Pengaturan environment
 define('ENVIRONMENT', 'production'); // 'development' atau 'production'

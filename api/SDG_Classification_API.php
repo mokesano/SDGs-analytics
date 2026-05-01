@@ -615,27 +615,98 @@ function fetchOrcidPersonData($orcid) {
 }
 
 function fetchDoiData($doi) {
-    $url = "https://api.crossref.org/works/" . urlencode($doi);
-    $ch  = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER=> true,
-        CURLOPT_USERAGENT     => 'SDG-Classifier/5.2 (wizdam@sangia.org)',
-        CURLOPT_CONNECTTIMEOUT=> 5,
-        CURLOPT_TIMEOUT       => 10,
-    ]);
-    $response = curl_exec($ch);
-    $errno    = curl_errno($ch);
-    $error    = curl_error($ch);
-    curl_close($ch);
-    if ($errno) throw new Exception('Gagal mengambil data Crossref: ' . $error, 500);
-    $data = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) throw new Exception('Data Crossref tidak valid', 500);
-    return $data;
+    $url     = "https://api.crossref.org/works/" . urlencode($doi);
+    $maxTry  = 3;
+    $delay   = 2;
+    $lastErr = '';
+
+    for ($attempt = 0; $attempt < $maxTry; $attempt++) {
+        if ($attempt > 0) sleep($delay * $attempt);
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER         => true,
+            CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT        => 12,
+        ]);
+        $raw       = curl_exec($ch);
+        $errno     = curl_errno($ch);
+        $errStr    = curl_error($ch);
+        $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $headerSize= curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $ctypeRaw  = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        curl_close($ch);
+
+        if ($errno) { $lastErr = 'cURL error: ' . $errStr; continue; }
+
+        // Rate limit – tunggu lalu retry
+        if ($httpCode === 429) { $lastErr = 'Crossref rate limit (429)'; continue; }
+
+        // DOI tidak ditemukan
+        if ($httpCode === 404) throw new Exception('DOI tidak ditemukan di Crossref (404)', 404);
+
+        if ($httpCode !== 200) throw new Exception("Crossref HTTP $httpCode untuk DOI: $doi", 500);
+
+        // Validasi Content-Type: harus JSON
+        if ($ctypeRaw && stripos($ctypeRaw, 'json') === false) {
+            throw new Exception('Crossref tidak mengembalikan JSON (Content-Type: ' . $ctypeRaw . ')', 500);
+        }
+
+        $body = substr($raw, $headerSize);
+
+        // Validasi karakter pertama respons
+        $firstChar = ltrim($body)[0] ?? '';
+        if ($firstChar !== '{' && $firstChar !== '[') {
+            throw new Exception('Crossref mengembalikan respons non-JSON: ' . substr($body, 0, 80), 500);
+        }
+
+        $data = json_decode($body, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('JSON Crossref tidak valid: ' . json_last_error_msg(), 500);
+        }
+        return $data;
+    }
+
+    throw new Exception('Gagal mengambil data Crossref setelah ' . $maxTry . ' percobaan. ' . $lastErr, 500);
 }
 
 function fetchAbstractFromAlternativeSource($doi) {
-    $url = "https://api.semanticscholar.org/v1/paper/" . urlencode($doi);
-    $ch  = curl_init($url);
+    // Coba OpenAlex terlebih dahulu (lebih lengkap)
+    $openAlexUrl = "https://api.openalex.org/works/doi:" . urlencode($doi);
+    $ch = curl_init($openAlexUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+        CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response && $httpCode === 200) {
+        $data = json_decode($response, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // OpenAlex menyimpan abstract sebagai inverted index
+            if (!empty($data['abstract_inverted_index'])) {
+                $inverted = $data['abstract_inverted_index'];
+                $words = [];
+                foreach ($inverted as $word => $positions) {
+                    foreach ($positions as $pos) {
+                        $words[$pos] = $word;
+                    }
+                }
+                ksort($words);
+                $abstract = implode(' ', $words);
+                if (!empty($abstract)) return $abstract;
+            }
+        }
+    }
+
+    // Fallback: Semantic Scholar
+    $ssUrl = "https://api.semanticscholar.org/v1/paper/" . urlencode($doi);
+    $ch = curl_init($ssUrl);
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 8]);
     $response = curl_exec($ch);
     curl_close($ch);
