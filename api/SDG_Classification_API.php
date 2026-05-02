@@ -218,11 +218,13 @@ function handleOrcidInitRequest($orcid, $force_refresh = false) {
             $title = isset($summary['title']['title']['value']) ? $summary['title']['title']['value'] : '';
             if (empty($title)) continue;
 
-            $doi = extractDoi($summary);
+            $doi      = extractDoi($summary);
+            $put_code = isset($summary['put-code']) ? (string)$summary['put-code'] : null;
             $works_stubs[] = [
-                'index' => count($works_stubs),
-                'title' => $title,
-                'doi'   => $doi,
+                'index'    => count($works_stubs),
+                'title'    => $title,
+                'doi'      => $doi,
+                'put_code' => $put_code,
             ];
         }
     }
@@ -300,23 +302,82 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
     $processed_works = [];
 
     foreach ($batch_stubs as $stub) {
-        $title = $stub['title'];
-        $doi   = isset($stub['doi']) ? $stub['doi'] : null;
+        $title    = $stub['title'];
+        $doi      = isset($stub['doi']) ? $stub['doi'] : null;
+        $put_code = isset($stub['put_code']) ? $stub['put_code'] : null;
 
-        // Ambil abstrak via DOI
+        // Ambil metadata lengkap via put-code (ORCID endpoint individual)
+        $contributors  = [];
+        $journal_title = '';
+        $volume        = '';
+        $issue         = '';
+        $pages         = '';
+        $pub_year      = null;
+        $keywords      = [];
+        $work_type     = '';
+        $work_url      = '';
+
+        if ($put_code) {
+            try {
+                $detail = fetchOrcidWorkDetail($orcid, $put_code);
+                $contributors  = $detail['contributors']  ?? [];
+                $journal_title = $detail['journal_title'] ?? '';
+                $pub_year      = $detail['pub_year']      ?? null;
+                $keywords      = $detail['keywords']      ?? [];
+                $work_type     = $detail['work_type']     ?? '';
+                $work_url      = $detail['url']           ?? '';
+            } catch (Exception $e) {
+                error_log("Batch: gagal fetch put-code $put_code: " . $e->getMessage());
+            }
+        }
+
+        // Ambil abstrak + enrichment via Crossref/OpenAlex
         $abstract = '';
         if ($doi) {
             try {
                 $doi_data = fetchDoiData($doi);
+
+                // Abstract dari Crossref
                 if (isset($doi_data['message']['abstract'])) {
                     $abstract = strip_tags($doi_data['message']['abstract']);
                 }
-                if (empty($abstract)) {
-                    $abstract = fetchAbstractFromAlternativeSource($doi);
+
+                // Contributors dari Crossref jika ORCID tidak punya
+                if (empty($contributors) && !empty($doi_data['message']['author'])) {
+                    foreach ($doi_data['message']['author'] as $a) {
+                        $n = trim(($a['given'] ?? '') . ' ' . ($a['family'] ?? ''));
+                        if ($n) $contributors[] = ['name' => $n, 'orcid' => $a['ORCID'] ?? null];
+                    }
                 }
+
+                // Journal dari Crossref jika kosong
+                if (empty($journal_title) && !empty($doi_data['message']['container-title'][0])) {
+                    $journal_title = $doi_data['message']['container-title'][0];
+                }
+
+                // Volume, issue, pages dari Crossref
+                if (empty($volume) && !empty($doi_data['message']['volume'])) $volume = $doi_data['message']['volume'];
+                if (empty($issue)  && !empty($doi_data['message']['issue']))  $issue  = $doi_data['message']['issue'];
+                if (empty($pages)  && !empty($doi_data['message']['page']))   $pages  = $doi_data['message']['page'];
+
+                // Year
+                if (empty($pub_year) && !empty($doi_data['message']['published']['date-parts'][0][0])) {
+                    $pub_year = (int)$doi_data['message']['published']['date-parts'][0][0];
+                }
+
+                // Keywords dari Crossref subjects
+                if (empty($keywords) && !empty($doi_data['message']['subject'])) {
+                    $keywords = $doi_data['message']['subject'];
+                }
+
             } catch (Exception $e) {
-                error_log("Batch: gagal ambil abstrak untuk DOI $doi: " . $e->getMessage());
+                error_log("Batch: gagal ambil DOI $doi: " . $e->getMessage());
             }
+        }
+
+        // Fallback abstract dari OpenAlex / Semantic Scholar
+        if (empty($abstract) && $doi) {
+            try { $abstract = fetchAbstractFromAlternativeSource($doi); } catch (Exception $e) {}
         }
 
         $full_text         = $title . ' ' . $abstract;
@@ -365,14 +426,24 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
         }
 
         $processed_works[] = [
-            'title'               => $title,
-            'doi'                 => $doi,
-            'abstract'            => $abstract,
-            'sdgs'                => $filtered_sdgs,
-            'sdg_confidence'      => $sdg_confidence,
-            'contributor_types'   => $contributor_types,
+            'title'                 => $title,
+            'doi'                   => $doi,
+            'put_code'              => $put_code,
+            'abstract'              => $abstract,
+            'contributors'          => $contributors,
+            'journal'               => $journal_title,
+            'volume'                => $volume,
+            'issue'                 => $issue,
+            'pages'                 => $pages,
+            'year'                  => $pub_year,
+            'keywords'              => $keywords,
+            'work_type'             => $work_type,
+            'url'                   => $work_url,
+            'sdgs'                  => $filtered_sdgs,
+            'sdg_confidence'        => $sdg_confidence,
+            'contributor_types'     => $contributor_types,
             'contribution_pathways' => $pathways,
-            'detailed_analysis'   => $sdg_analysis,
+            'detailed_analysis'     => $sdg_analysis,
         ];
     }
 
@@ -612,6 +683,71 @@ function fetchOrcidPersonData($orcid) {
     if ($errno || $http_code != 200) return [];
     $data = json_decode($response, true);
     return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
+}
+
+/**
+ * Ambil detail lengkap satu karya via ORCID put-code endpoint
+ * GET /v3.0/{orcid}/work/{put-code}
+ */
+function fetchOrcidWorkDetail($orcid, $put_code) {
+    $url = "https://pub.orcid.org/v3.0/{$orcid}/work/{$put_code}";
+    $ch  = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT        => 10,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $errno    = curl_errno($ch);
+    curl_close($ch);
+
+    if ($errno || $httpCode !== 200) return [];
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) return [];
+
+    // Contributors
+    $contributors = [];
+    if (isset($data['contributors']['contributor'])) {
+        foreach ($data['contributors']['contributor'] as $c) {
+            $name  = $c['credit-name']['value'] ?? null;
+            $orcid_path = $c['contributor-orcid']['path'] ?? null;
+            if ($name) $contributors[] = ['name' => $name, 'orcid' => $orcid_path];
+        }
+    }
+
+    // Journal title
+    $journal_title = isset($data['journal-title']['value']) ? $data['journal-title']['value'] : '';
+
+    // Publication year
+    $pub_year = null;
+    if (isset($data['publication-date']['year']['value'])) {
+        $pub_year = (int)$data['publication-date']['year']['value'];
+    }
+
+    // Keywords
+    $keywords = [];
+    if (isset($data['keywords']['keyword'])) {
+        foreach ($data['keywords']['keyword'] as $kw) {
+            if (!empty($kw['content'])) $keywords[] = $kw['content'];
+        }
+    }
+
+    // Work type
+    $work_type = $data['type'] ?? '';
+
+    // URL
+    $work_url = isset($data['url']['value']) ? $data['url']['value'] : '';
+
+    return [
+        'contributors'  => $contributors,
+        'journal_title' => $journal_title,
+        'pub_year'      => $pub_year,
+        'keywords'      => $keywords,
+        'work_type'     => $work_type,
+        'url'           => $work_url,
+    ];
 }
 
 function fetchDoiData($doi) {
