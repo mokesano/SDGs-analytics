@@ -1,21 +1,38 @@
 <?php
-// components/chatbot.php - Chatbot component
+/**
+ * Chatbot Component - Wizdam SDG Assistant
+ * 
+ * Features:
+ * - Context-aware responses based on database content
+ * - Integration with application documentation
+ * - Dynamic FAQ lookup from database
+ * - Multi-language support (EN/ID)
+ * 
+ * @version 2.0.0
+ */
+
+// Get current locale
+$current_locale = $_SESSION['locale'] ?? 'en_US';
 ?>
 
 <!-- Chatbot Button -->
-<button id="chatbotBtn" class="chatbot-button" aria-label="Open chatbot" title="Need help? Chat with our AI assistant">
+<button id="chatbotBtn" class="chatbot-button" aria-label="Open chatbot" title="<?= __('chatbot.title', 'Need help? Chat with our AI assistant') ?>">
     <i class="fas fa-comments"></i>
+    <span class="chatbot-badge"><?= $unread_count ?? 0 ?></span>
 </button>
 
 <!-- Chatbot Modal -->
 <div id="chatbotModal" class="chatbot-modal" role="dialog" aria-labelledby="chatbotTitle" aria-hidden="true">
     <!-- Chatbot Header -->
     <div class="chatbot-header">
-        <h3 id="chatbotTitle" class="chatbot-title">
+        <div class="chatbot-branding">
             <i class="fas fa-robot"></i>
-            Wizdam SDG Assistant
-        </h3>
-        <button id="chatbotClose" class="chatbot-close" aria-label="Close chatbot">
+            <div>
+                <h3 id="chatbotTitle" class="chatbot-title"><?= __('chatbot.name', 'Wizdam SDG Assistant') ?></h3>
+                <span class="chatbot-status"><span class="status-dot online"></span> <?= __('chatbot.online', 'Online') ?></span>
+            </div>
+        </div>
+        <button id="chatbotClose" class="chatbot-close" aria-label="<?= __('chatbot.close', 'Close chatbot') ?>">
             <i class="fas fa-times"></i>
         </button>
     </div>
@@ -24,23 +41,31 @@
     <div id="chatbotBody" class="chatbot-body" role="log" aria-live="polite">
         <!-- Welcome Message -->
         <div class="chatbot-welcome">
-            <i class="fas fa-wave-hand"></i>
-            Welcome! I'm your Wizdam SDG Assistant Analysis. How can I help you today?
+            <div class="welcome-avatar">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <p><?= __('chatbot.welcome', 'Hello! I\'m your Wizdam SDG Assistant. I can help you with:') ?></p>
+            <ul class="welcome-features">
+                <li><i class="fas fa-check"></i> <?= __('chatbot.feature1', 'Understanding SDG classification results') ?></li>
+                <li><i class="fas fa-check"></i> <?= __('chatbot.feature2', 'ORCID and DOI format validation') ?></li>
+                <li><i class="fas fa-check"></i> <?= __('chatbot.feature3', 'Platform features navigation') ?></li>
+                <li><i class="fas fa-check"></i> <?= __('chatbot.feature4', 'Research analytics interpretation') ?></li>
+            </ul>
         </div>
 
         <!-- Quick Action Buttons -->
         <div class="chatbot-quick-actions">
-            <button class="quick-action-btn" onclick="sendQuickMessage('help')">
-                <i class="fas fa-question-circle"></i> Help
+            <button class="quick-action-btn" onclick="sendQuickMessage('how_to_analyze')">
+                <i class="fas fa-chart-line"></i> <?= __('chatbot.action.analyze', 'How to Analyze') ?>
             </button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('orcid format')">
-                <i class="fas fa-id-card"></i> ORCID Format
+            <button class="quick-action-btn" onclick="sendQuickMessage('orcid_format')">
+                <i class="fas fa-id-card"></i> <?= __('chatbot.action.orcid', 'ORCID Format') ?>
             </button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('doi format')">
-                <i class="fas fa-link"></i> DOI Format
+            <button class="quick-action-btn" onclick="sendQuickMessage('doi_format')">
+                <i class="fas fa-link"></i> <?= __('chatbot.action.doi', 'DOI Format') ?>
             </button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('how to analyze')">
-                <i class="fas fa-chart-line"></i> How to Analyze
+            <button class="quick-action-btn" onclick="sendQuickMessage('sdg_explanation')">
+                <i class="fas fa-globe"></i> <?= __('chatbot.action.sdg', 'What are SDGs?') ?>
             </button>
         </div>
 
@@ -51,7 +76,7 @@
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
             </div>
-            <span>Assistant is typing...</span>
+            <span><?= __('chatbot.typing', 'Assistant is typing...') ?></span>
         </div>
     </div>
 
@@ -60,15 +85,36 @@
         <input 
             type="text" 
             id="chatbotInput" 
-            placeholder="Type your question here..." 
+            placeholder="<?= __('chatbot.placeholder', 'Type your question here...') ?>" 
             maxlength="500"
-            aria-label="Chat message input"
+            aria-label="<?= __('chatbot.input.label', 'Chat message input') ?>"
         class="chatbot-input" />
-        <button id="chatbotSend" class="chatbot-send" aria-label="Send message">
+        <button id="chatbotSend" class="chatbot-send" aria-label="<?= __('chatbot.send', 'Send message') ?>">
             <i class="fas fa-paper-plane"></i>
         </button>
     </div>
 </div>
+
+<!-- Chatbot Knowledge Base (injected from database/docs) -->
+<script id="chatbot-knowledge" type="application/json">
+<?= json_encode([
+    'locale' => $current_locale,
+    'stats' => [
+        'total_researchers' => $db->querySingle('SELECT COUNT(*) FROM researchers') ?: 0,
+        'total_works' => $db->querySingle('SELECT COUNT(*) FROM works') ?: 0,
+        'total_journals' => $db->querySingle('SELECT COUNT(*) FROM journals') ?: 0,
+        'sdg_coverage' => $db->querySingle('SELECT COUNT(DISTINCT sdg_code) FROM work_sdgs') ?: 0
+    ],
+    'faq' => array_map(function($row) {
+        return [
+            'question' => $row['question'],
+            'answer' => $row['answer'],
+            'category' => $row['category'] ?? 'general',
+            'keywords' => explode(',', strtolower($row['keywords'] ?? ''))
+        ];
+    }, $db->query('SELECT question, answer, category, keywords FROM faq ORDER BY category') ?: [])
+]) ?>
+</script>
 
 <!-- Chatbot JavaScript -->
 <script>
@@ -151,7 +197,18 @@ document.addEventListener('DOMContentLoaded', function() {
         loadConversationHistory();
     }
 
-    // Get response based on message
+    // Load knowledge base from JSON script tag
+    let knowledgeBase = { faq: [], stats: {}, locale: 'en_US' };
+    try {
+        const kbScript = document.getElementById('chatbot-knowledge');
+        if (kbScript && kbScript.textContent) {
+            knowledgeBase = JSON.parse(kbScript.textContent);
+        }
+    } catch (e) {
+        console.warn('Could not load chatbot knowledge base:', e);
+    }
+
+    // Get response based on message with intelligent FAQ matching
     function getResponse(message) {
         const msg = message.toLowerCase().trim();
         
@@ -167,7 +224,21 @@ document.addEventListener('DOMContentLoaded', function() {
             conversationContext = conversationContext.slice(-10);
         }
 
-        // Determine intent and get appropriate response
+        // Try to match with FAQ from database first
+        if (knowledgeBase.faq && knowledgeBase.faq.length > 0) {
+            const faqMatch = findBestFAQMatch(msg, knowledgeBase.faq);
+            if (faqMatch) {
+                const response = faqMatch.answer;
+                conversationContext.push({
+                    type: 'bot',
+                    message: response,
+                    timestamp: Date.now()
+                });
+                return response;
+            }
+        }
+
+        // Fallback to predefined responses
         let responseKey = 'default';
         
         if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
@@ -180,8 +251,10 @@ document.addEventListener('DOMContentLoaded', function() {
             responseKey = 'doi';
         } else if (msg.includes('sdg') || msg.includes('sustainable')) {
             responseKey = 'sdg';
-        } else if (msg.includes('analysis') || msg.includes('analyze') || msg.includes('how')) {
-            responseKey = msg.includes('how') ? 'how' : 'analysis';
+        } else if (msg.includes('analysis') || msg.includes('analyze')) {
+            responseKey = 'analysis';
+        } else if (msg.includes('how')) {
+            responseKey = 'how';
         } else if (msg.includes('confidence') || msg.includes('score')) {
             responseKey = 'confidence';
         } else if (msg.includes('error') || msg.includes('problem') || msg.includes('issue')) {
@@ -202,6 +275,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         return response;
+    }
+
+    // Find best FAQ match using keyword matching and simple NLP
+    function findBestFAQMatch(userMessage, faqList) {
+        const userWords = userMessage.split(/\s+/).filter(w => w.length > 2);
+        let bestMatch = null;
+        let bestScore = 0;
+
+        for (const faq of faqList) {
+            let score = 0;
+            const question = faq.question.toLowerCase();
+            const keywords = faq.keywords || [];
+            
+            // Score for exact question match
+            if (question.includes(userMessage) || userMessage.includes(question)) {
+                score += 10;
+            }
+            
+            // Score for keyword matches
+            for (const word of userWords) {
+                if (question.includes(word)) score += 2;
+                if (keywords.some(k => k.includes(word))) score += 3;
+            }
+            
+            // Score for category-specific terms
+            if (faq.category === 'orcid' && userMessage.includes('orcid')) score += 5;
+            if (faq.category === 'doi' && userMessage.includes('doi')) score += 5;
+            if (faq.category === 'sdg' && (userMessage.includes('sdg') || userMessage.includes('sustainable'))) score += 5;
+            
+            if (score > bestScore) {
+                bestScore = score;
+                bestMatch = faq;
+            }
+        }
+
+        // Return match if score is above threshold
+        return bestScore >= 3 ? bestMatch : null;
     }
 
     // Add message to chat

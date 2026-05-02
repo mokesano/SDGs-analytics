@@ -117,6 +117,18 @@ CREATE TABLE IF NOT EXISTS api_keys (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ── FAQ for Chatbot ───────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS faq (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    question    TEXT NOT NULL,
+    answer      TEXT NOT NULL,
+    category    TEXT DEFAULT 'general',  -- 'general', 'orcid', 'doi', 'sdg', 'platform', 'technical'
+    keywords    TEXT,  -- Comma-separated: 'orcid,format,validation'
+    locale      TEXT DEFAULT 'en_US',  -- 'en_US' or 'id_ID'
+    order_num   INTEGER DEFAULT 0,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ============================================================
 -- Index untuk query yang sering dipakai
 -- ============================================================
@@ -128,6 +140,8 @@ CREATE INDEX IF NOT EXISTS idx_works_doi              ON works(doi);
 CREATE INDEX IF NOT EXISTS idx_researchers_orcid      ON researchers(orcid);
 CREATE INDEX IF NOT EXISTS idx_search_history_type    ON search_history(input_type, searched_at);
 CREATE INDEX IF NOT EXISTS idx_journals_issn          ON journals(issn);
+CREATE INDEX IF NOT EXISTS idx_faq_category           ON faq(category);
+CREATE INDEX IF NOT EXISTS idx_faq_locale             ON faq(locale);
 
 -- ── Full-text search untuk abstrak (FTS5) ─────────────────────────────────
 CREATE VIRTUAL TABLE IF NOT EXISTS works_fts USING fts5(
