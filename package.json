@@ -1,6 +1,6 @@
 {
     "name": "wizdam-sdgs-analytics",
-    "version": "5.2.0",
+    "version": "1.0.0",
     "description": "SDGs Classification Analysis Frontend — Wizdam Sikola",
     "private": true,
     "scripts": {
