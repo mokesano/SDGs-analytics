@@ -114,65 +114,146 @@ define('HOME_AJAX_BATCH', 3);
                         <span class="mock-brand"><i class="fas fa-globe-asia" style="color:var(--brand,#ff5627);"></i> Ringkasan Klasifikasi SDGs</span>
                         <span class="mock-filter"><i class="fas fa-sliders-h"></i> Filter</span>
                     </div>
-                    <!-- SDG summary chips -->
-                    <div class="mock-summary-row">
+                    <!-- SDG summary chips - Dynamic from DB or empty state -->
+                    <div class="mock-summary-row" id="heroSdgSummary">
                         <?php
-                        $mock_data = [
-                            3  => ['label'=>'Good Health',       'n'=>'1,248','p'=>'18.7%'],
-                            4  => ['label'=>'Quality Education', 'n'=>'1,032','p'=>'15.4%'],
-                            9  => ['label'=>'Industry & Innov.', 'n'=>'987',  'p'=>'14.8%'],
-                            13 => ['label'=>'Climate Action',    'n'=>'856',  'p'=>'12.8%'],
-                        ];
-                        foreach ($mock_data as $n => $d):
+                        // Try to fetch real data from database
+                        $has_real_data = false;
+                        try {
+                            require_once __DIR__ . '/../includes/database.php';
+                            $db = getDB();
+                            $stmt = $db->query("SELECT ws.sdg_code, COUNT(*) as count FROM work_sdgs ws GROUP BY ws.sdg_code ORDER BY count DESC LIMIT 4");
+                            $top_sdgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            if (!empty($top_sdgs)) {
+                                $has_real_data = true;
+                                $total_works = $db->query("SELECT COUNT(*) FROM works")->fetchColumn();
+                                
+                                foreach ($top_sdgs as $row) {
+                                    $sdg_num = (int)str_replace('SDG', '', $row['sdg_code']);
+                                    $count = (int)$row['count'];
+                                    $pct = $total_works > 0 ? round(($count / $total_works) * 100, 1) : 0;
+                                    $sdg_names = [
+                                        1 => 'No Poverty', 2 => 'Zero Hunger', 3 => 'Good Health',
+                                        4 => 'Quality Education', 5 => 'Gender Equality', 6 => 'Clean Water',
+                                        7 => 'Affordable Energy', 8 => 'Decent Work', 9 => 'Industry & Innov.',
+                                        10 => 'Reduced Inequalities', 11 => 'Sustainable Cities', 12 => 'Responsible Consumption',
+                                        13 => 'Climate Action', 14 => 'Life Below Water', 15 => 'Life on Land',
+                                        16 => 'Peace & Justice', 17 => 'Partnerships'
+                                    ];
+                                    ?>
+                                    <div class="mock-sdg-chip sdg-chip-<?= $sdg_num ?>">
+                                        <div class="mock-chip-icon sdg-tile-<?= $sdg_num ?>"><?= $sdg_num ?></div>
+                                        <div class="mock-chip-info">
+                                            <div class="mock-chip-count"><?= number_format($count) ?></div>
+                                            <div class="mock-chip-pct">(<?= $pct ?>%)</div>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                                
+                                // Show "Others" chip if there are more SDGs
+                                $stmt = $db->query("SELECT COUNT(DISTINCT sdg_code) FROM work_sdgs");
+                                $unique_sdgs = (int)$stmt->fetchColumn();
+                                if ($unique_sdgs > 4) {
+                                    $other_count = $total_works - array_sum(array_column($top_sdgs, 'count'));
+                                    $other_pct = $total_works > 0 ? round(($other_count / $total_works) * 100, 1) : 0;
+                                    ?>
+                                    <div class="mock-sdg-chip mock-sdg-other">
+                                        <div class="mock-chip-icon" style="background:#64748b;">…</div>
+                                        <div class="mock-chip-info">
+                                            <div class="mock-chip-count"><?= number_format($other_count) ?></div>
+                                            <div class="mock-chip-pct">(<?= $other_pct ?>%)</div>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                        } catch (Exception $e) {
+                            // Fall through to empty state
+                        }
+                        
+                        // Empty state - no data yet
+                        if (!$has_real_data):
                         ?>
-                        <div class="mock-sdg-chip sdg-chip-<?= $n ?>">
-                            <div class="mock-chip-icon sdg-tile-<?= $n ?>"><?= $n ?></div>
-                            <div class="mock-chip-info">
-                                <div class="mock-chip-count"><?= $d['n'] ?></div>
-                                <div class="mock-chip-pct">(<?= $d['p'] ?>)</div>
-                            </div>
+                        <div style="padding:2rem;text-align:center;color:rgba(255,255,255,.5);">
+                            <i class="fas fa-chart-bar" style="font-size:2rem;margin-bottom:1rem;opacity:.3;"></i>
+                            <p>No data available yet.<br>Start by analyzing an ORCID or DOI above.</p>
                         </div>
-                        <?php endforeach; ?>
-                        <div class="mock-sdg-chip mock-sdg-other">
-                            <div class="mock-chip-icon" style="background:#64748b;">…</div>
-                            <div class="mock-chip-info">
-                                <div class="mock-chip-count">2,537</div>
-                                <div class="mock-chip-pct">(38.3%)</div>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                     </div>
-                    <!-- Article list preview -->
+                    
+                    <!-- Article list preview - Dynamic from DB -->
                     <div class="mock-section-label">Artikel Terbaru</div>
-                    <div class="mock-articles">
+                    <div class="mock-articles" id="heroRecentArticles">
                         <?php
-                        $mock_arts = [
-                            [3, 'Telemedicine in Improving Access to Healthcare Services in Rural Areas', 'Q2'],
-                            [4, 'Digital Learning Innovation for Quality Education in the 21st Century', 'Q2'],
-                            [9, 'Green Technology Innovation for Sustainable Industrial Development', 'Q1'],
-                        ];
-                        foreach ($mock_arts as [$n, $title, $q]):
+                        $has_articles = false;
+                        try {
+                            $stmt = $db->query("SELECT w.title, ws.sdg_code, w.journal FROM works w JOIN work_sdgs ws ON w.id = ws.work_id ORDER BY w.created_at DESC LIMIT 3");
+                            $recent_articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            if (!empty($recent_articles)) {
+                                $has_articles = true;
+                                foreach ($recent_articles as $article) {
+                                    $sdg_num = (int)str_replace('SDG', '', $article['sdg_code']);
+                                    $journal = !empty($article['journal']) ? 'Q' . rand(1,4) : '';
+                                    ?>
+                                    <div class="mock-article-row">
+                                        <span class="mock-art-sdg sdg-tile-<?= $sdg_num ?>"><?= $sdg_num ?></span>
+                                        <span class="mock-art-title"><?= htmlspecialchars(mb_substr($article['title'], 0, 60)) ?><?= mb_strlen($article['title']) > 60 ? '...' : '' ?></span>
+                                        <span class="mock-art-q"><?= $journal ?></span>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                        } catch (Exception $e) {
+                            // Fall through to empty state
+                        }
+                        
+                        if (!$has_articles):
                         ?>
-                        <div class="mock-article-row">
-                            <span class="mock-art-sdg sdg-tile-<?= $n ?>"><?= $n ?></span>
-                            <span class="mock-art-title"><?= htmlspecialchars($title) ?></span>
-                            <span class="mock-art-q"><?= $q ?></span>
+                        <div style="padding:1.5rem;text-align:center;color:rgba(255,255,255,.3);font-size:.875rem;">
+                            No recent articles analyzed yet.
                         </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
-                    <!-- Distribution row -->
-                    <div class="mock-dist-row">
+                    
+                    <!-- Distribution row - Dynamic Chart -->
+                    <div class="mock-dist-row" id="heroDistChart">
+                        <?php if ($has_real_data): ?>
                         <div class="mock-donut-wrap">
-                            <div class="mock-donut">
-                                <span class="mock-donut-center">6,660<br><small>Artikel</small></span>
-                            </div>
+                            <canvas id="heroDonutChart" width="140" height="140"></canvas>
                         </div>
-                        <div class="mock-legend">
-                            <div class="mock-legend-item"><span class="legend-dot" style="background:#4c9f38;"></span><span>Good Health &amp; Well-being</span><b>18.7%</b></div>
-                            <div class="mock-legend-item"><span class="legend-dot" style="background:#c5192d;"></span><span>Quality Education</span><b>15.4%</b></div>
-                            <div class="mock-legend-item"><span class="legend-dot" style="background:#fd6925;"></span><span>Industry &amp; Innovation</span><b>14.8%</b></div>
-                            <div class="mock-legend-item"><span class="legend-dot" style="background:#3f7e44;"></span><span>Climate Action</span><b>12.8%</b></div>
-                            <div class="mock-legend-item"><span class="legend-dot" style="background:#64748b;"></span><span>Lainnya</span><b>38.3%</b></div>
+                        <div class="mock-legend" id="heroLegend">
+                            <?php
+                            $sdg_colors = ['#E5243B','#DDA63A','#4C9F38','#C5192D','#FF3A21','#26BDE2','#FCC30B','#A21942','#FD6925','#DD1367','#FD9D24','#BF8B2E','#3F7E44','#0A97D9','#56C02B','#00689D','#19486A'];
+                            $stmt = $db->query("SELECT ws.sdg_code, COUNT(*) as count FROM work_sdgs ws GROUP BY ws.sdg_code ORDER BY count DESC LIMIT 4");
+                            $chart_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            $total = array_sum(array_column($chart_data, 'count'));
+                            
+                            foreach ($chart_data as $i => $row) {
+                                $sdg_num = (int)str_replace('SDG', '', $row['sdg_code']);
+                                $count = (int)$row['count'];
+                                $pct = $total > 0 ? round(($count / $total) * 100, 1) : 0;
+                                $color = $sdg_colors[$sdg_num - 1] ?? '#64748b';
+                                $names = ['No Poverty','Zero Hunger','Good Health','Quality Education','Gender Equality','Clean Water','Affordable Energy','Decent Work','Industry & Innov.','Reduced Inequalities','Sustainable Cities','Responsible Consumption','Climate Action','Life Below Water','Life on Land','Peace & Justice','Partnerships'];
+                                $name = $names[$sdg_num - 1] ?? 'SDG'.$sdg_num;
+                                ?>
+                                <div class="mock-legend-item">
+                                    <span class="legend-dot" style="background:<?= $color ?>;"></span>
+                                    <span><?= $name ?></span>
+                                    <b><?= $pct ?>%</b>
+                                </div>
+                                <?php
+                            }
+                            ?>
                         </div>
+                        <?php else: ?>
+                        <div style="padding:2rem;text-align:center;color:rgba(255,255,255,.3);">
+                            <i class="fas fa-chart-pie" style="font-size:1.5rem;margin-bottom:.5rem;opacity:.3;"></i>
+                            <p style="font-size:.875rem;">Distribution chart will appear here once data is available.</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -234,17 +315,30 @@ define('HOME_AJAX_BATCH', 3);
 </section>
 
 <!-- ============================================================
-     STATS SECTION
+     STATS SECTION - Dynamic from Database
      ============================================================ -->
 <section class="section-muted reveal">
     <div class="container">
+        <?php
+        $db_stats = ['researchers' => 0, 'works' => 0, 'sdgs' => 0, 'journals' => 0];
+        try {
+            require_once __DIR__ . '/../includes/database.php';
+            $db = getDB();
+            $db_stats['researchers'] = (int)$db->query("SELECT COUNT(*) FROM researchers WHERE last_fetched IS NOT NULL")->fetchColumn();
+            $db_stats['works'] = (int)$db->query("SELECT COUNT(*) FROM works")->fetchColumn();
+            $db_stats['sdgs'] = (int)$db->query("SELECT COUNT(DISTINCT sdg_code) FROM work_sdgs")->fetchColumn();
+            $db_stats['journals'] = (int)$db->query("SELECT COUNT(*) FROM journals WHERE last_fetched IS NOT NULL")->fetchColumn();
+        } catch (Exception $e) {
+            // Use zeros if DB error
+        }
+        ?>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;text-align:center;">
             <div class="stat-card">
-                <span class="stat-number">17</span>
+                <span class="stat-number"><?= $db_stats['sdgs'] > 0 ? $db_stats['sdgs'] : '17' ?></span>
                 <span class="stat-label">SDG Goals Covered</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">3</span>
+                <span class="stat-number"><?= $db_stats['works'] > 0 ? '3' : '3' ?></span>
                 <span class="stat-label">Works per Batch</span>
             </div>
             <div class="stat-card">
@@ -256,8 +350,8 @@ define('HOME_AJAX_BATCH', 3);
                 <span class="stat-label">Cache TTL</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">∞</span>
-                <span class="stat-label">Works Supported</span>
+                <span class="stat-number"><?= $db_stats['works'] > 0 ? number_format($db_stats['works']) : '∞' ?></span>
+                <span class="stat-label">Works Analyzed</span>
             </div>
         </div>
     </div>

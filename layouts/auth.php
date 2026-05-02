@@ -43,6 +43,7 @@ require_once PROJECT_ROOT . '/includes/locale.php';
     <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/sdg-colors.css">
     <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/animations.css">
     
     <!-- Auth-specific styles -->
     <style>
@@ -299,5 +300,6 @@ require_once PROJECT_ROOT . '/includes/locale.php';
     
     <!-- Scripts -->
     <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/scroll-reveal.js"></script>
 </body>
 </html>
