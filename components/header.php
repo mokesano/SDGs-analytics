@@ -24,14 +24,14 @@
     <meta property="og:description" content="<?php echo isset($page_description) ? $page_description : 'Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals.'; ?>" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>" />
-    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg" />
+    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/cover/cover-sikola.jpg" />
     <meta property="og:site_name" content="Wizdam AI - SDG Analysis" />
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="<?php echo isset($page_title) ? $page_title : 'SDGs Classification Analysis'; ?>" />
     <meta name="twitter:description" content="<?php echo isset($page_description) ? $page_description : 'Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals.'; ?>" />
-    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/twitter-card.jpg" />
+    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/cover/sikola-cover.jpg" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?php echo SITE_URL; ?>/assets/images/favicon.ico" />

@@ -37,117 +37,155 @@ define('HOME_AJAX_BATCH', 3);
 </div>
 
 <!-- ============================================================
-     HERO SECTION
+     HERO SECTION — dark navy, matching cover image design language
      ============================================================ -->
-<section class="hero-section dotted-bg">
-    <div class="ambient-blob" style="background:rgba(255,86,39,.06);top:-150px;left:-150px;"></div>
-    <div class="ambient-blob" style="background:rgba(255,86,39,.04);bottom:-100px;right:-100px;animation-delay:5s;width:400px;height:400px;"></div>
-    <div class="container">
-        <div class="hero-grid">
+<section class="hero-dark" id="hero-main">
+    <!-- Particle / network canvas background -->
+    <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+    <!-- Gradient glow blobs -->
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
 
-            <!-- Left: Content -->
-            <div class="hero-content reveal active">
-                <div class="hero-badge">
-                    <i class="fas fa-globe" style="color:var(--brand,#ff5627);"></i>
-                    AI-Powered SDG Research Platform
+    <div class="container" style="position:relative;z-index:2;">
+        <div class="hero-dark-grid">
+
+            <!-- ── LEFT: Branding + Search ──────────────────────────── -->
+            <div class="hero-dark-left reveal active">
+
+                <!-- Wordmark -->
+                <div class="hero-wordmark">
+                    <span class="hero-wiz">WIZ</span><span class="hero-dam">DAM</span>
                 </div>
-                <h1 class="hero-title">
-                    Classify Research into<br>
-                    <span class="hero-title-accent">17 UN Sustainable</span><br>
-                    Development Goals
-                </h1>
-                <p class="hero-subtitle">
-                    Enter an ORCID ID to analyze a researcher's full publication portfolio, or a DOI to classify a single article using multi-component NLP analysis.
+                <div class="hero-tagline">SDGs Classification &amp; Analytics</div>
+
+                <p class="hero-desc">
+                    Analisis dan klasifikasi artikel ilmiah berdasarkan
+                    <strong>Sustainable Development Goals</strong> menggunakan AI.
+                    Masukkan ORCID ID peneliti atau DOI artikel untuk memulai.
                 </p>
 
-                <!-- Search Form Card -->
-                <div class="search-card magic-card" style="margin-top:0;">
+                <!-- Feature pills -->
+                <div class="hero-pills">
+                    <span class="hero-pill"><i class="fas fa-layer-group"></i> Klasifikasi SDGs</span>
+                    <span class="hero-pill"><i class="fas fa-chart-bar"></i> Analitik Dampak</span>
+                    <span class="hero-pill"><i class="fas fa-search"></i> Pencarian Cerdas</span>
+                    <span class="hero-pill"><i class="fas fa-code"></i> Open API</span>
+                </div>
+
+                <!-- Search Form -->
+                <div class="hero-search-card">
                     <form id="analysisForm" method="POST" action="" autocomplete="off">
-
-                        <div style="margin-bottom:14px;">
-                            <div class="input-group">
-                                <input
-                                    type="text"
-                                    id="input_value"
-                                    name="input_value"
-                                    class="form-input floating-input"
-                                    placeholder=" "
-                                    required
-                                    autocomplete="off"
-                                    spellcheck="false"
-                                    style="padding-right:3rem;"
-                                >
-                                <label class="floating-label" for="input_value">Enter ORCID ID or DOI</label>
-                            </div>
-                            <div style="margin-top:8px;font-size:13px;color:var(--gray-400,#94a3b8);">
-                                <i class="fas fa-info-circle"></i>
-                                Example: <strong>0000-0002-5152-9727</strong> (ORCID) &nbsp;|&nbsp;
-                                         <strong>10.1038/nature12373</strong> (DOI)
-                            </div>
-                            <div class="input-status" id="input_status" style="margin-top:6px;font-size:13px;display:flex;align-items:center;gap:5px;">
-                                <span id="status_icon" class="fas fa-question-circle" style="color:var(--gray-300,#cbd5e1);"></span>
-                                <span id="status_text" style="color:var(--gray-400,#94a3b8);">Enter your ORCID or DOI to begin</span>
-                            </div>
-                        </div>
-
-                        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                                <i class="fas fa-search"></i> Analyze
+                        <div class="hero-input-wrap">
+                            <i class="fas fa-search hero-input-icon"></i>
+                            <input
+                                type="text"
+                                id="input_value"
+                                name="input_value"
+                                class="hero-input"
+                                placeholder="Cari artikel, judul, penulis, atau ORCID / DOI..."
+                                required autocomplete="off" spellcheck="false"
+                            >
+                            <button type="submit" class="hero-search-btn" id="submitBtn">
+                                Cari
                             </button>
-                            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-500,#64748b);cursor:pointer;user-select:none;">
-                                <input type="checkbox" id="force_refresh" name="force_refresh" value="1" style="cursor:pointer;accent-color:var(--brand,#ff5627);">
-                                Force refresh (bypass cache)
-                            </label>
                         </div>
+                        <div class="hero-input-hint">
+                            <span id="status_icon" class="fas fa-info-circle" style="color:rgba(255,255,255,.4);"></span>
+                            <span id="status_text" style="color:rgba(255,255,255,.45);">
+                                Contoh: <code style="color:rgba(255,255,255,.7);">0000-0002-5152-9727</code> (ORCID)
+                                &nbsp;|&nbsp;
+                                <code style="color:rgba(255,255,255,.7);">10.1038/nature12373</code> (DOI)
+                            </span>
+                        </div>
+                        <label class="hero-refresh-label">
+                            <input type="checkbox" id="force_refresh" name="force_refresh" value="1" style="accent-color:var(--brand,#ff5627);">
+                            Force refresh (bypass cache)
+                        </label>
                     </form>
                 </div>
-            </div>
 
-            <!-- Right: Feature Cards (dark) -->
-            <div class="hero-cards reveal" style="transition-delay:200ms;">
-                <!-- ORCID Card -->
-                <div class="code-card magic-card">
-                    <div class="code-card-header">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                        <span class="code-filename">orcid_classifier.php</span>
+            </div><!-- /left -->
+
+            <!-- ── RIGHT: App mockup dashboard ─────────────────────── -->
+            <div class="hero-dark-right reveal" style="transition-delay:200ms;">
+                <div class="hero-mockup">
+                    <!-- Mockup top bar -->
+                    <div class="mock-topbar">
+                        <span class="mock-brand"><i class="fas fa-globe-asia" style="color:var(--brand,#ff5627);"></i> Ringkasan Klasifikasi SDGs</span>
+                        <span class="mock-filter"><i class="fas fa-sliders-h"></i> Filter</span>
                     </div>
-                    <div class="code-card-body">
-                        <p>Analisis lengkap portofolio peneliti via ORCID ID. Sequential batch processing anti-timeout dengan SDG mapping otomatis.</p>
-                        <pre class="code-snippet">$analyzer->classify([
-  'orcid' => '0000-0002-5152-9727',
-  'mode'  => 'sequential_batch',
-]);</pre>
-                        <a href="#" onclick="event.preventDefault();document.getElementById('input_value').focus();" class="btn btn-primary btn-sm">
-                            Try ORCID Analysis <i class="fas fa-arrow-right"></i>
-                        </a>
+                    <!-- SDG summary chips -->
+                    <div class="mock-summary-row">
+                        <?php
+                        $mock_data = [
+                            3  => ['label'=>'Good Health',       'n'=>'1,248','p'=>'18.7%'],
+                            4  => ['label'=>'Quality Education', 'n'=>'1,032','p'=>'15.4%'],
+                            9  => ['label'=>'Industry & Innov.', 'n'=>'987',  'p'=>'14.8%'],
+                            13 => ['label'=>'Climate Action',    'n'=>'856',  'p'=>'12.8%'],
+                        ];
+                        foreach ($mock_data as $n => $d):
+                        ?>
+                        <div class="mock-sdg-chip sdg-chip-<?= $n ?>">
+                            <div class="mock-chip-icon sdg-tile-<?= $n ?>"><?= $n ?></div>
+                            <div class="mock-chip-info">
+                                <div class="mock-chip-count"><?= $d['n'] ?></div>
+                                <div class="mock-chip-pct">(<?= $d['p'] ?>)</div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                        <div class="mock-sdg-chip mock-sdg-other">
+                            <div class="mock-chip-icon" style="background:#64748b;">…</div>
+                            <div class="mock-chip-info">
+                                <div class="mock-chip-count">2,537</div>
+                                <div class="mock-chip-pct">(38.3%)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Article list preview -->
+                    <div class="mock-section-label">Artikel Terbaru</div>
+                    <div class="mock-articles">
+                        <?php
+                        $mock_arts = [
+                            [3, 'Telemedicine in Improving Access to Healthcare Services in Rural Areas', 'Q2'],
+                            [4, 'Digital Learning Innovation for Quality Education in the 21st Century', 'Q2'],
+                            [9, 'Green Technology Innovation for Sustainable Industrial Development', 'Q1'],
+                        ];
+                        foreach ($mock_arts as [$n, $title, $q]):
+                        ?>
+                        <div class="mock-article-row">
+                            <span class="mock-art-sdg sdg-tile-<?= $n ?>"><?= $n ?></span>
+                            <span class="mock-art-title"><?= htmlspecialchars($title) ?></span>
+                            <span class="mock-art-q"><?= $q ?></span>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <!-- Distribution row -->
+                    <div class="mock-dist-row">
+                        <div class="mock-donut-wrap">
+                            <div class="mock-donut">
+                                <span class="mock-donut-center">6,660<br><small>Artikel</small></span>
+                            </div>
+                        </div>
+                        <div class="mock-legend">
+                            <div class="mock-legend-item"><span class="legend-dot" style="background:#4c9f38;"></span><span>Good Health &amp; Well-being</span><b>18.7%</b></div>
+                            <div class="mock-legend-item"><span class="legend-dot" style="background:#c5192d;"></span><span>Quality Education</span><b>15.4%</b></div>
+                            <div class="mock-legend-item"><span class="legend-dot" style="background:#fd6925;"></span><span>Industry &amp; Innovation</span><b>14.8%</b></div>
+                            <div class="mock-legend-item"><span class="legend-dot" style="background:#3f7e44;"></span><span>Climate Action</span><b>12.8%</b></div>
+                            <div class="mock-legend-item"><span class="legend-dot" style="background:#64748b;"></span><span>Lainnya</span><b>38.3%</b></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- DOI Card -->
-                <div class="code-card magic-card">
-                    <div class="code-card-header">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                        <span class="code-filename">doi_classifier.php</span>
-                    </div>
-                    <div class="code-card-body">
-                        <p>Klasifikasi artikel tunggal berdasarkan DOI. Multi-source: Crossref + OpenAlex + Semantic Scholar.</p>
-                        <pre class="code-snippet">$result = $sdgApi->analyze([
-  'doi'  => '10.1038/nature12373',
-  'mode' => 'doi_single',
-]);</pre>
-                        <a href="#" onclick="event.preventDefault();document.getElementById('input_value').focus();" class="btn btn-outline-white btn-sm">
-                            Try DOI Analysis <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+                <!-- Floating SDG tile decorations -->
+                <div class="hero-float-tiles" aria-hidden="true">
+                    <?php foreach ([4,3,8,11,17] as $fn): ?>
+                    <div class="hero-float-tile sdg-tile-<?= $fn ?> hft-<?= $fn ?>"><span><?= $fn ?></span></div>
+                    <?php endforeach; ?>
                 </div>
-            </div>
+            </div><!-- /right -->
 
-        </div>
-    </div>
+        </div><!-- /grid -->
+    </div><!-- /container -->
 </section>
 
 <!-- ============================================================
@@ -315,7 +353,369 @@ define('HOME_AJAX_BATCH', 3);
 </div>
 
 <style>
-/* ── Home page specific styles ─── */
+/* ══════════════════════════════════════════════════════
+   HERO DARK — matches cover image design language
+   ══════════════════════════════════════════════════════ */
+.hero-dark {
+  position: relative;
+  background: linear-gradient(135deg, #0a0e1a 0%, #0f1b3d 45%, #0d1224 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0 60px;
+  overflow: hidden;
+}
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .45;
+  pointer-events: none;
+}
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.hero-blob-1 {
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, rgba(99,102,241,.18) 0%, transparent 70%);
+  top: -160px; left: -120px;
+}
+.hero-blob-2 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(255,86,39,.12) 0%, transparent 70%);
+  bottom: -80px; right: -100px;
+  animation: blobFloat 8s ease-in-out infinite alternate;
+}
+@keyframes blobFloat { from{transform:translateY(0)} to{transform:translateY(-30px)} }
+
+/* ── Grid ─── */
+.hero-dark-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+@media(max-width:900px){
+  .hero-dark-grid { grid-template-columns: 1fr; }
+  .hero-dark-right { display: none; }
+}
+
+/* ── Left content ─── */
+.hero-wordmark {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.03em;
+  margin-bottom: .3rem;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+.hero-wiz { color: #fff; }
+.hero-dam { color: #00c4ff; }
+.hero-tagline {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.75);
+  margin-bottom: 1.1rem;
+  letter-spacing: .01em;
+}
+.hero-desc {
+  color: rgba(255,255,255,.55);
+  font-size: .95rem;
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+  max-width: 480px;
+}
+.hero-desc strong { color: rgba(255,255,255,.85); }
+
+/* ── Pills ─── */
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.75rem;
+}
+.hero-pill {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.7);
+  padding: .35rem .85rem;
+  border-radius: 20px;
+  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  backdrop-filter: blur(8px);
+  transition: background .2s, border-color .2s;
+}
+.hero-pill i { color: #00c4ff; font-size: .75rem; }
+.hero-pill:hover { background: rgba(255,255,255,.12); border-color: rgba(0,196,255,.35); }
+
+/* ── Search card ─── */
+.hero-search-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 1.25rem;
+  backdrop-filter: blur(16px);
+  max-width: 520px;
+}
+.hero-input-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,.08);
+  border: 1.5px solid rgba(255,255,255,.18);
+  border-radius: 10px;
+  padding: 0 0 0 14px;
+  transition: border-color .2s, box-shadow .2s;
+  margin-bottom: .75rem;
+}
+.hero-input-wrap:focus-within {
+  border-color: rgba(0,196,255,.6);
+  box-shadow: 0 0 0 3px rgba(0,196,255,.12);
+}
+.hero-input-icon { color: rgba(255,255,255,.35); font-size: .9rem; flex-shrink: 0; }
+.hero-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 12px 10px;
+  font-size: .95rem;
+  color: #fff;
+  min-width: 0;
+}
+.hero-input::placeholder { color: rgba(255,255,255,.3); }
+.hero-search-btn {
+  background: var(--brand, #ff5627);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 0 8px 8px 0;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 100%;
+  transition: background .2s, transform .15s;
+}
+.hero-search-btn:hover { background: #e0481d; transform: none; }
+.hero-search-btn:disabled { background: #555; cursor: not-allowed; }
+.hero-input-hint {
+  font-size: .78rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  line-height: 1.5;
+  margin-bottom: .6rem;
+}
+.hero-refresh-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.4);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── Right: mockup ─── */
+.hero-dark-right { position: relative; }
+.hero-mockup {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px;
+  padding: 1.25rem;
+  backdrop-filter: blur(16px);
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 24px 80px rgba(0,0,0,.4);
+}
+.mock-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.mock-brand {
+  font-size: .85rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.8);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.mock-filter {
+  font-size: .75rem;
+  color: rgba(255,255,255,.4);
+  background: rgba(255,255,255,.06);
+  padding: .25rem .6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.mock-section-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: rgba(255,255,255,.35);
+  margin-bottom: .5rem;
+}
+.mock-summary-row {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.mock-sdg-chip {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: .4rem .6rem;
+  flex: 1;
+  min-width: 72px;
+}
+.mock-chip-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; font-weight: 900; color: #fff; flex-shrink: 0;
+}
+.mock-chip-count { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.85); line-height: 1.2; }
+.mock-chip-pct   { font-size: .68rem; color: rgba(255,255,255,.4); }
+
+/* SDG chip colors */
+.sdg-chip-3  .mock-chip-icon { background: #4c9f38; }
+.sdg-chip-4  .mock-chip-icon { background: #c5192d; }
+.sdg-chip-9  .mock-chip-icon { background: #fd6925; }
+.sdg-chip-13 .mock-chip-icon { background: #3f7e44; }
+
+.mock-articles { margin-bottom: 1rem; }
+.mock-article-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  font-size: .78rem;
+}
+.mock-article-row:last-child { border-bottom: none; }
+.mock-art-sdg {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; font-weight: 900; color: #fff; flex-shrink: 0;
+}
+.mock-art-title {
+  flex: 1;
+  color: rgba(255,255,255,.7);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: .76rem;
+}
+.mock-art-q {
+  font-size: .68rem;
+  font-weight: 700;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.mock-dist-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding-top: .75rem;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.mock-donut-wrap { flex-shrink: 0; }
+.mock-donut {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #4c9f38 0% 18.7%,
+    #c5192d 18.7% 34.1%,
+    #fd6925 34.1% 48.9%,
+    #3f7e44 48.9% 61.7%,
+    #374151 61.7% 100%
+  );
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.mock-donut::before {
+  content: '';
+  position: absolute;
+  width: 52px; height: 52px;
+  background: #0f1b3d;
+  border-radius: 50%;
+}
+.mock-donut-center {
+  position: relative;
+  z-index: 1;
+  font-size: .6rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.8);
+  text-align: center;
+  line-height: 1.3;
+}
+.mock-donut-center small { font-weight: 400; color: rgba(255,255,255,.4); font-size: .55rem; }
+.mock-legend { flex: 1; }
+.mock-legend-item {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .7rem;
+  color: rgba(255,255,255,.5);
+  margin-bottom: .2rem;
+}
+.mock-legend-item span:nth-child(2) { flex: 1; }
+.mock-legend-item b { color: rgba(255,255,255,.75); font-weight: 700; }
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* ── Floating SDG tiles ─── */
+.hero-float-tiles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-float-tile {
+  position: absolute;
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 900; color: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  animation: tileBob 6s ease-in-out infinite;
+  opacity: .85;
+}
+.hero-float-tile span { position: relative; z-index: 1; }
+.hft-4  { top: 5%;  right: -10px; animation-delay: 0s; }
+.hft-3  { top: 30%; left: -20px;  animation-delay: 1.5s; width: 64px; height: 64px; font-size: 1.2rem; }
+.hft-8  { bottom: 35%; right: -15px; animation-delay: 3s; }
+.hft-11 { bottom: 10%; left: -10px; animation-delay: 4.5s; width: 58px; height: 58px; }
+.hft-17 { bottom: -10px; right: 20%; animation-delay: 2s; }
+@keyframes tileBob {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-14px) rotate(2deg); }
+}
+
+/* ── Home page specific styles (kept from original) ─── */
 .floating-input { width:100%; padding:14px 16px; font-size:1rem; border:2px solid var(--gray-200,#e2e8f0); border-radius:10px; outline:none; transition:border-color .2s; background:#fff; }
 .floating-input:focus { border-color:var(--brand,#ff5627); box-shadow:0 0 0 3px rgba(255,86,39,.12); }
 .floating-input.valid   { border-color:var(--success,#22c55e); }
@@ -426,15 +826,19 @@ define('HOME_AJAX_BATCH', 3);
     // ── Validation ────────────────────────────────────────────────
     function detectType(value) {
         const v = value.trim();
+        // ORCID: full URL or bare ID
         if (/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i.test(v)) return 'orcid';
-        if (/^(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$/.test(v))              return 'orcid';
-        if (/^10\.\d{4,}\//.test(v))                                   return 'doi';
-        if (/doi\.org\//.test(v) || /dx\.doi\.org\//.test(v))         return 'doi';
+        if (/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(v))               return 'orcid';
+        // DOI: bare prefix or exact doi.org / dx.doi.org URL
+        if (/^10\.\d{4,}\/\S+/.test(v))                              return 'doi';
+        if (/^https?:\/\/(dx\.)?doi\.org\/10\.\d{4,}\//i.test(v))    return 'doi';
         return null;
     }
     function validateOrcid(orcid) {
+        // Strip ORCID URL if present
         const clean = orcid.replace(/^https?:\/\/(www\.)?orcid\.org\//i, '').trim();
         if (!/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(clean)) return false;
+        // ISO 7064 MOD 11-2 checksum — valid for all first-segment values (0000–9999)
         const digits = clean.replace(/-/g, '').slice(0, -1);
         const check  = clean.slice(-1);
         let total = 0;
@@ -444,8 +848,9 @@ define('HOME_AJAX_BATCH', 3);
         return check === (exp === 10 ? 'X' : String(exp));
     }
     function validateDoi(doi) {
-        const clean = doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').trim();
-        return /^10\.\d{4,}\/[^\s]+$/.test(clean);
+        // Accept bare DOI or full doi.org URL, reject arbitrary other URLs
+        const stripped = doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').trim();
+        return /^10\.\d{4,}\/\S+$/.test(stripped);
     }
 
     // ── Input status ──────────────────────────────────────────────
@@ -456,33 +861,33 @@ define('HOME_AJAX_BATCH', 3);
         if (!icon || !text || !inp) return;
         const v = value.trim();
         if (!v) {
-            icon.className = 'fas fa-question-circle'; icon.style.color = 'var(--gray-300,#cbd5e1)';
-            text.textContent = 'Enter ORCID or DOI to begin';
-            text.style.color = 'var(--gray-400,#94a3b8)';
-            inp.classList.remove('valid','invalid'); return;
+            icon.className = 'fas fa-info-circle'; icon.style.color = 'rgba(255,255,255,.4)';
+            text.innerHTML = 'Contoh: <code style="color:rgba(255,255,255,.7);">0000-0002-5152-9727</code> (ORCID) &nbsp;|&nbsp; <code style="color:rgba(255,255,255,.7);">10.1038/nature12373</code> (DOI)';
+            text.style.color = 'rgba(255,255,255,.4)';
+            inp.style.borderColor = ''; return;
         }
         const type = detectType(v);
         if (type === 'orcid') {
             const ok = validateOrcid(v);
             icon.className = ok ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-            icon.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
-            text.textContent = ok ? 'Valid ORCID ID — ready to analyze researcher profile'
-                                  : 'Invalid ORCID — check the 16-digit format and checksum';
-            text.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
-            inp.classList.toggle('valid', ok); inp.classList.toggle('invalid', !ok);
+            icon.style.color = ok ? '#22c55e' : '#ef4444';
+            text.textContent = ok ? 'Valid ORCID ID — siap analisis profil peneliti'
+                                  : 'ORCID tidak valid — periksa format 16-digit dan checksum';
+            text.style.color = ok ? '#22c55e' : '#ef4444';
+            inp.style.borderColor = ok ? 'rgba(34,197,94,.5)' : 'rgba(239,68,68,.5)';
         } else if (type === 'doi') {
             const ok = validateDoi(v);
             icon.className = ok ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-            icon.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
-            text.textContent = ok ? 'Valid DOI — ready to analyze article'
-                                  : 'Invalid DOI — format should be 10.xxxx/xxxxx';
-            text.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
-            inp.classList.toggle('valid', ok); inp.classList.toggle('invalid', !ok);
+            icon.style.color = ok ? '#22c55e' : '#ef4444';
+            text.textContent = ok ? 'Valid DOI — siap analisis artikel'
+                                  : 'DOI tidak valid — format: 10.xxxx/xxxxx';
+            text.style.color = ok ? '#22c55e' : '#ef4444';
+            inp.style.borderColor = ok ? 'rgba(34,197,94,.5)' : 'rgba(239,68,68,.5)';
         } else {
-            icon.className = 'fas fa-exclamation-circle'; icon.style.color = 'var(--warning,#f59e0b)';
-            text.textContent = 'Format not recognized. Use ORCID (0000-0000-0000-0000) or DOI (10.xxxx/xxxxx).';
-            text.style.color = 'var(--warning,#f59e0b)';
-            inp.classList.remove('valid'); inp.classList.add('invalid');
+            icon.className = 'fas fa-exclamation-circle'; icon.style.color = '#f59e0b';
+            text.textContent = 'Format tidak dikenali. Gunakan ORCID (XXXX-XXXX-XXXX-XXXX) atau DOI (10.xxxx/xxxxx).';
+            text.style.color = '#f59e0b';
+            inp.style.borderColor = 'rgba(245,158,11,.5)';
         }
     }
 
@@ -500,15 +905,21 @@ define('HOME_AJAX_BATCH', 3);
         if (!info) return;
         const initials = (info.name || 'NN').split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
         const instHtml = info.institutions && info.institutions.length
-            ? `<p style="margin:4px 0;font-size:.9rem;color:var(--gray-500,#64748b);"><i class="fas fa-university"></i> ${escH(info.institutions.slice(0,2).join(', '))}${info.institutions.length > 2 ? ' et al.' : ''}</p>` : '';
+            ? `<p style="margin:4px 0;font-size:.875rem;color:var(--gray-500,#64748b);"><i class="fas fa-university"></i> ${escH(info.institutions.slice(0,3).join(' · '))}${info.institutions.length > 3 ? ` +${info.institutions.length-3} more` : ''}</p>` : '';
+        const emailHtml = info.emails && info.emails.length
+            ? `<p style="margin:4px 0;font-size:.875rem;color:var(--gray-500,#64748b);"><i class="fas fa-envelope"></i> ${escH(info.emails[0])}</p>` : '';
+        const bioHtml = info.bio
+            ? `<p style="margin:8px 0 0;font-size:.875rem;color:var(--gray-600,#475569);line-height:1.6;">${escH(info.bio.slice(0,280))}${info.bio.length>280?'…':''}</p>` : '';
+        const kwHtml = info.keywords && info.keywords.length
+            ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">${info.keywords.slice(0,6).map(k=>`<span style="background:rgba(255,86,39,.08);color:var(--brand,#ff5627);padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:500;">${escH(k)}</span>`).join('')}</div>` : '';
         document.getElementById('ajaxResultsSection').innerHTML = `
         <div class="info-general">
             <div class="personal-info">
                 <div class="avatar">${escH(initials)}</div>
-                <div>
+                <div style="flex:1;">
                     <h2 style="margin:0 0 4px;font-size:1.2rem;">${escH(info.name || '–')}</h2>
-                    <p style="margin:4px 0;font-size:.9rem;color:var(--gray-500,#64748b);"><i class="fab fa-orcid" style="color:#a6ce39;"></i> ${escH(info.orcid || '')}</p>
-                    ${instHtml}
+                    <p style="margin:4px 0;font-size:.875rem;color:var(--gray-500,#64748b);"><i class="fab fa-orcid" style="color:#a6ce39;"></i> <a href="https://orcid.org/${escH(info.orcid||'')}" target="_blank" rel="noopener" style="color:#a6ce39;">${escH(info.orcid || '')}</a></p>
+                    ${instHtml}${emailHtml}${bioHtml}${kwHtml}
                 </div>
             </div>
             <div class="stats-grid">
@@ -552,8 +963,17 @@ define('HOME_AJAX_BATCH', 3);
                    </div>${buildDetailedAnalysis(work, idx)}`
                 : `<div class="none-SDG"><i class="fas fa-info-circle"></i> No SDGs identified with sufficient confidence.</div>`;
 
-            const abstract = work.abstract
-                ? `<div class="work-abstract"><strong>Abstract:</strong> ${escH(work.abstract.slice(0,400))}${work.abstract.length > 400 ? '…' : ''}</div>` : '';
+            const absFull    = work.abstract || '';
+            const absPreview = absFull.length > 320 ? absFull.slice(0, 320) + '…' : absFull;
+            const abstract   = absFull
+                ? `<div class="work-abstract" id="abs-${idx}">
+                    <strong>Abstract:</strong>
+                    <span class="abs-preview">${escH(absPreview)}</span>
+                    ${absFull.length > 320
+                        ? `<span class="abs-full" style="display:none;">${escH(absFull)}</span>
+                           <button class="abs-toggle" onclick="toggleAbstract('${idx}')" style="margin-left:6px;background:none;border:none;color:var(--brand,#ff5627);font-size:.8rem;cursor:pointer;font-weight:600;">Show more</button>`
+                        : ''}
+                   </div>` : '';
             const doi = work.doi
                 ? `<span><i class="fas fa-link"></i> <a href="https://doi.org/${escH(work.doi)}" target="_blank" rel="noopener">${escH(work.doi)}</a></span>` : '';
 
@@ -597,6 +1017,17 @@ define('HOME_AJAX_BATCH', 3);
         });
         return html + '</div>';
     }
+
+    window.toggleAbstract = function(idx) {
+        const preview = document.querySelector(`#abs-${idx} .abs-preview`);
+        const full    = document.querySelector(`#abs-${idx} .abs-full`);
+        const btn     = document.querySelector(`#abs-${idx} .abs-toggle`);
+        if (!preview || !full || !btn) return;
+        const expanded = full.style.display !== 'none';
+        preview.style.display = expanded ? 'inline' : 'none';
+        full.style.display    = expanded ? 'none'   : 'inline';
+        btn.textContent       = expanded ? 'Show more' : 'Show less';
+    };
 
     window.toggleDetails = function(idx) {
         const div = document.getElementById('analysis-' + idx);
@@ -917,5 +1348,83 @@ define('HOME_AJAX_BATCH', 3);
             });
         }, 300);
     });
+})();
+</script>
+
+<!-- ── Hero canvas particle network ───────────────────── -->
+<script>
+(function() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, nodes = [], animId;
+
+    function resize() {
+        const hero = canvas.parentElement;
+        W = canvas.width  = hero.offsetWidth;
+        H = canvas.height = hero.offsetHeight;
+    }
+
+    function makeNodes(n) {
+        nodes = [];
+        for (let i = 0; i < n; i++) {
+            nodes.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                vx: (Math.random() - .5) * .35,
+                vy: (Math.random() - .5) * .35,
+                r: Math.random() * 2 + 1.2,
+            });
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        // Connections
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const dx = nodes[i].x - nodes[j].x;
+                const dy = nodes[i].y - nodes[j].y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 140) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(0,196,255,${.22 * (1 - dist/140)})`;
+                    ctx.lineWidth = .8;
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[j].x, nodes[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        // Dots
+        nodes.forEach(n => {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,196,255,.6)';
+            ctx.fill();
+        });
+    }
+
+    function update() {
+        nodes.forEach(n => {
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < 0 || n.x > W) n.vx *= -1;
+            if (n.y < 0 || n.y > H) n.vy *= -1;
+        });
+    }
+
+    function loop() { update(); draw(); animId = requestAnimationFrame(loop); }
+
+    function init() {
+        resize();
+        const count = Math.min(80, Math.floor((W * H) / 12000));
+        makeNodes(count);
+        if (animId) cancelAnimationFrame(animId);
+        loop();
+    }
+
+    window.addEventListener('resize', init);
+    init();
 })();
 </script>
