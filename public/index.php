@@ -125,6 +125,7 @@ ini_set('error_log', PROJECT_ROOT . '/logs/error.log');
 require_once PROJECT_ROOT . '/includes/config.php';
 require_once PROJECT_ROOT . '/includes/functions.php';
 require_once PROJECT_ROOT . '/includes/sdg_definitions.php';
+require_once PROJECT_ROOT . '/includes/locale.php';
 
 // Routing sederhana via ?page=
 $page = isset($_GET['page']) ? trim($_GET['page']) : 'home';

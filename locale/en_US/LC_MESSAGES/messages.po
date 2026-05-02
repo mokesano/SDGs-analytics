@@ -1,0 +1,639 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Wizdam AI-sikola 1.0\n"
+"POT-Creation-Date: 2025-05-02 10:00+0700\n"
+"PO-Revision-Date: 2025-05-02 10:00+0700\n"
+"Last-Translator: Wizdam Team <info@sangia.org>\n"
+"Language-Team: English (US)\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Auth Pages - Login
+msgid "login.page_title"
+msgstr "Login to Wizdam AI"
+
+msgid "login.subtitle"
+msgstr "Access your personalized dashboard to manage your research analysis, view history, and track SDG contributions."
+
+msgid "login.welcome_heading"
+msgstr "Welcome Back"
+
+msgid "login.welcome_text"
+msgstr "Please sign in to continue to your account."
+
+msgid "login.benefits_heading"
+msgstr "Benefits of Logging In"
+
+msgid "login.benefit_history"
+msgstr "Save Analysis History"
+
+msgid "login.benefit_history_desc"
+msgstr "Keep track of all ORCID profiles and journals you've analyzed"
+
+msgid "login.benefit_dashboard"
+msgstr "Personal Dashboard"
+
+msgid "login.benefit_dashboard_desc"
+msgstr "View your analytics and contribution metrics"
+
+msgid "login.benefit_submit"
+msgstr "Submit Research"
+
+msgid "login.benefit_submit_desc"
+msgstr "Upload PDFs or URLs for SDG classification"
+
+msgid "login.benefit_leaderboard"
+msgstr "Leaderboard Access"
+
+msgid "login.benefit_leaderboard_desc"
+msgstr "See how you rank among researchers by SDG category"
+
+msgid "login.no_account"
+msgstr "Don't have an account?"
+
+msgid "login.register_link"
+msgstr "Register here"
+
+msgid "login.forgot_password"
+msgstr "Forgot password?"
+
+msgid "login.reset_link"
+msgstr "Reset it"
+
+msgid "login.email_label"
+msgstr "Email Address"
+
+msgid "login.password_label"
+msgstr "Password"
+
+msgid "login.remember_me"
+msgstr "Remember me"
+
+msgid "login.submit_button"
+msgstr "Sign In"
+
+# Auth Pages - Register
+msgid "register.page_title"
+msgstr "Create Your Account"
+
+msgid "register.subtitle"
+msgstr "Join Wizdam AI-sikola to start analyzing research contributions to Sustainable Development Goals"
+
+msgid "register.heading"
+msgstr "Register New Account"
+
+msgid "register.name_label"
+msgstr "Full Name"
+
+msgid "register.name_placeholder"
+msgstr "Enter your full name"
+
+msgid "register.orcid_label"
+msgstr "ORCID iD (Optional)"
+
+msgid "register.orcid_placeholder"
+msgstr "0000-0000-0000-0000"
+
+msgid "register.email_label"
+msgstr "Email Address"
+
+msgid "register.email_placeholder"
+msgstr "your.email@example.com"
+
+msgid "register.password_label"
+msgstr "Password"
+
+msgid "register.password_requirements"
+msgstr "Minimum 8 characters, at least one uppercase letter, one number"
+
+msgid "register.confirm_password_label"
+msgstr "Confirm Password"
+
+msgid "register.terms_checkbox"
+msgstr "I agree to the"
+
+msgid "register.terms_link"
+msgstr "Terms of Service"
+
+msgid "register.and"
+msgstr "and"
+
+msgid "register.privacy_link"
+msgstr "Privacy Policy"
+
+msgid "register.submit_button"
+msgstr "Create Account"
+
+msgid "register.have_account"
+msgstr "Already have an account?"
+
+msgid "register.login_link"
+msgstr "Sign in here"
+
+# Auth Pages - Forgot Password
+msgid "forgot_password.page_title"
+msgstr "Reset Your Password"
+
+msgid "forgot_password.subtitle"
+msgstr "Enter your email address and we'll send you instructions to reset your password"
+
+msgid "forgot_password.heading"
+msgstr "Forgot Password"
+
+msgid "forgot_password.email_label"
+msgstr "Email Address"
+
+msgid "forgot_password.submit_button"
+msgstr "Send Reset Link"
+
+msgid "forgot_password.back_to_login"
+msgstr "Back to login"
+
+msgid "forgot_password.check_email"
+msgstr "Check your email inbox for password reset instructions"
+
+msgid "forgot_password.spam_folder"
+msgstr "Didn't receive the email? Check your spam folder"
+
+# Dashboard
+msgid "dashboard.page_title"
+msgstr "My Dashboard"
+
+msgid "dashboard.welcome"
+msgstr "Welcome back,"
+
+msgid "dashboard.overview_heading"
+msgstr "Dashboard Overview"
+
+msgid "dashboard.stats_total_analyses"
+msgstr "Total Analyses"
+
+msgid "dashboard.stats_sdg_contributions"
+msgstr "SDG Contributions"
+
+msgid "dashboard.stats_submissions"
+msgstr "Research Submissions"
+
+msgid "dashboard.stats_profile_views"
+msgstr "Profile Views"
+
+msgid "dashboard.recent_activity"
+msgstr "Recent Activity"
+
+msgid "dashboard.quick_actions"
+msgstr "Quick Actions"
+
+msgid "dashboard.action_analyze_orcid"
+msgstr "Analyze ORCID"
+
+msgid "dashboard.action_check_journal"
+msgstr "Check Journal"
+
+msgid "dashboard.action_submit_pdf"
+msgstr "Submit PDF"
+
+msgid "dashboard.action_view_leaderboard"
+msgstr "View Leaderboard"
+
+# Settings
+msgid "settings.page_title"
+msgstr "Account Settings"
+
+msgid "settings.profile_heading"
+msgstr "Profile Information"
+
+msgid "settings.password_heading"
+msgstr "Change Password"
+
+msgid "settings.notifications_heading"
+msgstr "Notification Preferences"
+
+msgid "settings.danger_zone"
+msgstr "Danger Zone"
+
+msgid "settings.save_changes"
+msgstr "Save Changes"
+
+msgid "settings.current_password"
+msgstr "Current Password"
+
+msgid "settings.new_password"
+msgstr "New Password"
+
+msgid "settings.confirm_new_password"
+msgstr "Confirm New Password"
+
+msgid "settings.delete_account"
+msgstr "Delete Account"
+
+msgid "settings.delete_warning"
+msgstr "This action cannot be undone. All your data will be permanently deleted."
+
+# Submit Research
+msgid "submit_research.page_title"
+msgstr "Submit Research for SDG Analysis"
+
+msgid "submit_research.heading"
+msgstr "Submit Your Research"
+
+msgid "submit_research.description"
+msgstr "Upload a PDF file or provide a URL to analyze its alignment with Sustainable Development Goals"
+
+msgid "submit_research.tab_pdf"
+msgstr "Upload PDF"
+
+msgid "submit_research.tab_url"
+msgstr "Submit URL"
+
+msgid "submit_research.tab_doi"
+msgstr "Enter DOI"
+
+msgid "submit_research.pdf_dropzone"
+msgstr "Drag & drop your PDF here, or click to browse"
+
+msgid "submit_research.pdf_requirements"
+msgstr "Accepted formats: PDF. Maximum size: 10MB"
+
+msgid "submit_research.url_label"
+msgstr "Article URL"
+
+msgid "submit_research.url_placeholder"
+msgstr "https://journal.example.com/article/12345"
+
+msgid "submit_research.doi_label"
+msgstr "Digital Object Identifier (DOI)"
+
+msgid "submit_research.doi_placeholder"
+msgstr "10.1234/example.2024.001"
+
+msgid "submit_research.submit_button"
+msgstr "Analyze Research"
+
+msgid "submit_research.processing_status"
+msgstr "Processing your submission..."
+
+msgid "submit_research.analysis_complete"
+msgstr "Analysis Complete!"
+
+# Archived
+msgid "archived.page_title"
+msgstr "Research Archive"
+
+msgid "archived.heading"
+msgstr "Archived Research Profiles"
+
+msgid "archived.description"
+msgstr "Browse all researcher profiles and journals that have been analyzed on our platform"
+
+msgid "archived.search_placeholder"
+msgstr "Search by name, ORCID, or journal title..."
+
+msgid "archived.filter_by"
+msgstr "Filter by"
+
+msgid "archived.filter_all"
+msgstr "All Types"
+
+msgid "archived.filter_researchers"
+msgstr "Researchers"
+
+msgid "archived.filter_journals"
+msgstr "Journals"
+
+msgid "archived.sort_by"
+msgstr "Sort by"
+
+msgid "archived.sort_date_desc"
+msgstr "Most Recent"
+
+msgid "archived.sort_date_asc"
+msgstr "Oldest First"
+
+msgid "archived.sort_name"
+msgstr "Name (A-Z)"
+
+msgid "archived.table_name"
+msgstr "Name / Title"
+
+msgid "archived.table_type"
+msgstr "Type"
+
+msgid "archived.table_sdg_count"
+msgstr "SDGs"
+
+msgid "archived.table_works"
+msgstr "Works"
+
+msgid "archived.table_date"
+msgstr "Analyzed On"
+
+msgid "archived.table_action"
+msgstr "Action"
+
+msgid "archived.view_profile"
+msgstr "View Profile"
+
+msgid "archived.no_results"
+msgstr "No results found in the archive"
+
+# Leaderboard
+msgid "leaderboard.page_title"
+msgstr "SDG Contributor Leaderboard"
+
+msgid "leaderboard.heading"
+msgstr "Top Contributors by SDG"
+
+msgid "leaderboard.description"
+msgstr "Discover researchers making significant contributions to each Sustainable Development Goal"
+
+msgid "leaderboard.select_sdg"
+msgstr "Select SDG Goal"
+
+msgid "leaderboard.contributor_type"
+msgstr "Contributor Type"
+
+msgid "leaderboard.type_all"
+msgstr "All Contributors"
+
+msgid "leaderboard.type_active"
+msgstr "Active Contributors"
+
+msgid "leaderboard.type_relevant"
+msgstr "Relevant Contributors"
+
+msgid "leaderboard.type_discussant"
+msgstr "Discussants"
+
+msgid "leaderboard.rank"
+msgstr "Rank"
+
+msgid "leaderboard.researcher"
+msgstr "Researcher"
+
+msgid "leaderboard.contributions"
+msgstr "Contributions"
+
+msgid "leaderboard.institution"
+msgstr "Institution"
+
+msgid "leaderboard.view_profile"
+msgstr "View Profile"
+
+# Analytics
+msgid "analytics.page_title"
+msgstr "Analytics Dashboard"
+
+msgid "analytics.heading"
+msgstr "Platform Analytics"
+
+msgid "analytics.description"
+msgstr "Comprehensive insights into research contributions across all SDGs"
+
+msgid "analytics.total_researchers"
+msgstr "Total Researchers"
+
+msgid "analytics.total_works"
+msgstr "Total Works Analyzed"
+
+msgid "analytics.total_journals"
+msgstr "Journals Tracked"
+
+msgid "analytics.avg_confidence"
+msgstr "Average Confidence Score"
+
+msgid "analytics.sdg_distribution"
+msgstr "SDG Distribution"
+
+msgid "analytics.trend_analysis"
+msgstr "Trend Analysis"
+
+msgid "analytics.top_institutions"
+msgstr "Top Institutions"
+
+msgid "analytics.geographic_map"
+msgstr "Geographic Distribution"
+
+# Maintenance
+msgid "maintenance.page_title"
+msgstr "Under Maintenance"
+
+msgid "maintenance.heading"
+msgstr "We'll Be Right Back"
+
+msgid "maintenance.message"
+msgstr "Our platform is currently undergoing scheduled maintenance to improve your experience. Please check back soon."
+
+msgid "maintenance.estimated_time"
+msgstr "Estimated downtime:"
+
+msgid "maintenance.contact"
+msgstr "For urgent inquiries, contact us at"
+
+# Error Pages
+msgid "error.404_title"
+msgstr "Page Not Found"
+
+msgid "error.404_message"
+msgstr "The page you're looking for doesn't exist or has been moved."
+
+msgid "error.404_go_home"
+msgstr "Go to Homepage"
+
+msgid "error.500_title"
+msgstr "Server Error"
+
+msgid "error.500_message"
+msgstr "Something went wrong on our end. Please try again later."
+
+msgid "error.500_try_again"
+msgstr "Try Again"
+
+# Common
+msgid "common.loading"
+msgstr "Loading..."
+
+msgid "common.error"
+msgstr "Error"
+
+msgid "common.success"
+msgstr "Success"
+
+msgid "common.cancel"
+msgstr "Cancel"
+
+msgid "common.confirm"
+msgstr "Confirm"
+
+msgid "common.close"
+msgstr "Close"
+
+msgid "common.view_more"
+msgstr "View More"
+
+msgid "common.learn_more"
+msgstr "Learn More"
+
+msgid "common.required"
+msgstr "Required"
+
+msgid "common.optional"
+msgstr "Optional"
+
+msgid "nav.home"
+msgstr "Home"
+
+msgid "nav.about"
+msgstr "About"
+
+msgid "nav.teams"
+msgstr "Teams"
+
+msgid "nav.partners"
+msgstr "Partners"
+
+msgid "nav.blog"
+msgstr "Blog"
+
+msgid "nav.contact"
+msgstr "Contact"
+
+msgid "nav.help"
+msgstr "Help"
+
+msgid "nav.documentation"
+msgstr "Documentation"
+
+msgid "nav.api_reference"
+msgstr "API Reference"
+
+msgid "nav.apps"
+msgstr "Apps"
+
+msgid "nav.community_forum"
+msgstr "Community Forum"
+
+msgid "nav.press_kit"
+msgstr "Press Kit"
+
+msgid "nav.privacy_policy"
+msgstr "Privacy Policy"
+
+msgid "nav.careers"
+msgstr "Careers"
+
+msgid "nav.tutorials"
+msgstr "Tutorials"
+
+msgid "nav.research_papers"
+msgstr "Research Papers"
+
+msgid "nav.archived"
+msgstr "Archive"
+
+msgid "nav.dashboard"
+msgstr "Dashboard"
+
+msgid "nav.settings"
+msgstr "Settings"
+
+msgid "nav.logout"
+msgstr "Logout"
+
+msgid "nav.login"
+msgstr "Login"
+
+msgid "nav.register"
+msgstr "Register"
+
+# FAQ Page
+msgid "faq.page_title"
+msgstr "Frequently Asked Questions"
+
+msgid "faq.page_description"
+msgstr "Find answers to common questions about our platform"
+
+msgid "faq.title"
+msgstr "Frequently Asked Questions"
+
+msgid "faq.intro"
+msgstr "Find answers to common questions about our platform, SDG classification, ORCID integration, and more."
+
+msgid "faq.section.general"
+msgstr "General Questions"
+
+msgid "faq.q1"
+msgstr "What is this platform?"
+
+msgid "faq.a1"
+msgstr "This platform helps researchers and journals classify their publications according to the UN Sustainable Development Goals (SDGs). We use advanced AI to analyze research content and automatically assign relevant SDG categories."
+
+msgid "faq.q2"
+msgstr "Who can use this platform?"
+
+msgid "faq.a2"
+msgstr "The platform is designed for researchers, academic institutions, journal publishers, and anyone interested in understanding how research contributes to the SDGs."
+
+msgid "faq.q3"
+msgstr "Is the service free?"
+
+msgid "faq.a3"
+msgstr "Yes, we offer a free tier for individual researchers. Premium features are available for institutions and publishers with high-volume needs."
+
+msgid "faq.section.sdg"
+msgstr "SDG Classification"
+
+msgid "faq.q4"
+msgstr "What are the SDGs?"
+
+msgid "faq.a4"
+msgstr "The Sustainable Development Goals (SDGs) are 17 global goals set by the United Nations to achieve a better and more sustainable future for all. They address challenges including poverty, inequality, climate change, and peace."
+
+msgid "faq.q5"
+msgstr "How accurate is the SDG classification?"
+
+msgid "faq.a5"
+msgstr "Our AI model achieves over 90% accuracy in SDG classification, validated against manually curated datasets. The system continuously learns and improves from feedback."
+
+msgid "faq.q6"
+msgstr "Can I classify multiple papers at once?"
+
+msgid "faq.a6"
+msgstr "Yes, premium users can upload batches of PDFs or submit multiple URLs for bulk classification. Contact us for institutional plans."
+
+msgid "faq.section.orcid"
+msgstr "ORCID Integration"
+
+msgid "faq.q7"
+msgstr "What is ORCID?"
+
+msgid "faq.a7"
+msgstr "ORCID (Open Researcher and Contributor ID) provides a persistent digital identifier that distinguishes you from every other researcher. It supports automated linkages between you and your professional activities."
+
+msgid "faq.q8"
+msgstr "How do I connect my ORCID?"
+
+msgid "faq.a8"
+msgstr "You can link your ORCID during registration or later in your profile settings. This allows automatic import of your publications and ensures proper attribution."
+
+msgid "faq.section.submission"
+msgstr "Submission & Analysis"
+
+msgid "faq.q9"
+msgstr "How do I submit a paper for analysis?"
+
+msgid "faq.a9"
+msgstr "You can submit papers by uploading PDF files directly or providing DOI/URL links. The system will analyze the content and return SDG classifications within seconds."
+
+msgid "faq.q10"
+msgstr "What format do results come in?"
+
+msgid "faq.a10"
+msgstr "Results include SDG category assignments with confidence scores, visual badges for display, detailed reports, and exportable data in JSON or CSV formats."
+
+msgid "faq.section.contact"
+msgstr "Still Have Questions?"
+
+msgid "faq.contact_info"
+msgstr "Contact our support team at support@example.com or visit our contact page for assistance."
