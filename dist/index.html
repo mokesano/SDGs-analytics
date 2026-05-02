@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WizdamHub - Next-Gen Academic Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            DEFAULT: '#ff5627',
+                            hover: '#e0481d',
+                            dark: '#0a0d13',
+                            card: '#161b22',
+                            muted: '#6b1604', /* Merah burgundy pekat */
+                        }
+                    },
+                    backgroundImage: {
+                        'hero-peach': 'radial-gradient(100% 100% at 50% 0%, #fff2ec 0%, #fffaf7 40%, #ffffff 100%)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 10s infinite alternate ease-in-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'scale(1) translate(0, 0)', opacity: '0.8' },
+                            '100%': { transform: 'scale(1.2) translate(50px, 50px)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .reveal { @apply opacity-0 translate-y-10 transition-all duration-700 ease-out; }
+            .reveal.active { @apply opacity-100 translate-y-0; }
+            
+            /* --- THE PERFECT CURVE MAGIC BORDER --- */
+            .magic-card-wrapper {
+                @apply relative rounded-2xl transition-transform duration-300 shadow-xl shadow-black/5;
+            }
+            .magic-card-wrapper::before {
+                content: "";
+                @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 pointer-events-none;
+                background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 86, 39, 0.05), transparent 40%);
+                z-index: 1;
+            }
+            .dark-mode-card::before {
+                background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 86, 39, 0.15), transparent 40%);
+            }
+            .magic-card-wrapper::after {
+                content: "";
+                @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 pointer-events-none;
+                padding: 1.5px; 
+                background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 86, 39, 0.9), transparent 40%);
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                z-index: 20;
+            }
+            .magic-card-wrapper:hover::before, .magic-card-wrapper:hover::after { @apply opacity-100; }
+            .magic-card-content { @apply relative z-10 flex flex-col h-full w-full rounded-2xl overflow-hidden; }
+
+            /* Smooth Blinking Cursor */
+            .cursor-blink { animation: blink 1s step-end infinite; }
+            @keyframes blink { 0%, 100% { border-color: transparent; } 50% { border-color: inherit; } }
+            
+            /* Ambient Background Blur */
+            .ambient-blob { @apply absolute w-[600px] h-[600px] rounded-full blur-[80px] pointer-events-none -z-10 animate-blob; }
+
+            /* --- INTERACTIVE DOTTED BACKGROUND (Gcore Style) --- */
+            .dotted-interactive {
+                position: relative;
+                background-color: #ffffff;
+                background-image: radial-gradient(#e5e7eb 2px, transparent 2px);
+                background-size: 40px 40px;
+                overflow: hidden;
+            }
+            .dotted-interactive::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: radial-gradient(var(--brand-orange, #ff5627) 2px, transparent 2px);
+                background-size: 40px 40px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                /* Ini yang membuat mask transparan kecuali di area kursor */
+                -webkit-mask: radial-gradient(400px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), black, transparent 70%);
+                mask: radial-gradient(400px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), black, transparent 70%);
+                pointer-events: none;
+            }
+            .dotted-interactive:hover::before { opacity: 1; }
+        }
+        .u-js-hide { @apply opacity-0 translate-y-10; display: none !important;}
+    </style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased overflow-x-hidden selection:bg-brand selection:text-white relative">
+
+    <div class="ambient-blob bg-brand/5 -top-32 -left-32"></div>
+    <div class="ambient-blob bg-purple-500/5 top-1/3 -right-64 animation-delay-500"></div>
+
+    <header id="header" class="sticky top-0 w-full z-50 transition-all duration-300 border-b border-transparent h-20 px-6 md:px-10 flex justify-between items-center bg-white/85 backdrop-blur-md shadow-sm">
+        <a href="#" class="text-2xl font-extrabold tracking-tight text-gray-900 flex items-center gap-1">
+            Wizdam<span class="text-brand">Hub</span>
+        </a>
+        <nav class="hidden md:flex gap-2">
+            <a href="#section-home" class="u-js-hide text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">Home</a>
+            <a href="#solution" class="u-js-hide text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">Solution</a>
+            <a href="#service" class="text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">Service</a>
+            <a href="#network" class="text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">Network</a>
+            <a href="#sdgs-api" class="text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">SDGs API</a>
+            <a href="#scopus-tracker" class="text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">Scopus Tracker</a>
+            <a href="#features" class="text-gray-500 font-medium px-4 py-2 rounded-md hover:text-gray-900 hover:bg-gray-100/50 transition-colors">Features</a>
+        </nav>
+        <a href="#" class="hidden md:inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-semibold text-sm bg-gray-900 text-white hover:bg-brand-muted transition-all duration-300">Documentation</a>
+    </header>
+
+    <main>
+        <section id="section-home" class="relative pt-24 pb-24 px-6 text-center bg-hero-peach">
+            <div class="max-w-4xl mx-auto reveal active">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6 text-gray-900 flex flex-col items-center justify-center">
+                    <span class="block">A modern analytics engine for</span>
+                    <div class="h-[3rem] md:h-[4.5rem] mt-2 md:mt-4 flex items-center justify-center w-full">
+                        <span id="typewriter"></span>
+                    </div>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
+                    Optimized for NLP Classification and Smart Detection Updates. Make your journal management faster, strictly typed, and secure.
+                </p>
+            </div>
+            
+            <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-left reveal" style="transition-delay: 200ms;">
+                
+                <div class="magic-card-wrapper dark-mode-card bg-[#161b22] border border-white/10 hover:-translate-y-1">
+                    <div class="magic-card-content">
+                        <div class="bg-black/20 px-6 py-4 border-b border-white/5 flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-gray-400 font-mono text-sm ml-2">sdg_classifier.php</span>
+                        </div>
+                        <div class="p-6 md:p-8 flex-grow flex flex-col">
+                            <p class="text-gray-400 text-sm md:text-base mb-6 leading-relaxed">Ekstraksi metadata artikel dan petakan kontribusi riset ke dalam 17 SDGs menggunakan pemrosesan bahasa alami (NLP).</p>
+                            <div class="bg-[#0d1117] rounded-lg p-5 font-mono text-sm text-gray-300 mb-8 border border-white/5 shadow-inner overflow-x-auto">
+                                <span class="text-gray-500 italic">// PHP 8.4 Strict Typing</span><br>
+                                <span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">classify</span>(<span class="text-[#ff7b72]">string</span> <span class="text-[#79c0ff]">$text</span>): <span class="text-[#ff7b72]">array</span><br>
+                                {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">$this</span>->nlpEngine->analyze([<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'content'</span> => <span class="text-[#79c0ff]">$text</span>,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'mode'</span> => <span class="text-[#a5d6ff]">'sdg_mapping'</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;]);<br>
+                                }
+                            </div>
+                            <a href="#sdgs-api" class="mt-auto block w-full text-center py-4 rounded-lg font-bold bg-brand text-white hover:bg-brand-hover transition-colors shadow-lg shadow-brand/25">Test SDGs Classification</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="magic-card-wrapper dark-mode-card bg-[#161b22] border border-white/10 hover:-translate-y-1">
+                    <div class="magic-card-content">
+                        <div class="bg-black/20 px-6 py-4 border-b border-white/5 flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-gray-400 font-mono text-sm ml-2">scopus_sync.php</span>
+                        </div>
+                        <div class="p-6 md:p-8 flex-grow flex flex-col">
+                            <p class="text-gray-400 text-sm md:text-base mb-6 leading-relaxed">Pantau metrik Q1-Q4 dan CiteScore. Dilengkapi arsitektur Smart Cache untuk mencegah beban database akibat cron-job yang membabi-buta.</p>
+                            <div class="bg-[#0d1117] rounded-lg p-5 font-mono text-sm text-gray-300 mb-8 border border-white/5 shadow-inner overflow-x-auto">
+                                <span class="text-gray-500 italic">// Smart Detection Update Logic</span><br>
+                                <span class="text-[#79c0ff]">$tracker</span> = <span class="text-[#ff7b72]">new</span> <span class="text-[#d2a8ff]">ScopusTracker</span>();<br>
+                                <span class="text-[#79c0ff]">$tracker</span>-><span class="text-[#d2a8ff]">syncMetrics</span>([<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'issn'</span> => <span class="text-[#a5d6ff]">'1234-5678'</span>,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'cache'</span> => <span class="text-[#a5d6ff]">'smart_update_only'</span><br>
+                                ]);
+                            </div>
+                            <a href="#scopus-tracker" class="mt-auto block w-full text-center py-4 rounded-lg font-bold bg-transparent text-white border border-white/20 hover:bg-white/10 transition-colors">Explore Scopus Tracker</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="solution" class="dotted-interactive py-32 px-6 border-b border-gray-200 reveal u-js-hide">
+            <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
+                <div class="flex-1">
+                    <h2 class="text-5xl md:text-6xl font-extrabold text-brand mb-6 leading-[1.1]">
+                        SDGs <span class="text-gray-900">and</span> Scopus<br>
+                        <span class="text-gray-900">Solutions</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-10 max-w-xl">
+                        WizdamHub mempercepat sinkronisasi Scopus, menyediakan API Pemetaan SDGs berbasis NLP, dan melindungi struktur URL Anda dari pencurian data.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <input type="email" class="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-lg focus:ring-brand focus:border-brand bg-white/90 backdrop-blur" placeholder="Enter your email address">
+                        </div>
+                        <button class="w-full sm:w-auto bg-brand text-white px-8 py-4 rounded-lg font-bold hover:bg-brand-hover transition shadow-lg shrink-0">Try for free</button>
+                    </div>
+                    <p class="text-brand font-medium mt-6 text-sm hover:underline cursor-pointer">Chat with a Wizdam Expert →</p>
+                </div>
+                
+                <div class="flex-1 hidden md:block"></div>
+            </div>
+        </section>
+
+        <section id="service" class="bg-white py-24 px-6 border-b border-gray-100 reveal">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight max-w-3xl">
+                    Wizdam<span class="text-brand">Hub</span> is the foundation for your global academic infrastructure and publishing
+                </h2>
+                <p class="text-xl text-gray-500 mb-16 max-w-3xl">
+                    Protect your website, application, and metadata against complex web scrapers while optimizing your analytics.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                    <div>
+                        <div class="w-12 h-12 bg-orange-50 text-brand rounded-lg flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-3">Globally Distributed</h4>
+                        <p class="text-gray-500 text-sm leading-relaxed">Our multi-tenant billing and analytics network manages data for more than 15,000+ synchronized journals.</p>
+                    </div>
+                    <div>
+                        <div class="w-12 h-12 bg-orange-50 text-brand rounded-lg flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-3">Secure</h4>
+                        <p class="text-gray-500 text-sm leading-relaxed">Everything we offer seamlessly integrates state-of-the-art PII formatting and HMAC hash URL protection.</p>
+                    </div>
+                    <div>
+                        <div class="w-12 h-12 bg-orange-50 text-brand rounded-lg flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-3">Native PHP 8.4</h4>
+                        <p class="text-gray-500 text-sm leading-relaxed">All of our core classes natively integrate strict typing and decoupled DAO so your website always runs smoothly.</p>
+                    </div>
+                    <div>
+                        <div class="w-12 h-12 bg-orange-50 text-brand rounded-lg flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-3">Flexible and Scalable</h4>
+                        <p class="text-gray-500 text-sm leading-relaxed">We utilize Smart Detection Update algorithms, allowing databases to tailor operations only when data changes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sdgs-api" class="bg-[#0a0d13] text-white py-24 px-6 overflow-hidden relative">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center reveal">
+                <div>
+                    <span class="text-brand font-bold tracking-widest text-sm uppercase mb-2 block">NLP Engine API</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">Pemetaan SDGs Otomatis</h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">Integrasikan endpoint API kami ke dalam ekosistem penerbitan Anda. Algoritma kami secara otomatis membaca judul dan abstrak artikel, memisahkan noise, dan mengembalikan skor probabilitas SDGs.</p>
+                    <ul class="space-y-4 mb-10 text-gray-300 font-medium">
+                        <li class="flex items-center gap-3"><svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Arsitektur Modular (Decoupled DAO)</li>
+                        <li class="flex items-center gap-3"><svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Respons JSON latensi rendah</li>
+                        <li class="flex items-center gap-3"><svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Ditulis murni (No pass-by-reference)</li>
+                    </ul>
+                    <button class="bg-brand text-white px-8 py-4 rounded-lg font-bold hover:bg-brand-hover transition shadow-lg shadow-brand/20">Baca Dokumentasi API</button>
+                </div>
+                
+                <div class="magic-card-wrapper dark-mode-card bg-[#161b22] border border-white/10 animate-float shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
+                    <div class="magic-card-content p-0">
+                        <div class="bg-black/40 px-6 py-4 border-b border-white/5 flex items-center justify-center relative">
+                            <div class="absolute left-6 flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span class="text-gray-400 font-mono text-sm">WizdamAnalytics.php</span>
+                        </div>
+                        <div class="p-8 font-mono text-sm text-gray-300 leading-relaxed overflow-x-auto">
+                            <span class="text-gray-500 italic">/* 1400-line SDGs API refactored to modular logic */</span><br><br>
+                            <span class="text-[#ff7b72]">final class</span> <span class="text-[#d2a8ff]">WizdamAnalytics</span><br>
+                            {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">__construct</span>(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">private readonly</span> <span class="text-[#79c0ff]">NLPEngine</span> <span class="text-[#79c0ff]">$engine</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;) {}<br><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">getImpactScore</span>(<span class="text-[#ff7b72]">string</span> <span class="text-[#79c0ff]">$abstract</span>): <span class="text-[#ff7b72]">array</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">$this</span>->engine->process([<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'text'</span> => <span class="text-[#79c0ff]">$abstract</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'indicators'</span> => [<span class="text-[#a5d6ff]">'academic'</span>, <span class="text-[#a5d6ff]">'social'</span>]<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scopus-tracker" class="bg-gray-50 py-24 px-6 border-b border-gray-100 relative">
+            <div class="max-w-6xl mx-auto flex flex-col-reverse md:grid md:grid-cols-2 gap-16 items-center reveal">
+                
+                <div class="magic-card-wrapper dark-mode-card bg-[#1e1e1e] border border-gray-200 animate-float shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)]">
+                    <div class="magic-card-content p-0">
+                        <div class="bg-[#111] px-6 py-4 border-b border-white/5 flex items-center justify-center relative">
+                            <div class="absolute left-6 flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span class="text-white font-mono text-sm">SmartSync.php</span>
+                        </div>
+                        <div class="p-8 font-mono text-sm text-gray-300 bg-[#1e1e1e] leading-relaxed overflow-x-auto rounded-b-[15px]"> 
+                            <span class="text-gray-500 italic">// Smart Detection Update Implementation</span><br><br>
+                            <span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">syncScopus</span>(<span class="text-[#ff7b72]">string</span> <span class="text-[#79c0ff]">$issn</span>): <span class="text-[#ff7b72]">void</span><br>
+                            {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#79c0ff]">$live</span> = <span class="text-[#79c0ff]">$this</span>->api->fetch(<span class="text-[#79c0ff]">$issn</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#79c0ff]">$db</span> = <span class="text-[#79c0ff]">$this</span>->dao->getMetrics(<span class="text-[#79c0ff]">$issn</span>);<br><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500 italic">// Write ONLY if CiteScore changes</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">if</span> (<span class="text-[#79c0ff]">$live</span>['citescore'] !== <span class="text-[#79c0ff]">$db</span>['citescore']) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#79c0ff]">$this</span>->dao->update(<span class="text-[#79c0ff]">$live</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#79c0ff]">$this</span>->logger->info(<span class="text-[#a5d6ff]">'Metrics updated'</span>);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-brand font-bold tracking-widest text-sm uppercase mb-2 block">SMART CACHE SYSTEM</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-gray-900">Tracker Scopus Real-Time</h2>
+                    <p class="text-gray-500 text-lg mb-8 leading-relaxed">Tinggalkan sistem cache kedaluwarsa tetap yang usang. Wizdam Hub menggunakan logika <strong>Smart Detection Update</strong>.</p>
+                    <ul class="space-y-4 mb-10 text-gray-800 font-medium">
+                        <li class="flex items-center gap-3"><svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Menghemat resource I/O secara ekstrem</li>
+                        <li class="flex items-center gap-3"><svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Keamanan URL via PII formatting & HMAC</li>
+                    </ul>
+                    <button class="bg-gray-900 text-white px-8 py-4 rounded-lg font-bold hover:bg-brand-muted transition-all duration-300 shadow-lg">Demo Smart Cache</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="py-24 px-6 bg-white">
+            <div class="max-w-6xl mx-auto text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">Arsitektur Tanpa Kompromi</h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Dibangun dari inti legacy, mengutamakan keamanan, performa tinggi, dan best practices pengembangan modern.</p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal" style="transition-delay: 200ms;">
+                
+                <div class="magic-card-wrapper bg-gray-50 border border-gray-100 hover:-translate-y-1">
+                    <div class="magic-card-content p-6">
+                        <div class="w-14 h-14 bg-brand/10 text-brand rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">PHP 8.4 Native</h4>
+                        <p class="text-gray-500 leading-relaxed">Mengadopsi Strict Typing, OOP murni, dan pemisahan tegas antara Logic Layer dan Data Access Object (DAO).</p>
+                    </div>
+                </div>
+
+                <div class="magic-card-wrapper bg-gray-50 border border-gray-100 hover:-translate-y-1">
+                    <div class="magic-card-content p-6">
+                        <div class="w-14 h-14 bg-brand/10 text-brand rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">Security via Obscurity</h4>
+                        <p class="text-gray-500 leading-relaxed">Routing dilindungi ketat menggunakan pola PII dan hash HMAC untuk menyesatkan upaya intrusi scraper/bot.</p>
+                    </div>
+                </div>
+
+                <div class="magic-card-wrapper bg-gray-50 border border-gray-100 hover:-translate-y-1">
+                    <div class="magic-card-content p-6">
+                        <div class="w-14 h-14 bg-brand/10 text-brand rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">Custom Library Mgt.</h4>
+                        <p class="text-gray-500 leading-relaxed">Menggunakan direktori <code class="bg-gray-200 text-brand px-1 rounded">library/</code> kustom, bukan konvensi standar vendor untuk kontrol dependensi absolut.</p>
+                    </div>
+                </div>
+
+                <div class="magic-card-wrapper bg-gray-50 border border-gray-100 hover:-translate-y-1">
+                    <div class="magic-card-content p-6">
+                        <div class="w-14 h-14 bg-brand/10 text-brand rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">Multi-tenant Billing</h4>
+                        <p class="text-gray-500 leading-relaxed">Infrastruktur pembayaran global (Midtrans/Xendit) yang mendukung checkout tagihan multi-jurnal secara serentak.</p>
+                    </div>
+                </div>
+
+                <div class="magic-card-wrapper bg-gray-50 border border-gray-100 hover:-translate-y-1">
+                    <div class="magic-card-content p-6">
+                        <div class="w-14 h-14 bg-brand/10 text-brand rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">Lightweight DOM UI</h4>
+                        <p class="text-gray-500 leading-relaxed">Render antarmuka super cepat berkat kompilasi SASS/SCSS murni tanpa memuat library grafik berat seperti Chart.js.</p>
+                    </div>
+                </div>
+
+                <div class="magic-card-wrapper bg-gray-50 border border-gray-100 hover:-translate-y-1">
+                    <div class="magic-card-content p-6">
+                        <div class="w-14 h-14 bg-brand/10 text-brand rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">Wizdam Debug Bar</h4>
+                        <p class="text-gray-500 leading-relaxed">Pengembangan didukung alat debugging terisolasi eksklusif untuk mendeteksi bottleneck I/O memori secara real-time.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="network" class="bg-white py-24 px-6 border-b border-gray-100 overflow-hidden relative reveal">
+            <div class="absolute right-[-10%] top-0 w-1/2 h-full opacity-40 pointer-events-none" style="background-image: radial-gradient(circle at center, #9ca3af 2px, transparent 2px); background-size: 20px 20px; mask-image: radial-gradient(ellipse at center, black, transparent 70%); -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 70%); border-radius: 50%;"></div>
+
+            <div class="max-w-6xl mx-auto relative z-10">
+                <div class="max-w-2xl">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+                        Meet our powerful <br><span class="text-brand">global analytics network</span>
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-12 leading-relaxed">
+                        Your metadata is at the core of delivering academic impact, supporting university initiatives. But often, the performance of your database can be unpredictable. WizdamHub handles the heavy lifting of NLP mapping and Scopus syncing effortlessly.
+                    </p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12">
+                        <div class="border-l-4 border-brand pl-4">
+                            <h3 class="text-2xl md:text-3xl font-extrabold text-gray-900">1.2B+</h3>
+                            <p class="text-sm text-gray-500 mt-1">API Hits Processed<br>monthly</p>
+                        </div>
+                        <div class="border-l-4 border-brand pl-4">
+                            <h3 class="text-2xl md:text-3xl font-extrabold text-gray-900">15,000+</h3>
+                            <p class="text-sm text-gray-500 mt-1">Active Journals<br>synchronized</p>
+                        </div>
+                        <div class="border-l-4 border-brand pl-4">
+                            <h3 class="text-2xl md:text-3xl font-extrabold text-gray-900">~50ms</h3>
+                            <p class="text-sm text-gray-500 mt-1">SDGs Classification<br>API Latency</p>
+                        </div>
+                    </div>
+                    
+                    <button class="bg-brand text-white px-8 py-4 rounded-lg font-bold hover:bg-brand-hover transition shadow-lg shadow-brand/20">Explore Network Stats</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="dark bg-[#0a0d13] py-24 px-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-brand/10 to-transparent pointer-events-none"></div>
+            
+            <div class="max-w-6xl mx-auto md:grid md:grid-cols-2 gap-16 items-center reveal relative z-10">
+                <div class="mb-10 md:mb-0">
+                    <h2 class="text-4xl font-extrabold text-white mb-6">Developer Friendly API</h2>
+                    <p class="text-gray-400 text-lg mb-8">Semua endpoint analitik, citation fetcher, dan sinkronisasi Scopus dapat diakses via REST API. Dibangun oleh engineer, untuk efisiensi publisher.</p>
+                    <a href="#" class="text-brand font-bold flex items-center gap-2 hover:underline">Baca Dokumentasi API <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-8 grid grid-cols-2 gap-6">
+                    <div class="flex items-center gap-4 text-gray-300 font-medium"><div class="w-10 h-10 bg-brand/20 text-brand rounded-lg flex items-center justify-center font-bold">✓</div> Decoupled Logic</div>
+                    <div class="flex items-center gap-4 text-gray-300 font-medium"><div class="w-10 h-10 bg-brand/20 text-brand rounded-lg flex items-center justify-center font-bold">✓</div> Strict Typing</div>
+                    <div class="flex items-center gap-4 text-gray-300 font-medium"><div class="w-10 h-10 bg-brand/20 text-brand rounded-lg flex items-center justify-center font-bold">✓</div> No Pass-by-Ref</div>
+                    <div class="flex items-center gap-4 text-gray-300 font-medium"><div class="w-10 h-10 bg-brand/20 text-brand rounded-lg flex items-center justify-center font-bold">✓</div> Modular SDGs</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#05070a] text-gray-400 py-20 px-6 border-t border-white/5">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
+            <div class="lg:col-span-2">
+                <a href="#" class="text-2xl font-extrabold text-white mb-4 inline-block">Wizdam<span class="text-brand">Hub</span></a>
+                <p class="max-w-sm leading-relaxed">Sistem manajemen penerbitan modern dengan infrastruktur analitik cerdas berskala global.</p>
+            </div>
+            <div>
+                <h5 class="text-white font-bold tracking-wider text-sm uppercase mb-6">Ecosystem</h5>
+                <ul class="space-y-4">
+                    <li><a href="#" class="hover:text-brand transition-colors">Lumera</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Frontedge</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Sikola</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Wizdam Debug Toolbar</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold tracking-wider text-sm uppercase mb-6">Core Engines</h5>
+                <ul class="space-y-4">
+                    <li><a href="#" class="hover:text-brand transition-colors">SDGs NLP Classifier</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Smart Scopus Sync</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Citation Fetcher</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Global Checkout</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold tracking-wider text-sm uppercase mb-6">Network</h5>
+                <ul class="space-y-4">
+                    <li><a href="#" class="hover:text-brand transition-colors">Sangia Publishing</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">CSISC Research</a></li>
+                    <li><a href="#" class="hover:text-brand transition-colors">Sangia Inc.</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <p>&copy; 2026 SangiaWizdam Team. All rights reserved.</p>
+            <p>Built with PHP 8.4 Strict Standards & Tailwind CSS.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Sticky Glassmorphism Header Fix
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    header.classList.add('bg-white/85', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                    header.classList.remove('border-transparent');
+                } else {
+                    header.classList.remove('bg-white/85', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                    header.classList.add('border-transparent');
+                }
+            });
+
+            // 2. Scroll Reveal Observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // 3. Magic Mouse Tracking (Glowing Border Spotlight & NEW Dotted Interactive Background)
+            const cards = document.querySelectorAll('.magic-card-wrapper');
+            const dottedSection = document.querySelector('.dotted-interactive');
+
+            // Fungsi helper untuk track koordinat kursor relative terhadap elemen
+            const trackMouse = (el, e) => {
+                const rect = el.getBoundingClientRect();
+                el.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                el.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            };
+
+            // Pasang ke Magic Cards
+            cards.forEach(card => card.addEventListener('mousemove', e => trackMouse(card, e)));
+            
+            // Pasang ke Dotted Section Gcore Style
+            if(dottedSection) {
+                dottedSection.addEventListener('mousemove', e => trackMouse(dottedSection, e));
+            }
+
+            // 4. Animasi Typewriter (ANTI LAYOUT SHIFT + Humanized Speed + Dynamic Color)
+            const phrases = [
+                { text: "academic journals", color: "text-brand", font: "font-sans font-extrabold" },
+                { text: "SDGs mapping", color: "text-blue-600", font: "font-sans font-extrabold" }, 
+                { text: "Scopus tracking", color: "text-emerald-500", font: "font-sans font-extrabold" }
+            ];
+            
+            let i = 0, j = 0, isDeleting = false;
+            const target = document.getElementById('typewriter');
+            const baseClasses = "border-r-4 pr-1 cursor-blink inline-block border-current transition-colors duration-300 leading-none py-1";
+
+            function type() {
+                if(!target) return;
+                const current = phrases[i];
+
+                if (j === 0 && !isDeleting) {
+                    target.className = `${baseClasses} ${current.color} ${current.font}`;
+                }
+
+                if (isDeleting) {
+                    target.textContent = current.text.substring(0, j - 1);
+                    j--;
+                    if (j === 0) {
+                        isDeleting = false;
+                        i = (i + 1) % phrases.length;
+                        setTimeout(type, 800);
+                        return;
+                    }
+                } else {
+                    target.textContent = current.text.substring(0, j + 1);
+                    j++;
+                    if (j === current.text.length) {
+                        isDeleting = true;
+                        setTimeout(type, 3500);
+                        return;
+                    }
+                }
+
+                const speed = isDeleting ? 40 : 120 + Math.random() * 80;
+                setTimeout(type, speed);
+            }
+            
+            setTimeout(type, 1000);
+        });
+    </script>
+</body>
+</html>
