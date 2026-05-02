@@ -136,6 +136,7 @@ $allowed_pages = [
     'integration-tools', 'tutorials', 'research-papers', 'api-reference',
     'community-forum', 'blog', 'careers', 'partners', 'press-kit',
     'privacy-policy', 'orcid-profile', 'journal-profile', 'journal-archive',
+    'leaderboard',
 ];
 if (!in_array($page, $allowed_pages)) $page = 'home';
 
@@ -161,6 +162,10 @@ switch ($page) {
     case 'contact':
         $page_title       = 'Contact Us - SDGs Classification Analysis';
         $page_description = 'Get in touch with our team.';
+        break;
+    case 'leaderboard':
+        $page_title       = 'SDG Leaderboard - Top Researchers by Contribution';
+        $page_description = 'Discover top researchers contributing to each Sustainable Development Goal ranked by impact and relevance.';
         break;
     default:
         $page_title       = ucfirst(str_replace('-', ' ', $page)) . ' - SDGs Classification Analysis';

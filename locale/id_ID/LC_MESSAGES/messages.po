@@ -811,3 +811,94 @@ msgstr "Data dilayani dari cache"
 
 msgid "api.journal.fresh"
 msgstr "Data diambil dari Scopus API"
+
+# Leaderboard Page
+msgid "leaderboard.page_title"
+msgstr "Papan Peringkat SDG"
+
+msgid "leaderboard.page_subtitle"
+msgstr "Temukan peneliti teratas yang berkontribusi pada setiap Tujuan Pembangunan Berkelanjutan. Papan peringkat kami memberi peringkat peneliti berdasarkan dampak publikasi dan relevansi SDG mereka."
+
+msgid "leaderboard.browse_by_sdg"
+msgstr "Jelajahi berdasarkan SDG"
+
+msgid "leaderboard.select_sdg_description"
+msgstr "Pilih SDG untuk melihat kontributor teratas:"
+
+msgid "leaderboard.all_sdgs"
+msgstr "Ke-17 SDG"
+
+msgid "leaderboard.ranking_categories"
+msgstr "Kategori Peringkat"
+
+msgid "leaderboard.active_contributors"
+msgstr "Kontributor Aktif"
+
+msgid "leaderboard.active_contributors_desc"
+msgstr "Peneliti yang karyanya memiliki skor kepercayaan tinggi (>0,7) dan konten berfokus SDG yang signifikan. Mereka adalah suara terkemuka di setiap area tujuan."
+
+msgid "leaderboard.relevant_contributors"
+msgstr "Kontributor Relevan"
+
+msgid "leaderboard.relevant_contributors_desc"
+msgstr "Peneliti dengan skor kepercayaan sedang (0,4-0,7) yang karyanya berkaitan dengan SDG tetapi mungkin bukan fokus utama."
+
+msgid "leaderboard.discutors"
+msgstr "Diskutor"
+
+msgid "leaderboard.discutors_desc"
+msgstr "Peneliti yang karyanya menyebutkan atau membahas SDG (kepercayaan <0,4) tetapi tidak terutama berfokus padanya. Tetap berharga untuk perspektif interdisipliner!"
+
+msgid "leaderboard.metrics_heading"
+msgstr "Metrik Papan Peringkat"
+
+msgid "leaderboard.metrics_description"
+msgstr "Setiap profil peneliti menampilkan skor kontribusi, SDG utama, analisis tren, dan tautan langsung ke profil ORCID."
+
+msgid "leaderboard.filter_options"
+msgstr "Opsi Filter"
+
+msgid "leaderboard.filter_description"
+msgstr "Persempit papan peringkat berdasarkan institusi, negara, periode waktu, atau jenis kontributor."
+
+msgid "leaderboard.cta_text"
+msgstr "Ingin meningkatkan peringkat Anda? Analisis profil ORCID Anda untuk diklasifikasikan."
+
+msgid "leaderboard.update_note"
+msgstr "Peringkat diperbarui setiap hari berdasarkan profil penelitian yang diarsipkan."
+
+msgid "leaderboard.contribution_score"
+msgstr "Skor Kontribusi"
+
+msgid "leaderboard.top_sdgs"
+msgstr "SDG Utama"
+
+msgid "leaderboard.trend"
+msgstr "Tren"
+
+msgid "leaderboard.orcid_link"
+msgstr "Profil ORCID"
+
+msgid "leaderboard.filter_institution"
+msgstr "Berdasarkan Institusi"
+
+msgid "leaderboard.filter_country"
+msgstr "Berdasarkan Negara"
+
+msgid "leaderboard.filter_time"
+msgstr "Berdasarkan Periode Waktu"
+
+msgid "leaderboard.filter_type"
+msgstr "Berdasarkan Jenis Kontributor"
+
+msgid "leaderboard.no_data"
+msgstr "Data belum tersedia. Mulai analisis profil ORCID untuk mengisi papan peringkat."
+
+msgid "leaderboard.loading"
+msgstr "Memuat data papan peringkat..."
+
+msgid "leaderboard.export_csv"
+msgstr "Ekspor ke CSV"
+
+msgid "leaderboard.share"
+msgstr "Bagikan Papan Peringkat"

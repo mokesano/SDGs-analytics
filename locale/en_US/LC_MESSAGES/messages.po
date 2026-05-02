@@ -811,3 +811,201 @@ msgstr "Data served from cache"
 
 msgid "api.journal.fresh"
 msgstr "Data fetched from Scopus API"
+
+# Leaderboard Page
+msgid "leaderboard.page_title"
+msgstr "SDG Leaderboard"
+
+msgid "leaderboard.page_subtitle"
+msgstr "Discover top researchers contributing to each Sustainable Development Goal. Our leaderboard ranks researchers based on their publication impact and SDG relevance."
+
+msgid "leaderboard.browse_by_sdg"
+msgstr "Browse by SDG"
+
+msgid "leaderboard.select_sdg_description"
+msgstr "Select an SDG to see top contributors:"
+
+msgid "leaderboard.all_sdgs"
+msgstr "All 17 SDGs"
+
+msgid "leaderboard.ranking_categories"
+msgstr "Ranking Categories"
+
+msgid "leaderboard.active_contributors"
+msgstr "Active Contributors"
+
+msgid "leaderboard.active_contributors_desc"
+msgstr "Researchers whose work has high confidence scores (>0.7) and significant SDG-focused content. These are the leading voices in each goal area."
+
+msgid "leaderboard.relevant_contributors"
+msgstr "Relevant Contributors"
+
+msgid "leaderboard.relevant_contributors_desc"
+msgstr "Researchers with moderate confidence scores (0.4-0.7) whose work relates to the SDG but may not be the primary focus."
+
+msgid "leaderboard.discutors"
+msgstr "Discutors"
+
+msgid "leaderboard.discutors_desc"
+msgstr "Researchers whose work mentions or discusses the SDG (confidence <0.4) but is not primarily focused on it. Still valuable for interdisciplinary perspectives!"
+
+msgid "leaderboard.metrics_heading"
+msgstr "Leaderboard Metrics"
+
+msgid "leaderboard.metrics_description"
+msgstr "Each researcher profile displays contribution score, top SDGs, trend analysis, and direct ORCID profile link."
+
+msgid "leaderboard.filter_options"
+msgstr "Filter Options"
+
+msgid "leaderboard.filter_description"
+msgstr "Narrow down the leaderboard by institution, country, time period, or contributor type."
+
+msgid "leaderboard.cta_text"
+msgstr "Want to improve your ranking? Analyze your ORCID profile to get classified."
+
+msgid "leaderboard.update_note"
+msgstr "Rankings updated daily based on archived research profiles."
+
+msgid "leaderboard.contribution_score"
+msgstr "Contribution Score"
+
+msgid "leaderboard.top_sdgs"
+msgstr "Top SDGs"
+
+msgid "leaderboard.trend"
+msgstr "Trend"
+
+msgid "leaderboard.orcid_link"
+msgstr "ORCID Profile"
+
+msgid "leaderboard.filter_institution"
+msgstr "By Institution"
+
+msgid "leaderboard.filter_country"
+msgstr "By Country"
+
+msgid "leaderboard.filter_time"
+msgstr "By Time Period"
+
+msgid "leaderboard.filter_type"
+msgstr "By Contributor Type"
+
+msgid "leaderboard.no_data"
+msgstr "No data available yet. Start analyzing ORCID profiles to populate the leaderboard."
+
+msgid "leaderboard.loading"
+msgstr "Loading leaderboard data..."
+
+msgid "leaderboard.export_csv"
+msgstr "Export to CSV"
+
+msgid "leaderboard.share"
+msgstr "Share Leaderboard"
+
+# SDG Names
+msgid "sdg.1_name"
+msgstr "No Poverty"
+
+msgid "sdg.2_name"
+msgstr "Zero Hunger"
+
+msgid "sdg.3_name"
+msgstr "Good Health and Well-being"
+
+msgid "sdg.4_name"
+msgstr "Quality Education"
+
+msgid "sdg.5_name"
+msgstr "Gender Equality"
+
+msgid "sdg.6_name"
+msgstr "Clean Water and Sanitation"
+
+msgid "sdg.7_name"
+msgstr "Affordable and Clean Energy"
+
+msgid "sdg.8_name"
+msgstr "Decent Work and Economic Growth"
+
+msgid "sdg.9_name"
+msgstr "Industry, Innovation and Infrastructure"
+
+msgid "sdg.10_name"
+msgstr "Reduced Inequalities"
+
+msgid "sdg.11_name"
+msgstr "Sustainable Cities and Communities"
+
+msgid "sdg.12_name"
+msgstr "Responsible Consumption and Production"
+
+msgid "sdg.13_name"
+msgstr "Climate Action"
+
+msgid "sdg.14_name"
+msgstr "Life Below Water"
+
+msgid "sdg.15_name"
+msgstr "Life on Land"
+
+msgid "sdg.16_name"
+msgstr "Peace, Justice and Strong Institutions"
+
+msgid "sdg.17_name"
+msgstr "Partnerships for the Goals"
+
+# Leaderboard Additional Keys
+msgid "leaderboard.select_sdg"
+msgstr "Select SDG"
+
+msgid "leaderboard.all_types"
+msgstr "All Types"
+
+msgid "leaderboard.sort_by"
+msgstr "Sort By"
+
+msgid "leaderboard.sort_by_score"
+msgstr "Contribution Score"
+
+msgid "leaderboard.sort_by_works"
+msgstr "Total Works"
+
+msgid "leaderboard.sort_by_confidence"
+msgstr "Avg Confidence"
+
+msgid "leaderboard.showing_results"
+msgstr "Showing %d–%d of %d researchers"
+
+msgid "leaderboard.rank"
+msgstr "Rank"
+
+msgid "leaderboard.researcher"
+msgstr "Researcher"
+
+msgid "leaderboard.total_works"
+msgstr "Total Works"
+
+msgid "leaderboard.avg_confidence"
+msgstr "Avg Confidence"
+
+msgid "leaderboard.actions"
+msgstr "Actions"
+
+msgid "leaderboard.view_profile"
+msgstr "View Profile"
+
+msgid "leaderboard.cta_heading"
+msgstr "Ready to Make an Impact?"
+
+msgid "leaderboard.analyze_now"
+msgstr "Analyze Your ORCID Now"
+
+msgid "leaderboard.export_coming_soon"
+msgstr "CSV export coming soon!"
+
+msgid "pagination.previous"
+msgstr "Previous"
+
+msgid "pagination.next"
+msgstr "Next"
