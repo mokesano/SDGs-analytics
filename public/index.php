@@ -125,6 +125,7 @@ ini_set('error_log', PROJECT_ROOT . '/logs/error.log');
 require_once PROJECT_ROOT . '/includes/config.php';
 require_once PROJECT_ROOT . '/includes/functions.php';
 require_once PROJECT_ROOT . '/includes/sdg_definitions.php';
+require_once PROJECT_ROOT . '/includes/bootstrap.php';
 
 // Routing sederhana via ?page=
 $page = isset($_GET['page']) ? trim($_GET['page']) : 'home';
@@ -135,6 +136,7 @@ $allowed_pages = [
     'integration-tools', 'tutorials', 'research-papers', 'api-reference',
     'community-forum', 'blog', 'careers', 'partners', 'press-kit',
     'privacy-policy',
+    'login', 'register', 'forgot-password', 'leaderboard', 'orcid-profile',
 ];
 if (!in_array($page, $allowed_pages)) $page = 'home';
 
@@ -161,6 +163,22 @@ switch ($page) {
         $page_title       = 'Contact Us - SDGs Classification Analysis';
         $page_description = 'Get in touch with our team.';
         break;
+    case 'login':
+        $page_title = 'Login - SDGs Classification Analysis';
+        break;
+    case 'register':
+        $page_title = 'Register - SDGs Classification Analysis';
+        break;
+    case 'forgot-password':
+        $page_title = 'Reset Password - SDGs Classification Analysis';
+        break;
+    case 'leaderboard':
+        $page_title       = 'Leaderboard - SDGs Classification Analysis';
+        $page_description = 'Top researchers contributing to Sustainable Development Goals.';
+        break;
+    case 'orcid-profile':
+        $page_title = 'Researcher Profile - SDGs Classification Analysis';
+        break;
     default:
         $page_title       = ucfirst(str_replace('-', ' ', $page)) . ' - SDGs Classification Analysis';
         $page_description = 'SDGs Classification Analysis - AI-powered platform for research analysis.';
@@ -169,7 +187,9 @@ switch ($page) {
 include PROJECT_ROOT . '/components/header.php';
 include PROJECT_ROOT . '/components/navigation.php';
 
-$page_file = PROJECT_ROOT . "/pages/{$page}.php";
+$auth_pages = ['login' => 'auth/login', 'register' => 'auth/register', 'forgot-password' => 'auth/forgot'];
+$page_slug = isset($auth_pages[$page]) ? $auth_pages[$page] : $page;
+$page_file = PROJECT_ROOT . "/pages/{$page_slug}.php";
 if (file_exists($page_file)) {
     include $page_file;
 } else {
