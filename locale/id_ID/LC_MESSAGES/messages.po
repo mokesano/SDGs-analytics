@@ -637,3 +637,177 @@ msgstr "Masih Punya Pertanyaan?"
 
 msgid "faq.contact_info"
 msgstr "Hubungi tim dukungan kami di support@example.com atau kunjungi halaman kontak kami untuk bantuan."
+
+# Journal Profile Page
+msgid "journal.profile_title"
+msgstr "Profil Jurnal"
+
+msgid "journal.profile_subtitle"
+msgstr "Metrik jurnal terindeks Scopus dan pemetaan SDG"
+
+msgid "journal.metrics_title"
+msgstr "Metrik Jurnal"
+
+msgid "journal.sjr_label"
+msgstr "SJR"
+
+msgid "journal.h_index_label"
+msgstr "H-Index"
+
+msgid "journal.citescore_label"
+msgstr "CiteScore"
+
+msgid "journal.quartile_label"
+msgstr "Kuartil"
+
+msgid "journal.subject_areas_title"
+msgstr "Bidang Ilmu"
+
+msgid "journal.sdg_mapping_title"
+msgstr "Pemetaan SDG"
+
+msgid "journal.sdg_mapping_description"
+msgstr "Bidang ilmu jurnal ini dipetakan ke Tujuan Pembangunan Berkelanjutan yang relevan berdasarkan klasifikasi ASJC."
+
+msgid "journal.publisher_title"
+msgstr "Penerbit"
+
+msgid "journal.country_title"
+msgstr "Negara"
+
+msgid "journal.issn_title"
+msgstr "ISSN"
+
+msgid "journal.open_access_yes"
+msgstr "Jurnal Akses Terbuka"
+
+msgid "journal.open_access_no"
+msgstr "Berbasis Langganan"
+
+msgid "journal.discontinued_warning"
+msgstr "Peringatan: Jurnal ini tidak lagi terindeks di Scopus"
+
+msgid "journal.active_status"
+msgstr "Jurnal Aktif"
+
+msgid "journal.search_another"
+msgstr "Cari Jurnal Lain"
+
+msgid "journal.back_to_home"
+msgstr "Kembali ke Beranda"
+
+msgid "journal.share_journal"
+msgstr "Bagikan Jurnal"
+
+msgid "journal.loading"
+msgstr "Memuat Profil Jurnal..."
+
+msgid "journal.fetching_scopus"
+msgstr "Mengambil metadata dari Scopus API"
+
+msgid "journal.not_found"
+msgstr "Jurnal tidak ditemukan dalam database Scopus"
+
+msgid "journal.invalid_issn"
+msgstr "Format ISSN tidak valid. Silakan periksa dan coba lagi."
+
+msgid "journal.api_error"
+msgstr "Kesalahan menghubungkan ke Scopus API. Silakan coba lagi nanti."
+
+msgid "journal.try_again"
+msgstr "Coba Lagi"
+
+msgid "journal.q1_badge"
+msgstr "Q1 - 25% Teratas"
+
+msgid "journal.q2_badge"
+msgstr "Q2 - 50% Teratas"
+
+msgid "journal.q3_badge"
+msgstr "Q3 - 75% Teratas"
+
+msgid "journal.q4_badge"
+msgstr "Q4 - 25% Terbawah"
+
+msgid "journal.snip_label"
+msgstr "SNIP"
+
+msgid "journal.eissn_title"
+msgstr "eISSN"
+
+msgid "journal.coverage_title"
+msgstr "Cakupan"
+
+msgid "journal.type_title"
+msgstr "Jenis Publikasi"
+
+msgid "journal.high_relevance"
+msgstr "Relevansi Tinggi"
+
+msgid "journal.medium_relevance"
+msgstr "Relevansi Sedang"
+
+msgid "journal.low_relevance"
+msgstr "Relevansi Rendah"
+
+msgid "journal.sdg_relevance"
+msgstr "Relevansi SDG"
+
+msgid "journal.no_sdg_mapping"
+msgstr "Tidak ada pemetaan SDG untuk bidang ilmu jurnal ini."
+
+# Journal Archive Page
+msgid "journal.archive_title"
+msgstr "Arsip Jurnal"
+
+msgid "journal.archive_subtitle"
+msgstr "Telusuri semua jurnal yang telah dianalisis"
+
+msgid "journal.search_placeholder"
+msgstr "Cari berdasarkan judul, penerbit, atau bidang..."
+
+msgid "journal.total_count"
+msgstr "Total Jurnal"
+
+msgid "journal.no_results"
+msgstr "Tidak ada jurnal yang ditemukan sesuai pencarian Anda."
+
+msgid "journal.view_profile"
+msgstr "Lihat Profil"
+
+msgid "journal.last_checked"
+msgstr "Terakhir Diperiksa"
+
+msgid "journal.sort_by"
+msgstr "Urutkan Berdasarkan"
+
+msgid "journal.sort_recent"
+msgstr "Terbaru"
+
+msgid "journal.sort_alpha"
+msgstr "Alfabetis"
+
+msgid "journal.sort_sjr"
+msgstr "SJR (Tinggi ke Rendah)"
+
+msgid "journal.filter_quartile"
+msgstr "Filter berdasarkan Kuartil"
+
+msgid "journal.all_quartiles"
+msgstr "Semua Kuartil"
+
+# Journal API Response
+msgid "api.journal.success"
+msgstr "Data jurnal berhasil diambil"
+
+msgid "api.journal.error_not_found"
+msgstr "Jurnal tidak ditemukan"
+
+msgid "api.journal.error_invalid_issn"
+msgstr "Format ISSN tidak valid"
+
+msgid "api.journal.cached"
+msgstr "Data dilayani dari cache"
+
+msgid "api.journal.fresh"
+msgstr "Data diambil dari Scopus API"

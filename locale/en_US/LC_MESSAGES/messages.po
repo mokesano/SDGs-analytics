@@ -637,3 +637,177 @@ msgstr "Still Have Questions?"
 
 msgid "faq.contact_info"
 msgstr "Contact our support team at support@example.com or visit our contact page for assistance."
+
+# Journal Profile Page
+msgid "journal.profile_title"
+msgstr "Journal Profile"
+
+msgid "journal.profile_subtitle"
+msgstr "Scopus-indexed journal metrics and SDG mapping"
+
+msgid "journal.metrics_title"
+msgstr "Journal Metrics"
+
+msgid "journal.sjr_label"
+msgstr "SJR"
+
+msgid "journal.h_index_label"
+msgstr "H-Index"
+
+msgid "journal.citescore_label"
+msgstr "CiteScore"
+
+msgid "journal.quartile_label"
+msgstr "Quartile"
+
+msgid "journal.subject_areas_title"
+msgstr "Subject Areas"
+
+msgid "journal.sdg_mapping_title"
+msgstr "SDG Mapping"
+
+msgid "journal.sdg_mapping_description"
+msgstr "This journal's subject areas are mapped to relevant Sustainable Development Goals based on ASJC classifications."
+
+msgid "journal.publisher_title"
+msgstr "Publisher"
+
+msgid "journal.country_title"
+msgstr "Country"
+
+msgid "journal.issn_title"
+msgstr "ISSN"
+
+msgid "journal.open_access_yes"
+msgstr "Open Access Journal"
+
+msgid "journal.open_access_no"
+msgstr "Subscription-based"
+
+msgid "journal.discontinued_warning"
+msgstr "Warning: This journal is no longer indexed in Scopus"
+
+msgid "journal.active_status"
+msgstr "Active Journal"
+
+msgid "journal.search_another"
+msgstr "Search Another Journal"
+
+msgid "journal.back_to_home"
+msgstr "Back to Home"
+
+msgid "journal.share_journal"
+msgstr "Share Journal"
+
+msgid "journal.loading"
+msgstr "Loading Journal Profile..."
+
+msgid "journal.fetching_scopus"
+msgstr "Fetching metadata from Scopus API"
+
+msgid "journal.not_found"
+msgstr "Journal not found in Scopus database"
+
+msgid "journal.invalid_issn"
+msgstr "Invalid ISSN format. Please check and try again."
+
+msgid "journal.api_error"
+msgstr "Error connecting to Scopus API. Please try again later."
+
+msgid "journal.try_again"
+msgstr "Try Again"
+
+msgid "journal.q1_badge"
+msgstr "Q1 - Top 25%"
+
+msgid "journal.q2_badge"
+msgstr "Q2 - Top 50%"
+
+msgid "journal.q3_badge"
+msgstr "Q3 - Top 75%"
+
+msgid "journal.q4_badge"
+msgstr "Q4 - Bottom 25%"
+
+msgid "journal.snip_label"
+msgstr "SNIP"
+
+msgid "journal.eissn_title"
+msgstr "eISSN"
+
+msgid "journal.coverage_title"
+msgstr "Coverage"
+
+msgid "journal.type_title"
+msgstr "Publication Type"
+
+msgid "journal.high_relevance"
+msgstr "High Relevance"
+
+msgid "journal.medium_relevance"
+msgstr "Medium Relevance"
+
+msgid "journal.low_relevance"
+msgstr "Low Relevance"
+
+msgid "journal.sdg_relevance"
+msgstr "SDG Relevance"
+
+msgid "journal.no_sdg_mapping"
+msgstr "No SDG mapping available for this journal's subject areas."
+
+# Journal Archive Page
+msgid "journal.archive_title"
+msgstr "Journal Archive"
+
+msgid "journal.archive_subtitle"
+msgstr "Browse all journals that have been analyzed"
+
+msgid "journal.search_placeholder"
+msgstr "Search by title, publisher, or subject..."
+
+msgid "journal.total_count"
+msgstr "Total Journals"
+
+msgid "journal.no_results"
+msgstr "No journals found matching your search."
+
+msgid "journal.view_profile"
+msgstr "View Profile"
+
+msgid "journal.last_checked"
+msgstr "Last Checked"
+
+msgid "journal.sort_by"
+msgstr "Sort By"
+
+msgid "journal.sort_recent"
+msgstr "Most Recent"
+
+msgid "journal.sort_alpha"
+msgstr "Alphabetical"
+
+msgid "journal.sort_sjr"
+msgstr "SJR (High to Low)"
+
+msgid "journal.filter_quartile"
+msgstr "Filter by Quartile"
+
+msgid "journal.all_quartiles"
+msgstr "All Quartiles"
+
+# Journal API Response
+msgid "api.journal.success"
+msgstr "Journal data retrieved successfully"
+
+msgid "api.journal.error_not_found"
+msgstr "Journal not found"
+
+msgid "api.journal.error_invalid_issn"
+msgstr "Invalid ISSN format"
+
+msgid "api.journal.cached"
+msgstr "Data served from cache"
+
+msgid "api.journal.fresh"
+msgstr "Data fetched from Scopus API"
