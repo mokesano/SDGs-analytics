@@ -1,44 +1,31 @@
-# Wizdam AI-sikola .gitignore
-
-# Database
-/database/wizdam.db
-/database/*.db
-/database/*.sqlite
-
-# Runtime / Storage
-/storage/
-/api/cache/
-/logs/*.log
-!/logs/.gitkeep
+```gitignore
+# Compiled and build artifacts
+*.pyc
+__pycache__/
 
 # Dependencies
-/vendor/
-/node_modules/
-
-# Environment
-*.env
+node_modules/
+venv/
+.venv/
 .env
+.env.local
 .env.*
-!.env.example
 
-# Build artifacts
-/dist/
-/public/build/
-
-# Editor / OS
-.DS_Store
-.DS_Store?
-Thumbs.db
-.idea/
+# Editors
 .vscode/
+.idea/
+
+# Logs and temp files
+*.log
+*.tmp
 *.swp
-*.swo
-*~
 
-# PHP
-*.phar
-/composer.lock
-/package-lock.json
+# OS generated files
+.DS_Store
+Thumbs.db
 
-# Debug files
-/public/debug.php
+# Build directories
+dist/
+build/
+target/
+```
