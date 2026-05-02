@@ -3,7 +3,7 @@
  * SDG Frontend - Configuration File
  * Konfigurasi utama untuk aplikasi SDG Classification Analysis
  * 
- * @version 1.0.0
+ * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team
  * @license MIT
  */

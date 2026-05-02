@@ -6,7 +6,7 @@
  * 1. AJAX Proxy  — Jika POST dengan _sdg, teruskan ke API via direct include
  * 2. Page Router — Jika GET, sajikan halaman HTML sesuai ?page=
  *
- * @version 1.0.0
+ * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
