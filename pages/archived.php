@@ -2,15 +2,32 @@
 $page_title = 'Archived Searches';
 $page_description = 'Browse previously analyzed ORCID profiles and DOI articles on the Wizdam AI SDG Classification Platform.';
 
-// Static placeholder data — will be replaced with DB queries once SQLite is set up
-$archived_researchers = [
-    ['orcid' => '0000-0002-5152-9727', 'name' => 'Rochmady', 'institution' => 'Universitas Iqra Buru', 'works' => 24, 'sdgs' => 8, 'date' => '2025-05-01'],
-    ['orcid' => '0000-0002-1825-0097', 'name' => 'Sample Researcher A', 'institution' => 'Universitas Indonesia', 'works' => 42, 'sdgs' => 12, 'date' => '2025-04-28'],
-    ['orcid' => '0000-0003-4560-0123', 'name' => 'Sample Researcher B', 'institution' => 'Institut Teknologi Bandung', 'works' => 18, 'sdgs' => 5, 'date' => '2025-04-25'],
-    ['orcid' => '0000-0001-7852-3654', 'name' => 'Sample Researcher C', 'institution' => 'Universitas Gadjah Mada', 'works' => 35, 'sdgs' => 9, 'date' => '2025-04-20'],
-    ['orcid' => '0000-0002-9910-4567', 'name' => 'Sample Researcher D', 'institution' => 'Universitas Airlangga', 'works' => 11, 'sdgs' => 4, 'date' => '2025-04-15'],
-    ['orcid' => '0000-0003-2210-8899', 'name' => 'Sample Researcher E', 'institution' => 'Universitas Hasanuddin', 'works' => 29, 'sdgs' => 7, 'date' => '2025-04-10'],
-];
+require_once __DIR__ . '/../includes/database.php';
+$db = getDB();
+
+$archived_researchers = [];
+try {
+    $stmt = $db->query("
+        SELECT r.orcid, r.name, r.institutions, COUNT(w.id) as works, 
+               COUNT(DISTINCT ws.sdg_code) as sdgs, r.last_fetched as date
+        FROM researchers r
+        LEFT JOIN works w ON r.id = w.researcher_id
+        LEFT JOIN work_sdgs ws ON w.id = ws.work_id
+        WHERE r.last_fetched IS NOT NULL
+        GROUP BY r.id
+        ORDER BY r.last_fetched DESC
+    ");
+    $archived_researchers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    foreach ($archived_researchers as &$r) {
+        $institutions = json_decode($r['institutions'], true) ?: [];
+        $r['institution'] = !empty($institutions) ? $institutions[0] : 'Unknown';
+    }
+} catch (Exception $e) {
+    error_log("Archive page error: " . $e->getMessage());
+}
+
+$has_data = count($archived_researchers) > 0;
 ?>
 <div class="page-header">
     <div class="container">
@@ -22,6 +39,13 @@ $archived_researchers = [
 
 <section class="section">
     <div class="container">
+
+        <?php if (!$has_data): ?>
+        <div class="alert alert-info" style="margin-bottom:1.5rem;">
+            <i class="fas fa-inbox"></i>
+            <span><strong>No archived analyses yet.</strong> Start by analyzing an ORCID profile or DOI from the home page.</span>
+        </div>
+        <?php else: ?>
 
         <!-- Filter & Search Bar -->
         <div class="card" style="margin-bottom:1.5rem;">
@@ -41,12 +65,6 @@ $archived_researchers = [
                     Showing <span id="archiveCount" style="font-weight:700;color:var(--brand,#ff5627);"><?= count($archived_researchers) ?></span> researchers
                 </div>
             </div>
-        </div>
-
-        <!-- TODO: Replace this with real DB data once SQLite is set up -->
-        <div class="alert alert-info" style="margin-bottom:1.5rem;">
-            <i class="fas fa-database"></i>
-            <span><strong>Note:</strong> Displaying placeholder data. Real archive will be populated from SQLite database once <code>feat/sqlite-setup</code> is merged.</span>
         </div>
 
         <div class="table-wrapper reveal">
@@ -81,7 +99,7 @@ $archived_researchers = [
                         <td style="font-size:.875rem;color:var(--gray-500);"><?= htmlspecialchars($r['institution']) ?></td>
                         <td><span class="badge badge-dark"><?= $r['works'] ?> works</span></td>
                         <td><span class="badge badge-brand"><?= $r['sdgs'] ?> SDGs</span></td>
-                        <td style="font-size:.8rem;color:var(--gray-400);"><?= $r['date'] ?></td>
+                        <td style="font-size:.8rem;color:var(--gray-400);"><?= htmlspecialchars($r['date']) ?></td>
                         <td>
                             <a href="?page=home#analysis" onclick="document.getElementById('input_value') && (document.getElementById('input_value').value = '<?= htmlspecialchars($r['orcid']) ?>')" class="btn btn-primary btn-sm">
                                 <i class="fas fa-search"></i> Analyze
@@ -93,7 +111,6 @@ $archived_researchers = [
             </table>
         </div>
 
-        <!-- Pagination Placeholder -->
         <div style="display:flex;justify-content:center;gap:.5rem;margin-top:1.5rem;">
             <button class="btn btn-secondary btn-sm" disabled><i class="fas fa-chevron-left"></i></button>
             <button class="btn btn-primary btn-sm">1</button>
@@ -101,6 +118,7 @@ $archived_researchers = [
             <button class="btn btn-secondary btn-sm">3</button>
             <button class="btn btn-secondary btn-sm"><i class="fas fa-chevron-right"></i></button>
         </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -120,7 +138,6 @@ function filterArchive(query) {
 }
 
 function filterBySdg(sdg) {
-    // TODO: implement real filtering once DB is connected
     console.log('Filter by SDG:', sdg);
 }
 </script>
