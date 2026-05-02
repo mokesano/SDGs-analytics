@@ -1,4 +1,42 @@
-```markdown
-# No build artifacts, dependencies, or temporary files detected in changes
-# Source files and documentation only
+```
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Editors
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-selfcheck.json
+*.so
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git*
+*.pot
+.DS_Store
+Thumbs.db
 ```
