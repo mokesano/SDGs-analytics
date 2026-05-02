@@ -334,6 +334,9 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
                 $contributors  = $detail['contributors']  ?? [];
                 $journal_title = $detail['journal_title'] ?? '';
                 $pub_year      = $detail['pub_year']      ?? null;
+                $volume        = $detail['volume']        ?? '';
+                $issue         = $detail['issue']         ?? '';
+                $pages         = $detail['pages']         ?? '';
                 $keywords      = $detail['keywords']      ?? [];
                 $work_type     = $detail['work_type']     ?? '';
                 $work_url      = $detail['url']           ?? '';
@@ -854,6 +857,20 @@ function fetchOrcidWorkDetail($orcid, $put_code) {
         $pub_year = (int)$data['publication-date']['year']['value'];
     }
 
+    // Volume, Issue, Pages dari ORCID
+    $volume = '';
+    $issue  = '';
+    $pages  = '';
+    if (isset($data['citation']['volume'])) {
+        $volume = $data['citation']['volume']['value'] ?? '';
+    }
+    if (isset($data['citation']['issue'])) {
+        $issue = $data['citation']['issue']['value'] ?? '';
+    }
+    if (isset($data['citation']['page-range'])) {
+        $pages = $data['citation']['page-range']['value'] ?? '';
+    }
+
     // Keywords
     $keywords = [];
     if (isset($data['keywords']['keyword'])) {
@@ -872,6 +889,9 @@ function fetchOrcidWorkDetail($orcid, $put_code) {
         'contributors'  => $contributors,
         'journal_title' => $journal_title,
         'pub_year'      => $pub_year,
+        'volume'        => $volume,
+        'issue'         => $issue,
+        'pages'         => $pages,
         'keywords'      => $keywords,
         'work_type'     => $work_type,
         'url'           => $work_url,
