@@ -12,183 +12,320 @@
  * @author Rochmady and Wizdam Team
  */
 
-// Konstanta untuk JavaScript
 define('HOME_AJAX_BATCH', 3);
 ?>
 
 <!-- ============================================================
      PROGRESS SECTION — tersembunyi, muncul saat AJAX berjalan
      ============================================================ -->
-<div id="ajaxProgressSection" style="display:none; max-width:900px; margin:20px auto; background:#fff; border-radius:16px; padding:24px; box-shadow:0 8px 30px rgba(0,0,0,.1);">
+<div id="ajaxProgressSection" class="progress-section" style="display:none">
     <div style="display:flex;align-items:center;gap:15px;margin-bottom:15px;">
-        <div class="ajax-spinner" id="ajaxSpinner" style="width:38px;height:38px;border:4px solid #e9ecef;border-top-color:#667eea;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0;"></div>
+        <div class="ajax-spinner" id="ajaxSpinner"></div>
         <div>
-            <h3 id="ajaxProgressTitle" style="font-size:1.05rem;color:#333;margin:0 0 3px;">Preparing analysis…</h3>
-            <p  id="ajaxProgressSubtitle" style="font-size:13px;color:#888;margin:0;">Please wait</p>
+            <h3 id="ajaxProgressTitle" style="font-size:1.05rem;color:var(--gray-800,#1e293b);margin:0 0 3px;">Preparing analysis…</h3>
+            <p  id="ajaxProgressSubtitle" style="font-size:13px;color:var(--gray-500,#64748b);margin:0;">Please wait</p>
         </div>
     </div>
-    <div style="background:#e9ecef;border-radius:10px;height:10px;overflow:hidden;margin-bottom:10px;">
-        <div id="ajaxProgressBar" style="height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:10px;transition:width .5s ease;width:0;"></div>
+    <div class="ajax-progress-bar-track">
+        <div id="ajaxProgressBar" class="ajax-progress-bar-fill" style="width:0;"></div>
     </div>
-    <div style="font-size:13px;color:#888;">
-        Works: <span id="ajaxProgressCount" style="font-weight:600;color:#333;">0</span>
-             / <span id="ajaxProgressTotal" style="font-weight:600;color:#333;">?</span>
-        &nbsp;|&nbsp; Batch: <span id="ajaxProgressBatch" style="font-weight:600;color:#333;">0</span>
+    <div style="font-size:13px;color:var(--gray-500,#64748b);margin-top:6px;">
+        Works: <span id="ajaxProgressCount" style="font-weight:700;color:var(--gray-800,#1e293b);">0</span>
+             / <span id="ajaxProgressTotal" style="font-weight:700;color:var(--gray-800,#1e293b);">?</span>
+        &nbsp;|&nbsp; Batch: <span id="ajaxProgressBatch" style="font-weight:700;color:var(--brand,#ff5627);">0</span>
     </div>
 </div>
 
 <!-- ============================================================
-     MAIN CONTENT
+     HERO SECTION
      ============================================================ -->
-<div class="container" id="mainContent">
+<section class="hero-section dotted-bg">
+    <div class="ambient-blob" style="background:rgba(255,86,39,.06);top:-150px;left:-150px;"></div>
+    <div class="ambient-blob" style="background:rgba(255,86,39,.04);bottom:-100px;right:-100px;animation-delay:5s;width:400px;height:400px;"></div>
+    <div class="container">
+        <div class="hero-grid">
 
-    <!-- Hero / Header -->
-    <div class="header">
-        <h1><i class="fas fa-globe"></i> Welcome! Wizdam AI-sikola</h1>
-        <h2>Sustainable Development Goals (SDGs) Classification Analysis</h2>
-        <p>AI-powered platform for analyzing research contributions to the 17 United Nations Sustainable Development Goals</p>
-    </div>
-
-    <!-- Search Form -->
-    <div class="search-card">
-        <h2><i class="fas fa-search"></i> Analyze Research Contributions</h2>
-        <p>Enter an ORCID ID to analyze a researcher's profile, or a DOI to analyze a single article.</p>
-
-        <form id="analysisForm" method="POST" action="" autocomplete="off">
-
-            <div class="form-group">
-                <div class="input-group" style="position:relative;">
-                    <input
-                        type="text"
-                        id="input_value"
-                        name="input_value"
-                        class="floating-input form-input"
-                        placeholder=" "
-                        required
-                        autocomplete="off"
-                        spellcheck="false"
-                    >
-                    <label class="floating-label" for="input_value">Enter ORCID ID or DOI</label>
+            <!-- Left: Content -->
+            <div class="hero-content reveal active">
+                <div class="hero-badge">
+                    <i class="fas fa-globe" style="color:var(--brand,#ff5627);"></i>
+                    AI-Powered SDG Research Platform
                 </div>
-                <div class="input-hint" style="margin-top:8px;font-size:13px;color:#888;">
-                    <i class="fas fa-info-circle"></i>
-                    Example: <strong>0000-0002-5152-9727</strong> (ORCID) &nbsp;|&nbsp;
-                             <strong>10.1038/nature12373</strong> (DOI)
-                </div>
-                <div class="input-status" id="input_status" style="margin-top:6px;font-size:13px;">
-                    <span id="status_icon" class="fas fa-question-circle" style="color:#aaa;margin-right:4px;"></span>
-                    <span id="status_text" style="color:#aaa;">Enter your ORCID or DOI to begin</span>
+                <h1 class="hero-title">
+                    Classify Research into<br>
+                    <span class="hero-title-accent">17 UN Sustainable</span><br>
+                    Development Goals
+                </h1>
+                <p class="hero-subtitle">
+                    Enter an ORCID ID to analyze a researcher's full publication portfolio, or a DOI to classify a single article using multi-component NLP analysis.
+                </p>
+
+                <!-- Search Form Card -->
+                <div class="search-card magic-card" style="margin-top:0;">
+                    <form id="analysisForm" method="POST" action="" autocomplete="off">
+
+                        <div style="margin-bottom:14px;">
+                            <div class="input-group">
+                                <input
+                                    type="text"
+                                    id="input_value"
+                                    name="input_value"
+                                    class="form-input floating-input"
+                                    placeholder=" "
+                                    required
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    style="padding-right:3rem;"
+                                >
+                                <label class="floating-label" for="input_value">Enter ORCID ID or DOI</label>
+                            </div>
+                            <div style="margin-top:8px;font-size:13px;color:var(--gray-400,#94a3b8);">
+                                <i class="fas fa-info-circle"></i>
+                                Example: <strong>0000-0002-5152-9727</strong> (ORCID) &nbsp;|&nbsp;
+                                         <strong>10.1038/nature12373</strong> (DOI)
+                            </div>
+                            <div class="input-status" id="input_status" style="margin-top:6px;font-size:13px;display:flex;align-items:center;gap:5px;">
+                                <span id="status_icon" class="fas fa-question-circle" style="color:var(--gray-300,#cbd5e1);"></span>
+                                <span id="status_text" style="color:var(--gray-400,#94a3b8);">Enter your ORCID or DOI to begin</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-search"></i> Analyze
+                            </button>
+                            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-500,#64748b);cursor:pointer;user-select:none;">
+                                <input type="checkbox" id="force_refresh" name="force_refresh" value="1" style="cursor:pointer;accent-color:var(--brand,#ff5627);">
+                                Force refresh (bypass cache)
+                            </label>
+                        </div>
+                    </form>
                 </div>
             </div>
 
-            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:12px;">
-                <button type="submit" class="submit-btn btn btn-primary" id="submitBtn">
-                    <i class="fas fa-search"></i> Analyze
-                </button>
-                <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#666;cursor:pointer;">
-                    <input type="checkbox" id="force_refresh" name="force_refresh" value="1" style="cursor:pointer;">
-                    Force refresh (bypass cache)
-                </label>
-            </div>
-        </form>
-    </div>
+            <!-- Right: Feature Cards (dark) -->
+            <div class="hero-cards reveal" style="transition-delay:200ms;">
+                <!-- ORCID Card -->
+                <div class="code-card magic-card">
+                    <div class="code-card-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="code-filename">orcid_classifier.php</span>
+                    </div>
+                    <div class="code-card-body">
+                        <p>Analisis lengkap portofolio peneliti via ORCID ID. Sequential batch processing anti-timeout dengan SDG mapping otomatis.</p>
+                        <pre class="code-snippet">$analyzer->classify([
+  'orcid' => '0000-0002-5152-9727',
+  'mode'  => 'sequential_batch',
+]);</pre>
+                        <a href="#" onclick="event.preventDefault();document.getElementById('input_value').focus();" class="btn btn-primary btn-sm">
+                            Try ORCID Analysis <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
 
-    <!-- Feature Cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0;">
-        <div style="background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.07);">
-            <div style="font-size:2rem;margin-bottom:10px;">🎯</div>
-            <strong>17 SDG Goals</strong>
-            <p style="font-size:13px;color:#666;margin-top:6px;">Classify research across all UN Sustainable Development Goals</p>
-        </div>
-        <div style="background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.07);">
-            <div style="font-size:2rem;margin-bottom:10px;">🔬</div>
-            <strong>ORCID Analysis</strong>
-            <p style="font-size:13px;color:#666;margin-top:6px;">Analyze a researcher's complete publication portfolio</p>
-        </div>
-        <div style="background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.07);">
-            <div style="font-size:2rem;margin-bottom:10px;">📄</div>
-            <strong>DOI Analysis</strong>
-            <p style="font-size:13px;color:#666;margin-top:6px;">Classify a single article by its DOI identifier</p>
-        </div>
-        <div style="background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.07);">
-            <div style="font-size:2rem;margin-bottom:10px;">⚡</div>
-            <strong>AI-Powered</strong>
-            <p style="font-size:13px;color:#666;margin-top:6px;">Multi-component scoring: keywords, similarity, causal analysis</p>
+                <!-- DOI Card -->
+                <div class="code-card magic-card">
+                    <div class="code-card-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="code-filename">doi_classifier.php</span>
+                    </div>
+                    <div class="code-card-body">
+                        <p>Klasifikasi artikel tunggal berdasarkan DOI. Multi-source: Crossref + OpenAlex + Semantic Scholar.</p>
+                        <pre class="code-snippet">$result = $sdgApi->analyze([
+  'doi'  => '10.1038/nature12373',
+  'mode' => 'doi_single',
+]);</pre>
+                        <a href="#" onclick="event.preventDefault();document.getElementById('input_value').focus();" class="btn btn-outline-white btn-sm">
+                            Try DOI Analysis <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+</section>
+
+<!-- ============================================================
+     DARK FEATURES SECTION
+     ============================================================ -->
+<section class="section-dark reveal">
+    <div class="container">
+        <div class="text-center" style="margin-bottom:1rem;">
+            <div class="section-label">Platform Features</div>
+            <h2 class="section-title-white">Arsitektur Tanpa Kompromi</h2>
+            <p class="section-subtitle-muted" style="max-width:560px;margin:0 auto;">
+                Dibangun untuk analisis riset akademik skala besar dengan akurasi tinggi dan zero timeout.
+            </p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                <h4 style="color:#fff;margin-bottom:.5rem;font-size:1rem;">Sequential Batch</h4>
+                <p style="color:rgba(255,255,255,.5);font-size:.875rem;margin:0;line-height:1.6;">
+                    Anti-timeout processing: karya peneliti diproses dalam batch kecil berurutan untuk menghindari server timeout.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-database"></i></div>
+                <h4 style="color:#fff;margin-bottom:.5rem;font-size:1rem;">Multi-Source</h4>
+                <p style="color:rgba(255,255,255,.5);font-size:.875rem;margin:0;line-height:1.6;">
+                    Data dari ORCID + Crossref + OpenAlex + Semantic Scholar digabung untuk metadata paling lengkap.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h4 style="color:#fff;margin-bottom:.5rem;font-size:1rem;">Smart Cache</h4>
+                <p style="color:rgba(255,255,255,.5);font-size:.875rem;margin:0;line-height:1.6;">
+                    Hasil analisis di-cache gzip selama 7 hari. Pencarian kedua untuk ORCID yang sama: instan.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-globe-asia"></i></div>
+                <h4 style="color:#fff;margin-bottom:.5rem;font-size:1rem;">17 SDG Goals</h4>
+                <p style="color:rgba(255,255,255,.5);font-size:.875rem;margin:0;line-height:1.6;">
+                    Klasifikasi lengkap ke semua 17 Tujuan Pembangunan Berkelanjutan PBB dengan warna resmi UN.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     STATS SECTION
+     ============================================================ -->
+<section class="section-muted reveal">
+    <div class="container">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;text-align:center;">
+            <div class="stat-card">
+                <span class="stat-number">17</span>
+                <span class="stat-label">SDG Goals Covered</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">3</span>
+                <span class="stat-label">Works per Batch</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">4+</span>
+                <span class="stat-label">API Sources</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">7d</span>
+                <span class="stat-label">Cache TTL</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Works Supported</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SDG GOALS PREVIEW
+     ============================================================ -->
+<section class="section reveal">
+    <div class="container">
+        <div class="text-center" style="margin-bottom:2rem;">
+            <div class="section-label">UN Agenda 2030</div>
+            <h2 class="section-title">17 Sustainable Development Goals</h2>
+            <p class="section-subtitle" style="margin:0 auto;">
+                Platform ini mengklasifikasikan riset akademik ke dalam 17 Tujuan SDG resmi PBB menggunakan warna identitas visual UN.
+            </p>
+        </div>
+        <div class="sdg-preview-grid">
+            <?php
+            $sdg_tiles = [
+                1 => 'No Poverty',         2 => 'Zero Hunger',
+                3 => 'Good Health',        4 => 'Quality Education',
+                5 => 'Gender Equality',    6 => 'Clean Water',
+                7 => 'Affordable Energy',  8 => 'Decent Work',
+                9 => 'Industry & Innovation', 10 => 'Reduced Inequalities',
+                11 => 'Sustainable Cities', 12 => 'Responsible Consumption',
+                13 => 'Climate Action',    14 => 'Life Below Water',
+                15 => 'Life on Land',      16 => 'Peace & Justice',
+                17 => 'Partnerships',
+            ];
+            foreach ($sdg_tiles as $num => $name):
+            ?>
+            <div class="sdg-tile sdg-tile-<?= $num ?>" title="SDG <?= $num ?>: <?= htmlspecialchars($name) ?>">
+                <span class="sdg-num"><?= $num ?></span>
+                <span style="font-size:.65rem;line-height:1.2;display:block;"><?= htmlspecialchars($name) ?></span>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     HOW IT WORKS
+     ============================================================ -->
+<section class="section-muted reveal">
+    <div class="container">
+        <div class="text-center" style="margin-bottom:2.5rem;">
+            <div class="section-label">How It Works</div>
+            <h2 class="section-title">3 Langkah Mudah</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
+            <div style="text-align:center;padding:2rem 1.5rem;">
+                <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,86,39,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.5rem;color:var(--brand,#ff5627);">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h4 style="margin-bottom:.5rem;color:var(--gray-800,#1e293b);">1. Input</h4>
+                <p style="color:var(--gray-500,#64748b);font-size:.875rem;line-height:1.6;margin:0;">
+                    Masukkan ORCID ID peneliti atau DOI artikel pada kotak pencarian.
+                </p>
+            </div>
+            <div style="text-align:center;padding:2rem 1.5rem;">
+                <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,86,39,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.5rem;color:var(--brand,#ff5627);">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h4 style="margin-bottom:.5rem;color:var(--gray-800,#1e293b);">2. Analisis</h4>
+                <p style="color:var(--gray-500,#64748b);font-size:.875rem;line-height:1.6;margin:0;">
+                    AI mengambil metadata dari berbagai sumber dan menghitung skor SDG multi-komponen.
+                </p>
+            </div>
+            <div style="text-align:center;padding:2rem 1.5rem;">
+                <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,86,39,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.5rem;color:var(--brand,#ff5627);">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h4 style="margin-bottom:.5rem;color:var(--gray-800,#1e293b);">3. Hasil</h4>
+                <p style="color:var(--gray-500,#64748b);font-size:.875rem;line-height:1.6;margin:0;">
+                    Tampilkan profil SDG lengkap: distribusi kontribusi, confidence score, dan contributor type.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- ============================================================
      RESULTS SECTION — diisi oleh JavaScript saat analisis selesai
      ============================================================ -->
-<div class="container" id="ajaxResultsSection" style="display:none;"></div>
+<div class="container" id="ajaxResultsSection" style="display:none; padding-top:1.5rem; padding-bottom:2rem;"></div>
 
 <!-- Loading Overlay -->
 <div id="loadingOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.92);z-index:9000;flex-direction:column;align-items:center;justify-content:center;">
-    <div class="spinner" style="width:60px;height:60px;border:5px solid #e9ecef;border-top-color:#667eea;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;"></div>
-    <div class="loading-text" style="font-size:1.1rem;font-weight:600;color:#333;">Analyzing…</div>
-    <div class="loading-subtext" style="font-size:0.9rem;color:#888;margin-top:6px;">Please wait</div>
+    <div class="spinner"></div>
+    <div style="font-size:1.1rem;font-weight:700;color:var(--gray-800,#1e293b);">Analyzing…</div>
+    <div style="font-size:.9rem;color:var(--gray-500,#64748b);margin-top:6px;">Please wait</div>
 </div>
 
 <style>
-@keyframes spin { to { transform:rotate(360deg); } }
-.floating-input { width:100%; padding:14px 16px; font-size:1rem; border:2px solid #e2e8f0; border-radius:10px; outline:none; transition:border-color .2s; }
-.floating-input:focus { border-color:#667eea; }
-.floating-input.valid   { border-color:#22c55e; }
-.floating-input.invalid { border-color:#ef4444; }
-.floating-label { position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:0.95rem;color:#aaa;pointer-events:none;transition:all .2s;background:#fff;padding:0 4px; }
+/* ── Home page specific styles ─── */
+.floating-input { width:100%; padding:14px 16px; font-size:1rem; border:2px solid var(--gray-200,#e2e8f0); border-radius:10px; outline:none; transition:border-color .2s; background:#fff; }
+.floating-input:focus { border-color:var(--brand,#ff5627); box-shadow:0 0 0 3px rgba(255,86,39,.12); }
+.floating-input.valid   { border-color:var(--success,#22c55e); }
+.floating-input.invalid { border-color:var(--danger,#ef4444); }
+.floating-input::placeholder { color:transparent; }
+.floating-label { position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:0.95rem;color:var(--gray-400,#94a3b8);pointer-events:none;transition:all .2s;background:#fff;padding:0 4px;border-radius:4px; }
 .floating-input:not(:placeholder-shown) ~ .floating-label,
-.floating-input:focus ~ .floating-label { top:-2px;transform:translateY(-50%) scale(.85);color:#667eea; }
-.submit-btn { padding:12px 28px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:opacity .2s; }
-.submit-btn:disabled { opacity:.6;cursor:not-allowed; }
-.work-sdg-tag { display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;color:#fff;font-size:13px;font-weight:600;margin:3px; }
-.sdg-mini-icon img { border-radius:3px; }
-.sdg-confidence-info { font-weight:400;opacity:.85; }
-.none-SDG { color:#888;font-style:italic;padding:10px 0; }
-.work-item { background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);border-left:4px solid #667eea; }
-.work-title { font-weight:700;font-size:1rem;color:#1e293b;margin-bottom:8px;line-height:1.4; }
-.work-meta { display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:#64748b;margin-bottom:10px; }
-.work-meta a { color:#667eea;text-decoration:none; }
-.work-abstract { font-size:13px;color:#555;line-height:1.6;margin-bottom:10px;border-left:3px solid #e2e8f0;padding-left:10px; }
-.sdg-card { background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.07);position:relative;overflow:hidden; }
-.sdg-card::after { content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:#667eea; }
-.sdg-icon img { width:48px;height:48px;border-radius:8px; }
-.sdg-title { font-weight:700;font-size:.95rem;margin-bottom:10px;color:#1e293b; }
-.sdg-stats { display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;margin-bottom:8px; }
-.sdg-stat-label { color:#888; }
-.sdg-stat-value { font-weight:600;color:#333; }
-.confidence-bar { background:#e9ecef;border-radius:10px;height:8px;overflow:hidden;margin-bottom:6px; }
-.confidence-fill { height:100%;border-radius:10px;transition:width .8s ease-out; }
-.contributor-type { display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#f0f4ff;color:#667eea; }
-.show-more-btn { padding:6px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;font-size:12px;color:#667eea;transition:background .2s; }
-.show-more-btn:hover { background:#eef2ff; }
-.detailed-analysis { display:none;margin-top:14px;padding:14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0; }
-.detailed-analysis.show { display:block; }
-.analysis-section { margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #e2e8f0; }
-.analysis-section:last-child { border-bottom:none;margin-bottom:0; }
-.analysis-components { display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0; }
-.component-score { background:#fff;border-radius:8px;padding:8px;border:1px solid #e2e8f0;text-align:center; }
-.component-label { font-size:11px;color:#888;text-transform:uppercase;margin-bottom:4px; }
-.component-value { font-size:1rem;font-weight:700;color:#667eea; }
-.info-badge { display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#f0f4ff;color:#667eea;margin-right:4px; }
-.info-badge.confidence { background:#f0fdf4;color:#16a34a; }
-.stats-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:16px 0; }
-.stat-card { background:#fff;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07); }
-.stat-number { font-size:1.8rem;font-weight:700;color:#667eea;line-height:1; }
-.stat-label { font-size:12px;color:#888;margin-top:4px; }
-.sdg-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:16px 0; }
-.charts-section { display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:16px 0; }
-.chart-container { background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.07); }
-.chart-container canvas { max-height:250px; }
-.info-general { background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:16px; }
-.personal-info { display:flex;align-items:center;gap:18px;margin-bottom:16px; }
-.avatar { width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:700;flex-shrink:0; }
-.works-container { background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-top:16px; }
-.u-heading3 { font-size:1.1rem;font-weight:700;color:#1e293b;margin-bottom:16px; }
-@media (max-width:640px) {
-    .charts-section { grid-template-columns:1fr; }
-    .analysis-components { grid-template-columns:1fr; }
-}
+.floating-input:focus ~ .floating-label { top:-2px;transform:translateY(-50%) scale(.82);color:var(--brand,#ff5627);font-weight:600; }
+.floating-input.valid   ~ .floating-label { color:var(--success,#22c55e); }
+.floating-input.invalid ~ .floating-label { color:var(--danger,#ef4444); }
 </style>
 
 <script>
@@ -227,8 +364,8 @@ define('HOME_AJAX_BATCH', 3);
                     <h3 style="color:#dc2626;margin:0 0 6px;font-size:1rem;">Analysis Failed</h3>
                     <p style="color:#555;margin:0;font-size:.9rem;line-height:1.5;">${escH(message)}</p>
                     <button onclick="document.getElementById('ajaxProgressSection').style.display='none';"
-                        style="margin-top:12px;padding:6px 14px;background:#dc2626;color:#fff;border:none;
-                               border-radius:6px;cursor:pointer;font-size:.85rem;">
+                        style="margin-top:12px;padding:6px 16px;background:#dc2626;color:#fff;border:none;
+                               border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;">
                         Close
                     </button>
                 </div>
@@ -319,32 +456,32 @@ define('HOME_AJAX_BATCH', 3);
         if (!icon || !text || !inp) return;
         const v = value.trim();
         if (!v) {
-            icon.className = 'fas fa-question-circle'; icon.style.color = '#aaa';
+            icon.className = 'fas fa-question-circle'; icon.style.color = 'var(--gray-300,#cbd5e1)';
             text.textContent = 'Enter ORCID or DOI to begin';
-            text.style.color = '#aaa';
+            text.style.color = 'var(--gray-400,#94a3b8)';
             inp.classList.remove('valid','invalid'); return;
         }
         const type = detectType(v);
         if (type === 'orcid') {
             const ok = validateOrcid(v);
             icon.className = ok ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-            icon.style.color = ok ? '#22c55e' : '#ef4444';
+            icon.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
             text.textContent = ok ? 'Valid ORCID ID — ready to analyze researcher profile'
                                   : 'Invalid ORCID — check the 16-digit format and checksum';
-            text.style.color = ok ? '#22c55e' : '#ef4444';
+            text.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
             inp.classList.toggle('valid', ok); inp.classList.toggle('invalid', !ok);
         } else if (type === 'doi') {
             const ok = validateDoi(v);
             icon.className = ok ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-            icon.style.color = ok ? '#22c55e' : '#ef4444';
+            icon.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
             text.textContent = ok ? 'Valid DOI — ready to analyze article'
                                   : 'Invalid DOI — format should be 10.xxxx/xxxxx';
-            text.style.color = ok ? '#22c55e' : '#ef4444';
+            text.style.color = ok ? 'var(--success,#22c55e)' : 'var(--danger,#ef4444)';
             inp.classList.toggle('valid', ok); inp.classList.toggle('invalid', !ok);
         } else {
-            icon.className = 'fas fa-exclamation-circle'; icon.style.color = '#f59e0b';
+            icon.className = 'fas fa-exclamation-circle'; icon.style.color = 'var(--warning,#f59e0b)';
             text.textContent = 'Format not recognized. Use ORCID (0000-0000-0000-0000) or DOI (10.xxxx/xxxxx).';
-            text.style.color = '#f59e0b';
+            text.style.color = 'var(--warning,#f59e0b)';
             inp.classList.remove('valid'); inp.classList.add('invalid');
         }
     }
@@ -363,22 +500,22 @@ define('HOME_AJAX_BATCH', 3);
         if (!info) return;
         const initials = (info.name || 'NN').split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
         const instHtml = info.institutions && info.institutions.length
-            ? `<p style="margin:4px 0;font-size:.9rem;color:#64748b;"><i class="fas fa-university"></i> ${escH(info.institutions.slice(0,2).join(', '))}${info.institutions.length > 2 ? ' et al.' : ''}</p>` : '';
+            ? `<p style="margin:4px 0;font-size:.9rem;color:var(--gray-500,#64748b);"><i class="fas fa-university"></i> ${escH(info.institutions.slice(0,2).join(', '))}${info.institutions.length > 2 ? ' et al.' : ''}</p>` : '';
         document.getElementById('ajaxResultsSection').innerHTML = `
         <div class="info-general">
             <div class="personal-info">
                 <div class="avatar">${escH(initials)}</div>
                 <div>
                     <h2 style="margin:0 0 4px;font-size:1.2rem;">${escH(info.name || '–')}</h2>
-                    <p style="margin:4px 0;font-size:.9rem;color:#64748b;"><i class="fab fa-orcid" style="color:#a6ce39;"></i> ${escH(info.orcid || '')}</p>
+                    <p style="margin:4px 0;font-size:.9rem;color:var(--gray-500,#64748b);"><i class="fab fa-orcid" style="color:#a6ce39;"></i> ${escH(info.orcid || '')}</p>
                     ${instHtml}
                 </div>
             </div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Total Works</div></div>
-                <div class="stat-card"><div class="stat-number" id="ajaxStatSdgs">–</div><div class="stat-label">Identified SDGs</div></div>
-                <div class="stat-card"><div class="stat-number" id="ajaxStatActive">–</div><div class="stat-label">Active Contributor</div></div>
-                <div class="stat-card"><div class="stat-number" id="ajaxStatConf">–</div><div class="stat-label">Avg Confidence</div></div>
+                <div class="stat-card"><span class="stat-number">${total}</span><span class="stat-label">Total Works</span></div>
+                <div class="stat-card"><span class="stat-number" id="ajaxStatSdgs">–</span><span class="stat-label">Identified SDGs</span></div>
+                <div class="stat-card"><span class="stat-number" id="ajaxStatActive">–</span><span class="stat-label">Active Contributor</span></div>
+                <div class="stat-card"><span class="stat-number" id="ajaxStatConf">–</span><span class="stat-label">Avg Confidence</span></div>
             </div>
         </div>
         <div id="ajaxSdgSummary"></div>
@@ -448,8 +585,8 @@ define('HOME_AJAX_BATCH', 3);
             const kwEvidence = (analysis.evidence && analysis.evidence.keyword_matches || []).slice(0,2).map(m =>
                 `<div style="font-size:12px;margin-top:4px;color:#555;"><strong>${escH(m.keyword||'')}</strong>: ${escH(m.context||'')}</div>`).join('');
             html += `<div class="analysis-section">
-                <h5 style="margin:0 0 8px;color:#1e293b;">${escH(sdg + ': ' + (def.title||sdg))}
-                    <span style="color:#667eea;font-weight:400;">(Score: ${(analysis.score||0).toFixed(3)})</span></h5>
+                <h5 style="margin:0 0 8px;color:var(--gray-800,#1e293b);">${escH(sdg + ': ' + (def.title||sdg))}
+                    <span style="color:var(--brand,#ff5627);font-weight:400;">(Score: ${(analysis.score||0).toFixed(3)})</span></h5>
                 <div class="analysis-components">${compsHtml}</div>
                 <div style="margin-top:8px;">
                     <span class="info-badge">${escH(analysis.contributor_type&&analysis.contributor_type.type||'–')}</span>
@@ -493,11 +630,11 @@ define('HOME_AJAX_BATCH', 3);
         // SDG Grid
         let html = '<div class="info-general"><h3 class="u-heading3"><i class="fas fa-chart-pie"></i> SDG Contribution Summary</h3><div class="sdg-grid">';
         Object.entries(summary).forEach(([sdg, sum], i) => {
-            const def = SDG_DEFS[sdg] || { title:sdg, color:'#667eea', svg_url:'' };
+            const def = SDG_DEFS[sdg] || { title:sdg, color:'var(--brand,#ff5627)', svg_url:'' };
             const prf = profile[sdg] || {};
             const pct = (sum.average_confidence * 100).toFixed(1);
-            html += `<div class="sdg-card">
-                <div class="sdg-icon" style="margin-bottom:10px;"><img src="${escH(def.svg_url)}" alt="${escH(def.title||sdg)}" style="width:48px;height:48px;border-radius:8px;"></div>
+            html += `<div class="sdg-card" style="--sdg-color:${def.color};">
+                <div style="margin-bottom:10px;"><img src="${escH(def.svg_url)}" alt="${escH(def.title||sdg)}" style="width:48px;height:48px;border-radius:8px;"></div>
                 <div>
                     <div class="sdg-title">${escH(def.title||sdg)}</div>
                     <div class="sdg-stats">
@@ -507,7 +644,6 @@ define('HOME_AJAX_BATCH', 3);
                     <div class="confidence-bar"><div class="confidence-fill" style="width:${pct}%;background:${def.color};"></div></div>
                     ${prf.dominant_type ? `<div class="contributor-type">${escH(prf.dominant_type)}</div>` : ''}
                 </div>
-                <style>.sdg-card:nth-of-type(${i+1})::after{background:${def.color}}</style>
             </div>`;
         });
         html += '</div></div>';
@@ -519,8 +655,8 @@ define('HOME_AJAX_BATCH', 3);
         const chartsEl = document.getElementById('ajaxCharts');
         if (chartsEl && typeof Chart !== 'undefined') {
             chartsEl.innerHTML = `<div class="info-general"><div class="charts-section">
-                <div class="chart-container"><h4><i class="fas fa-chart-pie"></i> SDG Distribution</h4><canvas id="ajaxSdgChart"></canvas></div>
-                <div class="chart-container"><h4><i class="fas fa-chart-bar"></i> Contributor Type</h4><canvas id="ajaxContribChart"></canvas></div>
+                <div class="chart-container"><h4 style="margin-bottom:12px;"><i class="fas fa-chart-pie"></i> SDG Distribution</h4><canvas id="ajaxSdgChart"></canvas></div>
+                <div class="chart-container"><h4 style="margin-bottom:12px;"><i class="fas fa-chart-bar"></i> Contributor Type</h4><canvas id="ajaxContribChart"></canvas></div>
             </div></div>`;
 
             if (ajaxSdgChart) ajaxSdgChart.destroy();
@@ -529,7 +665,7 @@ define('HOME_AJAX_BATCH', 3);
                 data: {
                     labels: Object.keys(summary).map(s => (SDG_DEFS[s]||{}).title || s),
                     datasets: [{ data: Object.values(summary).map(s => s.work_count),
-                        backgroundColor: Object.keys(summary).map(s => (SDG_DEFS[s]||{}).color || '#667eea'),
+                        backgroundColor: Object.keys(summary).map(s => (SDG_DEFS[s]||{}).color || 'var(--brand,#ff5627)'),
                         borderWidth: 2, borderColor: '#fff' }]
                 },
                 options: { responsive:true, maintainAspectRatio:false,
@@ -544,7 +680,7 @@ define('HOME_AJAX_BATCH', 3);
                 data: {
                     labels: Object.keys(ctypes),
                     datasets: [{ label:'SDGs', data: Object.values(ctypes),
-                        backgroundColor: ['#667eea','#764ba2','#f093fb','#f5576c','#4facfe'].slice(0, Object.keys(ctypes).length),
+                        backgroundColor: ['#ff5627','#e0481d','#fd9d24','#4c9f38','#0a97d9'].slice(0, Object.keys(ctypes).length),
                         borderWidth: 0, borderRadius: 8 }]
                 },
                 options: { responsive:true, maintainAspectRatio:false,
@@ -572,7 +708,7 @@ define('HOME_AJAX_BATCH', 3);
         const scores  = data.sdg_scores || {};
         const sorted  = Object.entries(scores).sort((a,b) => b[1] - a[1]).filter(([,v]) => v >= 0.20);
         const tagHtml = sorted.map(([sdg, score]) => {
-            const def = SDG_DEFS[sdg] || { color:'#667eea', title:sdg, svg_url:'' };
+            const def = SDG_DEFS[sdg] || { color:'var(--brand,#ff5627)', title:sdg, svg_url:'' };
             return `<div class="work-sdg-tag" style="background:${def.color}">
                 <div class="sdg-mini-icon"><img src="${escH(def.svg_url)}" alt="${escH(def.title)}" width="20" height="20"></div>
                 <span>${escH(sdg)}: ${escH(def.title)} <span class="sdg-confidence-info">(${(score*100).toFixed(1)}%)</span></span>
@@ -585,17 +721,17 @@ define('HOME_AJAX_BATCH', 3);
                 <div class="avatar" style="font-size:1.5rem;"><i class="fas fa-file-alt"></i></div>
                 <div>
                     <h2 style="font-size:1.05rem;line-height:1.4;margin:0 0 8px;">${title}</h2>
-                    ${authors ? `<p style="color:#64748b;font-size:.9rem;margin:0 0 4px;"><i class="fas fa-users"></i> ${authors}</p>` : ''}
-                    ${journal  ? `<p style="color:#64748b;font-size:.9rem;margin:0 0 4px;"><i class="fas fa-book"></i> ${journal}${year ? ' (' + year + ')' : ''}</p>` : ''}
-                    ${doi      ? `<p style="font-size:.9rem;margin:0;"><i class="fas fa-link" style="color:#667eea;"></i> <a href="https://doi.org/${doi}" target="_blank" rel="noopener" style="color:#667eea;">https://doi.org/${doi}</a></p>` : ''}
+                    ${authors ? `<p style="color:var(--gray-500,#64748b);font-size:.9rem;margin:0 0 4px;"><i class="fas fa-users"></i> ${authors}</p>` : ''}
+                    ${journal  ? `<p style="color:var(--gray-500,#64748b);font-size:.9rem;margin:0 0 4px;"><i class="fas fa-book"></i> ${journal}${year ? ' (' + year + ')' : ''}</p>` : ''}
+                    ${doi      ? `<p style="font-size:.9rem;margin:0;"><i class="fas fa-link" style="color:var(--brand,#ff5627);"></i> <a href="https://doi.org/${doi}" target="_blank" rel="noopener" style="color:var(--brand,#ff5627);">https://doi.org/${doi}</a></p>` : ''}
                 </div>
             </div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-number">${sorted.length}</div><div class="stat-label">Identified SDGs</div></div>
-                <div class="stat-card"><div class="stat-number">${sorted.length > 0 ? (sorted[0][1]*100).toFixed(0)+'%' : '–'}</div><div class="stat-label">Top Confidence</div></div>
+                <div class="stat-card"><span class="stat-number">${sorted.length}</span><span class="stat-label">Identified SDGs</span></div>
+                <div class="stat-card"><span class="stat-number">${sorted.length > 0 ? (sorted[0][1]*100).toFixed(0)+'%' : '–'}</span><span class="stat-label">Top Confidence</span></div>
             </div>
         </div>
-        ${abst ? `<div class="info-general"><h4 style="margin-bottom:10px;"><i class="fas fa-align-left"></i> Abstract</h4><p style="color:#555;line-height:1.7;margin:0;">${abst}</p></div>` : ''}
+        ${abst ? `<div class="info-general"><h4 style="margin-bottom:10px;"><i class="fas fa-align-left"></i> Abstract</h4><p style="color:var(--gray-600,#475569);line-height:1.7;margin:0;">${abst}</p></div>` : ''}
         <div class="info-general">
             <h4 style="margin-bottom:12px;"><i class="fas fa-tags"></i> SDG Classification</h4>
             ${sorted.length
