@@ -91,7 +91,12 @@ class Database {
                 ':last_fetched'  => date('Y-m-d H:i:s'),
             ]);
             
-            return (int)$db->lastInsertId();
+            // Fetch the actual ID after upsert, not lastInsertId() which can be stale
+            $selectStmt = $db->prepare("SELECT id FROM researchers WHERE orcid = :orcid");
+            $selectStmt->execute([':orcid' => $orcid]);
+            $result = $selectStmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result ? (int)$result['id'] : null;
         } catch (Exception $e) {
             error_log('Failed to save researcher: ' . $e->getMessage());
             return null;
@@ -120,24 +125,47 @@ class Database {
     public static function saveWork(int $researcherId, array $work): ?int {
         try {
             $db = self::getInstance();
-            $stmt = $db->prepare("
-                INSERT INTO works (researcher_id, put_code, title, doi, abstract, authors, 
-                                   journal, volume, issue, pages, year, keywords, work_type, url)
-                VALUES (:researcher_id, :put_code, :title, :doi, :abstract, :authors,
-                        :journal, :volume, :issue, :pages, :year, :keywords, :work_type, :url)
-                ON CONFLICT(doi) DO UPDATE SET
-                    title = excluded.title,
-                    abstract = excluded.abstract,
-                    authors = excluded.authors,
-                    journal = excluded.journal,
-                    volume = excluded.volume,
-                    issue = excluded.issue,
-                    pages = excluded.pages,
-                    year = excluded.year,
-                    keywords = excluded.keywords,
-                    work_type = excluded.work_type,
-                    url = excluded.url
-            ");
+            
+            // If DOI is null/empty, use put_code as unique identifier instead
+            if (empty($work['doi'])) {
+                $stmt = $db->prepare("
+                    INSERT INTO works (researcher_id, put_code, title, doi, abstract, authors, 
+                                       journal, volume, issue, pages, year, keywords, work_type, url)
+                    VALUES (:researcher_id, :put_code, :title, :doi, :abstract, :authors,
+                            :journal, :volume, :issue, :pages, :year, :keywords, :work_type, :url)
+                    ON CONFLICT(put_code) DO UPDATE SET
+                        title = excluded.title,
+                        abstract = excluded.abstract,
+                        authors = excluded.authors,
+                        journal = excluded.journal,
+                        volume = excluded.volume,
+                        issue = excluded.issue,
+                        pages = excluded.pages,
+                        year = excluded.year,
+                        keywords = excluded.keywords,
+                        work_type = excluded.work_type,
+                        url = excluded.url
+                ");
+            } else {
+                $stmt = $db->prepare("
+                    INSERT INTO works (researcher_id, put_code, title, doi, abstract, authors, 
+                                       journal, volume, issue, pages, year, keywords, work_type, url)
+                    VALUES (:researcher_id, :put_code, :title, :doi, :abstract, :authors,
+                            :journal, :volume, :issue, :pages, :year, :keywords, :work_type, :url)
+                    ON CONFLICT(doi) DO UPDATE SET
+                        title = excluded.title,
+                        abstract = excluded.abstract,
+                        authors = excluded.authors,
+                        journal = excluded.journal,
+                        volume = excluded.volume,
+                        issue = excluded.issue,
+                        pages = excluded.pages,
+                        year = excluded.year,
+                        keywords = excluded.keywords,
+                        work_type = excluded.work_type,
+                        url = excluded.url
+                ");
+            }
             
             $stmt->execute([
                 ':researcher_id' => $researcherId,
@@ -156,7 +184,20 @@ class Database {
                 ':url'           => $work['url'] ?? '',
             ]);
             
-            return (int)$db->lastInsertId();
+            // Fetch the actual work ID after upsert
+            if (!empty($work['doi'])) {
+                $selectStmt = $db->prepare("SELECT id FROM works WHERE doi = :doi");
+                $selectStmt->execute([':doi' => $work['doi']]);
+            } else {
+                $selectStmt = $db->prepare("SELECT id FROM works WHERE put_code = :put_code AND researcher_id = :researcher_id");
+                $selectStmt->execute([
+                    ':put_code' => $work['put_code'] ?? '',
+                    ':researcher_id' => $researcherId
+                ]);
+            }
+            $result = $selectStmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result ? (int)$result['id'] : null;
         } catch (Exception $e) {
             error_log('Failed to save work: ' . $e->getMessage());
             return null;

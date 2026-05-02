@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - First-character validation before json_decode()
   - OpenAlex fallback in `fetchAbstractFromAlternativeSource()`
 
+- **Bug #3**: SQLite ON CONFLICT clause does not match UNIQUE constraint - Added UNIQUE constraints to `works.doi` and `works.put_code` columns in schema.sql to support upsert operations
+  
+- **Bug #4**: lastInsertId() returns stale ID after ON CONFLICT DO UPDATE - Modified `saveResearcher()` and `saveWork()` to explicitly SELECT the ID after upsert instead of relying on lastInsertId()
+
+- **Bug #5**: showError() replaces #ajaxProgressSection innerHTML breaking subsequent progress updates - Refactored showError() to preserve DOM structure by updating element content instead of replacing innerHTML, ensuring showProgress()/setBar() continue to work after errors
+
 #### Added
 - **Front Controller Router** (`public/.htaccess`, `public/index.php`):
   - Clean URL support for `/orcid/{id}` → `index.php?page=orcid-profile&orcid={id}`
