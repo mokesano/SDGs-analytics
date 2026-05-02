@@ -3,7 +3,7 @@
  * SDG Frontend - Configuration File
  * Konfigurasi utama untuk aplikasi SDG Classification Analysis
  * 
- * @version 5.1.8
+ * @version 1.0.0
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
@@ -15,8 +15,8 @@
 // Informasi situs
 define('SITE_NAME', 'SDGs Classification Analysis');
 define('SITE_URL', 'https://www.wizdam.sangia.org'); // Sesuaikan domain
-define('VERSION', '5.2.0');
-define('API_VERSION', 'v5_2_0');
+define('VERSION', '1.0.0');
+define('API_VERSION', 'v1_0_0');
 
 // Path absolut ke file-file kritis (aman di semua konfigurasi server)
 if (!defined('PROJECT_ROOT')) {
@@ -38,7 +38,7 @@ date_default_timezone_set('Asia/Jakarta');
 // URL API utama - sesuai dengan kode original
 $CONFIG = [
     // API endpoint untuk analisis SDG
-    'API_BASE_URL' => 'https://www.wizdam.sangia.org/API/v5_1_8_SDGs_Classification.php',
+    'API_BASE_URL' => 'https://www.wizdam.sangia.org/API/v1/SDGs_Classification.php',
     
     // API eksternal
     'ORCID_API_URL' => 'https://pub.orcid.org/v3.0',

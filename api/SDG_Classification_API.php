@@ -13,7 +13,7 @@
  * - ?doi=xxx           → Analisis satu artikel
  *
  * @author Rochmady and Wizdam Team
- * @version 5.2.0
+ * @version 1.0.0
  * @license MIT
  */
 
@@ -23,7 +23,7 @@
 if (empty($_GET)) {
     http_response_code(200);
     header('Content-Type: application/json');
-    echo json_encode(['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v5.2.0']);
+    echo json_encode(['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v1.0.0']);
     exit;
 }
 
@@ -181,7 +181,7 @@ function main() {
                 'Refresh Cache'    => 'tambahkan &refresh=true',
             ],
             'timestamp'   => date('c'),
-            'api_version' => 'v5.2.0',
+            'api_version' => 'v1.0.0',
         ];
     }
 }
@@ -240,7 +240,7 @@ function handleOrcidInitRequest($orcid, $force_refresh = false) {
     $result = [
         'status'       => 'success',
         'action'       => 'init',
-        'api_version'  => 'v5.2.0',
+        'api_version'  => 'v1.0.0',
         'personal_info' => [
             'name'         => $name ?: 'Peneliti ' . $orcid,
             'institutions' => $institutions,
@@ -284,7 +284,7 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
         return [
             'status'      => 'success',
             'action'      => 'batch',
-            'api_version' => 'v5.2.0',
+            'api_version' => 'v1.0.0',
             'orcid'       => $orcid,
             'offset'      => $offset,
             'limit'       => $limit,
@@ -464,7 +464,7 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
     $result = [
         'status'      => 'success',
         'action'      => 'batch',
-        'api_version' => 'v5.2.0',
+        'api_version' => 'v1.0.0',
         'orcid'       => $orcid,
         'offset'      => $offset,
         'limit'       => $limit,
@@ -595,7 +595,7 @@ function handleOrcidSummaryRequest($orcid) {
     return [
         'status'               => 'success',
         'action'               => 'summary',
-        'api_version'          => 'v5.2.0',
+        'api_version'          => 'v1.0.0',
         'personal_info'        => $init_data['personal_info'],
         'researcher_sdg_summary' => $researcher_sdg_summary,
         'contributor_profile'  => $contributor_profile,
@@ -1109,7 +1109,7 @@ function processOrcidData($orcid, $works_data, $person_data) {
         'researcher_sdg_summary'=> $researcher_sdg_summary,
         'works'                 => $processed_works,
         'status'                => 'success',
-        'api_version'           => 'v5.2.0',
+        'api_version'           => 'v1.0.0',
         'timestamp'             => date('c'),
     ];
 }
@@ -1186,14 +1186,14 @@ function processDoiData($doi, $data) {
         'contributor_types'    => $ctypes,
         'contribution_pathways'=> $pathways,
         'detailed_analysis'    => $sdg_analysis,
-        'api_version'          => 'v5.2.0',
+        'api_version'          => 'v1.0.0',
         'status'               => 'success',
         'timestamp'            => date('c'),
     ];
 }
 
 // =================================================================
-// FUNGSI ANALISIS SDG (tidak berubah dari v5.1.8)
+// FUNGSI ANALISIS SDG (tidak berubah dari v1.0.0)
 // =================================================================
 
 function evaluateSDGContribution($text, $sdg) {
@@ -1653,5 +1653,5 @@ try {
     echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'code' => 500, 'message' => 'Internal error: ' . $e->getMessage(), 'timestamp' => date('c'), 'api_version' => 'v5.2.0'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    echo json_encode(['status' => 'error', 'code' => 500, 'message' => 'Internal error: ' . $e->getMessage(), 'timestamp' => date('c'), 'api_version' => 'v1.0.0'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

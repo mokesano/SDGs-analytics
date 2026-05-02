@@ -8,7 +8,7 @@
  *
  * AJAX endpoint = public/index.php (file ini di-include dari sana).
  *
- * @version 5.2.0
+ * @version 1.0.0
  * @author Rochmady and Wizdam Team
  */
 
