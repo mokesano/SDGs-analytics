@@ -3,7 +3,7 @@
  * SDG Classification Presentation Interface
  * Interface modern untuk menampilkan hasil analisis SDG
  *
- * Perubahan dari v2.3 (MINIMAL – semua bagian original tetap utuh):
+ * Perubahan dari v1.1 (MINIMAL – semua bagian original tetap utuh):
  * + Proxy block ditambah di atas untuk menghindari WAF
  * + makeApiRequest kini pakai direct PHP include (tidak cURL ke URL eksternal)
  * + ORCID diproses via AJAX sequential (tidak timeout) – JS intercept
@@ -11,7 +11,7 @@
  * + Progress section ditambah (hidden by default)
  * Semua CSS, HTML, fungsi PHP, dan JS asli TIDAK diubah.
  *
- * @version 2.4 - AJAX Sequential untuk ORCID
+ * @version 1.1 - AJAX Sequential untuk ORCID
  * @author Rochmady and Wizdam Team
  * Last update: 2025-06-16
  */
