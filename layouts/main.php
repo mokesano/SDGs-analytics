@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS (built) -->
-    <link rel="stylesheet" href="/dist/assets/styles-RLXKZ-n-.css">
+    <link rel="stylesheet" href="/dist/assets/styles-CEd_xe0g.css">
 </head>
 <body class="bg-bg text-text transition-colors duration-300">
     <!-- Navbar -->
