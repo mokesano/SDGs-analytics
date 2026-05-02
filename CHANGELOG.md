@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Phase 1 — Bug Fix & Foundation ✅
 
-**Completed:** [Date: Current]
+**Completed:** December 2024
 
 #### Fixed
 - **Bug #1**: Metadata artikel tidak lengkap - Implemented put-code fetching from ORCID API and Crossref enrichment for complete bibliographic data (authors, journal, volume, issue, pages, keywords)
@@ -46,9 +46,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - SQLite database path constants (DB_PATH, DB_SCHEMA_FILE)
   - Updated $DB_CONFIG for SQLite driver
 
+- **Data Persistence** (`api/SDG_Classification_API.php`):
+  - New function `persistOrcidResultsToDatabase()` to save analysis results after batch completion
+  - Automatic database storage when `action=summary` is called
+  - Saves researchers, works, and work_sdgs relationships in a single transaction
+  - Error logging for failed persistence operations
+
 #### Changed
 - Refactored CSS into modular files: variables.css, base.css, components.css, sdg-colors.css, layout.css, animations.css (already existed)
 - Refactored JavaScript into modular files: script.js, charts.js, scroll-reveal.js (already existed)
+
+#### Task Completion Status
+
+| Task | Status | Deliverable |
+|------|--------|-------------|
+| Fix metadata artikel (put-code + Crossref enrichment) | ✅ Done | Karya tampil dengan penulis, jurnal, keywords |
+| Fix SyntaxError DOI + retry logic | ✅ Done | DOI analysis stabil, handle rate limit |
+| Implementasi front controller router | ✅ Done | URL `/orcid/{id}` dan `/journal/{issn}` aktif |
+| Setup SQLite + schema + PDO helper | ✅ Done | DB tersedia, tabel siap |
+| Simpan hasil analisis ke DB setelah batch selesai | ✅ Done | Data ORCID tersimpan otomatis via `persistOrcidResultsToDatabase()` |
+| Pisahkan CSS/JS ke `assets/` (refactor) | ✅ Done | File modular di assets/css/ dan assets/js/ |
 
 ---
 
