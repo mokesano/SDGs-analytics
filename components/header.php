@@ -24,14 +24,14 @@
     <meta property="og:description" content="<?php echo isset($page_description) ? $page_description : 'Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals.'; ?>" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>" />
-    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg" />
+    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/cover/cover-sikola.jpg" />
     <meta property="og:site_name" content="Wizdam AI - SDG Analysis" />
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="<?php echo isset($page_title) ? $page_title : 'SDGs Classification Analysis'; ?>" />
     <meta name="twitter:description" content="<?php echo isset($page_description) ? $page_description : 'Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals.'; ?>" />
-    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/twitter-card.jpg" />
+    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/cover/sikola-cover.jpg" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?php echo SITE_URL; ?>/assets/images/favicon.ico" />
@@ -48,11 +48,19 @@
     
     <!-- External CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+
     <!-- Local CSS -->
     <link href="assets/css/style.css" rel="stylesheet" />
     <link href="assets/css/chatbot.css" rel="stylesheet" />
+
+    <!-- Design System CSS -->
+    <link href="assets/css/variables.css" rel="stylesheet" />
+    <link href="assets/css/base.css" rel="stylesheet" />
+    <link href="assets/css/components.css" rel="stylesheet" />
+    <link href="assets/css/sdg-colors.css" rel="stylesheet" />
+    <link href="assets/css/layout.css" rel="stylesheet" />
+    <link href="assets/css/animations.css" rel="stylesheet" />
     
     <!-- External JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" defer></script>
@@ -140,7 +148,7 @@
             margin-bottom: 27px;
             color: white;
             padding: 70px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff5627 0%, #e0481d 100%);
             position: relative;
             overflow: hidden;
         }
@@ -179,8 +187,8 @@
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     
     <!-- Theme Color for Mobile Browsers -->
-    <meta name="theme-color" content="#667eea" />
-    <meta name="msapplication-TileColor" content="#667eea" />
+    <meta name="theme-color" content="#ff5627" />
+    <meta name="msapplication-TileColor" content="#ff5627" />
     <meta name="msapplication-TileImage" content="<?php echo SITE_URL; ?>/assets/images/mstile-144x144.png" />
     
     <!-- Apple-specific Meta Tags -->
@@ -269,14 +277,14 @@
             width: 40px;
             height: 40px;
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #ff5627;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 15px;
         }
         
         .loader-text {
-            color: #667eea;
+            color: #ff5627;
             font-weight: 600;
             font-size: 14px;
         }

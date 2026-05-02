@@ -679,7 +679,7 @@ criticalPages.forEach(url => {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, var(--brand, #ff5627), var(--brand-hover, #e0481d));
     width: 0%;
     transition: width 0.3s ease;
 }
@@ -818,7 +818,7 @@ criticalPages.forEach(url => {
 /* Keyboard navigation */
 .keyboard-navigation .navbar-item:focus,
 .keyboard-navigation .dropdown-trigger:focus {
-    outline: 2px solid #667eea;
+    outline: 2px solid var(--brand, #ff5627);
     outline-offset: 2px;
 }
 

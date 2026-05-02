@@ -126,7 +126,8 @@
 
 <!-- Local JavaScript -->
 <script src="assets/js/script.js" defer></script>
-<script src="assets/js/chart.js" defer></script>
+<script src="assets/js/charts.js" defer></script>
+<script src="assets/js/scroll-reveal.js" defer></script>
 
 <!-- Additional Page-Specific Scripts -->
 <?php if (isset($additional_scripts)): ?>
@@ -149,7 +150,7 @@
     right: 30px;
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand, #ff5627);
     color: white;
     border: none;
     border-radius: 50%;
@@ -184,7 +185,7 @@
     color: white;
     padding: 20px;
     z-index: 10000;
-    border-top: 3px solid #667eea;
+    border-top: 3px solid var(--brand, #ff5627);
 }
 
 .cookie-content {
@@ -205,7 +206,7 @@
 
 .cookie-text i {
     font-size: 24px;
-    color: #667eea;
+    color: var(--brand, #ff5627);
 }
 
 .cookie-actions {
@@ -224,22 +225,22 @@
 }
 
 .cookie-accept {
-    background: #667eea;
+    background: var(--brand, #ff5627);
     color: white;
 }
 
 .cookie-accept:hover {
-    background: #5a6fd8;
+    background: var(--brand-hover, #e0481d);
 }
 
 .cookie-customize {
     background: transparent;
     color: white;
-    border: 1px solid #667eea;
+    border: 1px solid var(--brand, #ff5627);
 }
 
 .cookie-customize:hover {
-    background: #667eea;
+    background: var(--brand, #ff5627);
     color: white;
 }
 
