@@ -66,17 +66,19 @@ $CONFIG = [
 ];
 
 // ==============================================
-// KONFIGURASI DATABASE (OPSIONAL)
+// KONFIGURASI DATABASE
 // ==============================================
+
+// SQLite database path
+define('DB_PATH', PROJECT_ROOT . '/database/wizdam.db');
+define('DB_SCHEMA_FILE', PROJECT_ROOT . '/database/schema.sql');
 
 // Jika Anda menggunakan database untuk logging atau caching
 $DB_CONFIG = [
-    'host' => 'localhost',
-    'database' => 'sdg_analysis',
-    'username' => 'your_username',
-    'password' => 'your_password',
+    'driver' => 'sqlite',
+    'database' => DB_PATH,
     'charset' => 'utf8mb4',
-    'enabled' => false // Set true jika menggunakan database
+    'enabled' => true // Set true jika menggunakan database
 ];
 
 // ==============================================

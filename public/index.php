@@ -134,7 +134,7 @@ $allowed_pages = [
     'documentation', 'analitics-dashboard', 'api-access', 'bulk-analysis',
     'integration-tools', 'tutorials', 'research-papers', 'api-reference',
     'community-forum', 'blog', 'careers', 'partners', 'press-kit',
-    'privacy-policy',
+    'privacy-policy', 'orcid-profile', 'journal-profile',
 ];
 if (!in_array($page, $allowed_pages)) $page = 'home';
 
