@@ -1,35 +1,19 @@
-```
-# Dependencies
-node_modules/
+```gitignore
+# Database files
+*.db
 
-# Build artifacts
-dist/
+# Logs and temp files
+*.log
+*.tmp
 
-# Environment variables
+# Environment
 .env
 .env.local
-.env.*
+*.env.*
 
-# IDE
+# Editors
 .vscode/
 .idea/
-
-# Logs
-*.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.swp
-*.swo
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
 
 # Python
 __pycache__/
@@ -40,39 +24,18 @@ __pycache__/
 env/
 venv/
 .venv/
+.venv.bak/
 pip-log.txt
 pip-delete-this-directory.txt
-*.so
-*.egg-info/
-.egg/
-
-# Node.js
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Compression
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
-
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/modules/
+.DS_Store
+Thumbs.db
 ```
