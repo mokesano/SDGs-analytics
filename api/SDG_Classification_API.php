@@ -405,9 +405,9 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
 
         // Analisis SDG
         $sdg_analysis = [];
-        foreach ($SDG_KEYWORDS as $sdg => $keywords) {
+        foreach ($SDG_KEYWORDS as $sdg => $sdg_kw_list) {
             $matched = false;
-            foreach ($keywords as $keyword) {
+            foreach ($sdg_kw_list as $keyword) {
                 if (stripos($preprocessed_text, $keyword) !== false) {
                     $matched = true;
                     break;
@@ -509,6 +509,7 @@ function handleOrcidSummaryRequest($orcid) {
 
     $researcher_sdg_summary = [];
     $total_analyzed         = 0;
+    $all_works              = [];
 
     // Baca semua batch cache dan agregasi
     for ($offset = 0; $offset < $total_works; $offset += $limit) {
@@ -521,6 +522,7 @@ function handleOrcidSummaryRequest($orcid) {
 
         foreach ($batch_data['works'] as $work) {
             $total_analyzed++;
+            $all_works[] = $work;
 
             foreach ($work['detailed_analysis'] as $sdg => $analysis) {
                 if ($analysis['score'] < $CONFIG['CONFIDENCE_THRESHOLD']) continue;
@@ -601,16 +603,194 @@ function handleOrcidSummaryRequest($orcid) {
         ];
     }
 
-    return [
+    $summary_result = [
         'status'               => 'success',
         'action'               => 'summary',
-        'api_version'          => 'v1.0.0',
+        'api_version'          => 'v5.2.0',
+        'orcid'                => $orcid,
         'personal_info'        => $init_data['personal_info'],
         'researcher_sdg_summary' => $researcher_sdg_summary,
         'contributor_profile'  => $contributor_profile,
+        'total_works'          => $total_works,
         'total_works_analyzed' => $total_analyzed,
+        'works'                => $all_works,
         'timestamp'            => date('c'),
     ];
+
+    // Persist results to database (silently — never crash the API)
+    persistOrcidResultsToDb($summary_result);
+
+    // Strip works array from response to avoid bloating the JSON output
+    unset($summary_result['works']);
+
+    return $summary_result;
+}
+
+/**
+ * Persist ORCID summary + individual works / SDG mappings to the SQLite database.
+ * Self-contained: works whether bootstrap.php was loaded or not (POST proxy never loads it).
+ */
+function persistOrcidResultsToDb(array $summary): void {
+    try {
+        if (function_exists('getDb')) {
+            $db = getDb();
+        } else {
+            // POST proxy path — bootstrap.php is never required, so open PDO directly.
+            $db_path = defined('PROJECT_ROOT')
+                ? PROJECT_ROOT . '/database/wizdam.db'
+                : dirname(__DIR__)  . '/database/wizdam.db';
+            $db_dir = dirname($db_path);
+            if (!is_dir($db_dir)) {
+                mkdir($db_dir, 0755, true);
+            }
+            $db = new PDO('sqlite:' . $db_path);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db->exec('PRAGMA journal_mode=WAL');
+            $db->exec('PRAGMA foreign_keys=ON');
+            // Bootstrap schema so tables exist on first run
+            $schema = defined('PROJECT_ROOT')
+                ? PROJECT_ROOT . '/database/schema.sql'
+                : dirname(__DIR__)  . '/database/schema.sql';
+            if (file_exists($schema)) {
+                $db->exec((string) file_get_contents($schema));
+            }
+        }
+    } catch (Throwable $e) {
+        error_log('[persistOrcidResultsToDb] DB init failed: ' . $e->getMessage());
+        return;
+    }
+
+    try {
+        $orcid        = $summary['orcid'] ?? null;
+        $name         = $summary['personal_info']['name'] ?? null;
+        $institutions = json_encode($summary['personal_info']['institutions'] ?? []);
+        $total_works  = $summary['total_works'] ?? 0;
+
+        if (empty($orcid)) return;
+
+        // ── Upsert researcher ─────────────────────────────────────
+        $stmt = $db->prepare(
+            'INSERT INTO researchers (orcid, name, institutions, total_works, last_fetched)
+             VALUES (?, ?, ?, ?, datetime(\'now\'))
+             ON CONFLICT(orcid) DO UPDATE SET
+               name=excluded.name,
+               institutions=excluded.institutions,
+               total_works=excluded.total_works,
+               last_fetched=excluded.last_fetched'
+        );
+        $stmt->execute([$orcid, $name, $institutions, $total_works]);
+
+        // Get researcher ID
+        $stmt = $db->prepare('SELECT id FROM researchers WHERE orcid=?');
+        $stmt->execute([$orcid]);
+        $researcher_id = $stmt->fetchColumn();
+        if (!$researcher_id) return;
+
+        // ── Upsert each work ──────────────────────────────────────
+        foreach ($summary['works'] ?? [] as $work) {
+            $title     = $work['title']     ?? null;
+            $doi       = $work['doi']       ?? null;
+            $abstract  = $work['abstract']  ?? null;
+            $authors   = json_encode($work['contributors'] ?? []);
+            $journal   = $work['journal']   ?? null;
+            $volume    = $work['volume']    ?? null;
+            $issue     = $work['issue']     ?? null;
+            $pages     = $work['pages']     ?? null;
+            $year      = isset($work['year']) ? (int)$work['year'] : null;
+            $keywords  = json_encode($work['keywords'] ?? []);
+            $work_type = $work['work_type'] ?? null;
+            $url       = $work['url']       ?? null;
+            $put_code  = $work['put_code']  ?? null;
+
+            // Upsert work (keyed on put_code + researcher_id when available, else title)
+            if ($put_code !== null) {
+                $stmt = $db->prepare(
+                    'INSERT INTO works
+                       (researcher_id, put_code, title, doi, abstract, authors, journal,
+                        volume, issue, pages, year, keywords, work_type, url)
+                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                     WHERE NOT EXISTS (
+                         SELECT 1 FROM works WHERE put_code=? AND researcher_id=?
+                     )'
+                );
+                $stmt->execute([
+                    $researcher_id, $put_code, $title, $doi, $abstract, $authors,
+                    $journal, $volume, $issue, $pages, $year, $keywords, $work_type, $url,
+                    $put_code, $researcher_id,
+                ]);
+
+                // Update existing record fields
+                $stmt = $db->prepare(
+                    'UPDATE works SET
+                       title=?, doi=?, abstract=?, authors=?, journal=?, volume=?,
+                       issue=?, pages=?, year=?, keywords=?, work_type=?, url=?
+                     WHERE put_code=? AND researcher_id=?'
+                );
+                $stmt->execute([
+                    $title, $doi, $abstract, $authors, $journal, $volume,
+                    $issue, $pages, $year, $keywords, $work_type, $url,
+                    $put_code, $researcher_id,
+                ]);
+            } else {
+                // No put_code — insert only if title+researcher_id combo is new
+                $stmt = $db->prepare(
+                    'INSERT INTO works
+                       (researcher_id, put_code, title, doi, abstract, authors, journal,
+                        volume, issue, pages, year, keywords, work_type, url)
+                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                     WHERE NOT EXISTS (
+                         SELECT 1 FROM works WHERE title=? AND researcher_id=?
+                     )'
+                );
+                $stmt->execute([
+                    $researcher_id, null, $title, $doi, $abstract, $authors,
+                    $journal, $volume, $issue, $pages, $year, $keywords, $work_type, $url,
+                    $title, $researcher_id,
+                ]);
+            }
+
+            // Get work ID
+            if ($put_code !== null) {
+                $stmt = $db->prepare('SELECT id FROM works WHERE put_code=? AND researcher_id=?');
+                $stmt->execute([$put_code, $researcher_id]);
+            } else {
+                $stmt = $db->prepare('SELECT id FROM works WHERE title=? AND researcher_id=?');
+                $stmt->execute([$title, $researcher_id]);
+            }
+            $work_id = $stmt->fetchColumn();
+            if (!$work_id) continue;
+
+            // ── Refresh SDG mappings for this work ────────────────
+            $stmt = $db->prepare('DELETE FROM work_sdgs WHERE work_id=?');
+            $stmt->execute([$work_id]);
+
+            $sdg_analysis    = $work['detailed_analysis']  ?? [];
+            $contributor_map = $work['contributor_types']  ?? [];
+
+            foreach ($sdg_analysis as $sdg_code => $analysis) {
+                $contributor_type = $analysis['contributor_type']['type'] ?? ($contributor_map[$sdg_code] ?? null);
+                if ($contributor_type === 'Not Relevant') continue;
+
+                $confidence_score = $analysis['score']             ?? null;
+                $keyword_score    = $analysis['keyword_score']     ?? null;
+                $similarity_score = $analysis['similarity_score']  ?? null;
+                $causal_score     = $analysis['causal_score']      ?? null;
+
+                $stmt = $db->prepare(
+                    'INSERT INTO work_sdgs
+                       (work_id, sdg_code, confidence_score, contributor_type,
+                        keyword_score, similarity_score, causal_score)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)'
+                );
+                $stmt->execute([
+                    $work_id, $sdg_code, $confidence_score, $contributor_type,
+                    $keyword_score, $similarity_score, $causal_score,
+                ]);
+            }
+        }
+    } catch (Throwable $e) {
+        error_log('[persistOrcidResultsToDb] DB error: ' . $e->getMessage());
+    }
 }
 
 // =================================================================

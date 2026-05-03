@@ -1,640 +1,355 @@
 <?php
-// pages/about.php - About page
-$page_title = "About Us";
-$page_description = "Learn about Wizdam AI's mission to advance Sustainable Development Goals through AI-powered research analysis and classification technology.";
+$page_title = 'Tentang Wizdam AI';
+$page_description = 'Wizdam AI — Platform klasifikasi SDG berbasis AI oleh PT. Sangia Research Media and Publishing untuk membantu peneliti memahami kontribusi riset mereka terhadap Tujuan Pembangunan Berkelanjutan.';
 ?>
 
-<div class="header">
-    <h1><i class="fas fa-info-circle"></i> About Wizdam AI</h1>
-    <p>Advancing Sustainable Development Goals through AI-powered research analysis</p>
+<div class="page-header">
+    <div class="container">
+        <div class="section-label">Tentang Kami</div>
+        <h1 class="section-title">Menghubungkan Riset dengan Tujuan Global</h1>
+        <p class="section-subtitle">Wizdam AI membantu peneliti memahami dan mengukur kontribusi karya ilmiah mereka terhadap 17 Tujuan Pembangunan Berkelanjutan (SDG) PBB.</p>
+    </div>
 </div>
 
+<section class="section">
 <div class="container">
-    <!-- Mission Section -->
-    <div class="info-general">
-        <h2><i class="fas fa-bullseye"></i> Our Mission</h2>
-        <p class="lead">
-            At Wizdam AI, we believe that artificial intelligence can be a powerful force for positive change in the world. 
-            Our mission is to accelerate progress toward the United Nations Sustainable Development Goals (SDGs) by making 
-            research impact more visible, measurable, and actionable.
-        </p>
-        
-        <div class="mission-grid">
-            <div class="mission-card">
-                <div class="mission-icon">
-                    <i class="fas fa-globe"></i>
-                </div>
-                <h4>Global Impact</h4>
-                <p>Empowering researchers worldwide to understand and amplify their contributions to sustainable development.</p>
-            </div>
-            
-            <div class="mission-card">
-                <div class="mission-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h4>AI Innovation</h4>
-                <p>Leveraging cutting-edge artificial intelligence to provide accurate, comprehensive SDG classification.</p>
-            </div>
-            
-            <div class="mission-card">
-                <div class="mission-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h4>Community Driven</h4>
-                <p>Building a collaborative platform that connects researchers, institutions, and policymakers.</p>
-            </div>
+
+    <!-- Stats Bar -->
+    <div class="about-stats-bar">
+        <div class="about-stat-item">
+            <div class="about-stat-number">34.701+</div>
+            <div class="about-stat-label">Karya Dianalisis</div>
+        </div>
+        <div class="about-stat-item">
+            <div class="about-stat-number">12.843+</div>
+            <div class="about-stat-label">Peneliti</div>
+        </div>
+        <div class="about-stat-item">
+            <div class="about-stat-number">1.256+</div>
+            <div class="about-stat-label">Jurnal</div>
+        </div>
+        <div class="about-stat-item">
+            <div class="about-stat-number">17</div>
+            <div class="about-stat-label">SDGs Didukung</div>
         </div>
     </div>
 
-    <!-- Company Story -->
-    <div class="info-general">
-        <h2><i class="fas fa-history"></i> Our Story</h2>
-        <div class="story-timeline">
-            <div class="timeline-item">
-                <div class="timeline-year">2020</div>
-                <div class="timeline-content">
-                    <h4>Foundation</h4>
-                    <p>Wizdam AI was founded by a team of researchers and AI experts passionate about using technology for social good. The idea emerged from the challenge of measuring research impact on the SDGs.</p>
+    <!-- Mission -->
+    <div class="card about-mission-card">
+        <div class="about-mission-icon"><i class="fas fa-bullseye"></i></div>
+        <div class="about-mission-body">
+            <h2 style="font-size:1.4rem;margin-bottom:.75rem;color:var(--dark,#1a2e45);">Misi Kami</h2>
+            <p style="color:var(--gray-600);line-height:1.8;font-size:1rem;">
+                Wizdam AI lahir dari keyakinan bahwa penelitian akademik Indonesia memiliki kontribusi besar terhadap agenda global SDG yang belum terukur secara sistematis.
+                Kami membangun platform berbasis kecerdasan buatan yang memungkinkan setiap peneliti — dari Sabang sampai Merauke — untuk memahami dampak nyata karya mereka
+                terhadap isu-isu global: kemiskinan, pendidikan, kesehatan, lingkungan, dan 13 tujuan lainnya.
+            </p>
+            <p style="color:var(--gray-600);line-height:1.8;font-size:1rem;margin-top:.75rem;">
+                Platform ini dikembangkan oleh <strong>PT. Sangia Research Media and Publishing</strong>, sebuah lembaga riset dan penerbitan akademik berbasis di Indonesia,
+                dengan dukungan teknologi AI terkini mencakup keyword matching berbasis UN AURORA, cosine similarity TF-IDF, dan causal relationship analysis.
+            </p>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div style="margin:3rem 0;">
+        <div class="section-label" style="text-align:center;margin-bottom:.5rem;">Perjalanan Kami</div>
+        <h2 style="text-align:center;font-size:1.5rem;margin-bottom:2.5rem;color:var(--dark,#1a2e45);">Sejarah Wizdam</h2>
+
+        <div class="about-timeline">
+            <div class="about-timeline-line"></div>
+
+            <div class="about-timeline-item">
+                <div class="about-timeline-year">2019</div>
+                <div class="about-timeline-dot"></div>
+                <div class="about-timeline-content">
+                    <h4>Awal Mulai</h4>
+                    <p>Riset awal tentang klasifikasi SDG berbasis AI dimulai sebagai proyek penelitian internal PT. Sangia Research. Tim kecil mulai mengeksplorasi metode NLP untuk memetakan karya akademik ke dalam kerangka SDG PBB.</p>
                 </div>
             </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-year">2021</div>
-                <div class="timeline-content">
-                    <h4>First Platform</h4>
-                    <p>Launched our first SDG classification prototype, working with universities to test and refine our AI algorithms using thousands of research papers.</p>
+
+            <div class="about-timeline-item about-timeline-item-right">
+                <div class="about-timeline-year">2020</div>
+                <div class="about-timeline-dot"></div>
+                <div class="about-timeline-content">
+                    <h4>Pengembangan Platform</h4>
+                    <p>Prototype pertama classifier SDG dikembangkan menggunakan algoritma keyword matching dan vector similarity. Pengujian awal dilakukan terhadap ratusan artikel ilmiah Indonesia.</p>
                 </div>
             </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-year">2022</div>
-                <div class="timeline-content">
-                    <h4>API Launch</h4>
-                    <p>Released our comprehensive API, enabling institutions to integrate SDG analysis directly into their research management systems.</p>
+
+            <div class="about-timeline-item">
+                <div class="about-timeline-year">2021</div>
+                <div class="about-timeline-dot"></div>
+                <div class="about-timeline-content">
+                    <h4>Kemitraan Awal</h4>
+                    <p>Integrasi pertama dengan ORCID API dan CrossRef berhasil dilakukan, memungkinkan pengambilan data publikasi peneliti secara otomatis. Kolaborasi dengan beberapa universitas untuk validasi model dimulai.</p>
                 </div>
             </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-year">2023</div>
-                <div class="timeline-content">
-                    <h4>Global Expansion</h4>
-                    <p>Partnered with leading universities and research institutions worldwide, analyzing over 1 million publications for SDG relevance.</p>
+
+            <div class="about-timeline-item about-timeline-item-right">
+                <div class="about-timeline-year">2022</div>
+                <div class="about-timeline-dot"></div>
+                <div class="about-timeline-content">
+                    <h4>Peluncuran Platform Penuh</h4>
+                    <p>wizdam.sangia.org diluncurkan secara resmi ke publik. Platform mendukung analisis ORCID dan DOI dengan tampilan hasil yang komprehensif termasuk SDG badge, contributor type, dan confidence score.</p>
                 </div>
             </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-year">2024</div>
-                <div class="timeline-content">
+
+            <div class="about-timeline-item">
+                <div class="about-timeline-year">2023</div>
+                <div class="about-timeline-dot"></div>
+                <div class="about-timeline-content">
+                    <h4>Pengembangan Database</h4>
+                    <p>Integrasi OpenAlex dan Semantic Scholar sebagai sumber abstrak fallback memperluas cakupan analisis secara signifikan. Database internal berkembang pesat dengan puluhan ribu karya teranalisis.</p>
+                </div>
+            </div>
+
+            <div class="about-timeline-item about-timeline-item-right">
+                <div class="about-timeline-year">2024</div>
+                <div class="about-timeline-dot"></div>
+                <div class="about-timeline-content">
                     <h4>AI Enhancement</h4>
-                    <p>Introduced advanced natural language processing and machine learning capabilities, achieving 95%+ accuracy in SDG classification.</p>
+                    <p>Penguatan algoritma cosine similarity dengan TF-IDF yang lebih akurat dan penambahan modul causal relationship analysis untuk mendeteksi kontribusi kausal langsung terhadap SDG target.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Technology Section -->
-    <div class="info-general">
-        <h2><i class="fas fa-cogs"></i> Our Technology</h2>
-        <p>Our SDG classification system combines multiple AI approaches to provide comprehensive and accurate analysis:</p>
-        
-        <div class="tech-features">
-            <div class="tech-feature">
-                <div class="tech-icon">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h4>Keyword Analysis</h4>
-                <p>Advanced semantic matching against comprehensive SDG vocabularies and taxonomies.</p>
-                <div class="tech-weight">Weight: 30%</div>
+    <!-- Values -->
+    <div style="margin:3rem 0;">
+        <div class="section-label" style="text-align:center;margin-bottom:.5rem;">Nilai-Nilai Kami</div>
+        <h2 style="text-align:center;font-size:1.5rem;margin-bottom:2rem;color:var(--dark,#1a2e45);">Prinsip yang Memandu Kami</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
+            <div class="about-value-card">
+                <div class="about-value-icon" style="background:rgba(255,86,39,.12);color:#ff5627;"><i class="fas fa-crosshairs"></i></div>
+                <h3>Akurasi</h3>
+                <p>Setiap klasifikasi SDG dihasilkan dari tiga lapisan analisis yang saling memvalidasi — keyword, similarity, dan causal — untuk memastikan hasil yang dapat dipercaya dan terukur.</p>
             </div>
-            
-            <div class="tech-feature">
-                <div class="tech-icon">
-                    <i class="fas fa-project-diagram"></i>
-                </div>
-                <h4>Similarity Mapping</h4>
-                <p>Deep learning models that understand contextual relationships between research content and SDG themes.</p>
-                <div class="tech-weight">Weight: 30%</div>
+            <div class="about-value-card">
+                <div class="about-value-icon" style="background:rgba(16,185,129,.12);color:#10b981;"><i class="fas fa-eye"></i></div>
+                <h3>Transparansi</h3>
+                <p>Setiap skor ditampilkan beserta komponen pembentuknya. Peneliti dapat melihat persis mengapa sebuah karya diklasifikasikan ke SDG tertentu dan berapa confidence score-nya.</p>
             </div>
-            
-            <div class="tech-feature">
-                <div class="tech-icon">
-                    <i class="fas fa-microscope"></i>
-                </div>
-                <h4>Substantive Analysis</h4>
-                <p>Evaluation of research depth and methodology relevance to specific SDG targets and indicators.</p>
-                <div class="tech-weight">Weight: 20%</div>
-            </div>
-            
-            <div class="tech-feature">
-                <div class="tech-icon">
-                    <i class="fas fa-link"></i>
-                </div>
-                <h4>Causal Inference</h4>
-                <p>Detection of causal relationships and evidence of direct impact on SDG outcomes.</p>
-                <div class="tech-weight">Weight: 20%</div>
+            <div class="about-value-card">
+                <div class="about-value-icon" style="background:rgba(59,130,246,.12);color:#3b82f6;"><i class="fas fa-globe-asia"></i></div>
+                <h3>Dampak</h3>
+                <p>Kami percaya data tentang kontribusi riset terhadap SDG dapat mendorong kebijakan yang lebih baik, kolaborasi yang lebih terarah, dan pengakuan yang lebih adil bagi peneliti Indonesia.</p>
             </div>
         </div>
     </div>
 
-    <!-- Team Section -->
-    <div class="info-general">
-        <h2><i class="fas fa-users"></i> Our Team</h2>
-        <p>We're a diverse team of researchers, engineers, and domain experts committed to making a positive impact.</p>
-        
-        <div class="team-grid">
-            <div class="team-member">
-                <div class="member-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h4>Dr. Sarah Chen</h4>
-                <p class="member-role">Chief Technology Officer</p>
-                <p class="member-bio">AI researcher with 15+ years experience in natural language processing and machine learning.</p>
-                <div class="member-social">
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+    <!-- Team Preview -->
+    <div style="margin:3rem 0;">
+        <div class="section-label" style="text-align:center;margin-bottom:.5rem;">Tim Kami</div>
+        <h2 style="text-align:center;font-size:1.5rem;margin-bottom:2rem;color:var(--dark,#1a2e45);">Orang-Orang di Balik Wizdam</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;">
+            <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#ff5627,#e03e18);">RC</div>
+                <div class="team-name">Dr. Rochmady</div>
+                <div class="team-role">Lead Researcher &amp; AI Architect</div>
+                <div class="team-bio">Universitas Iqra Buru. Pengembang utama arsitektur Wizdam AI dan algoritma klasifikasi SDG berbasis NLP.</div>
+                <div class="team-social">
+                    <a href="https://orcid.org/0000-0002-5152-9727" target="_blank" rel="noopener" title="ORCID"><i class="fab fa-orcid"></i></a>
+                    <a href="https://github.com/mokesano" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
                 </div>
             </div>
-            
-            <div class="team-member">
-                <div class="member-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h4>Prof. Michael Rodriguez</h4>
-                <p class="member-role">Chief Scientific Officer</p>
-                <p class="member-bio">Sustainability expert and former UN advisor on SDG measurement and monitoring.</p>
-                <div class="member-social">
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" aria-label="ResearchGate"><i class="fab fa-researchgate"></i></a>
+            <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#1a2e45,#2d4a6e);">AR</div>
+                <div class="team-name">Dr. Andi Rahwan</div>
+                <div class="team-role">Research Scientist &amp; SDG Analyst</div>
+                <div class="team-bio">Pakar analisis kebijakan SDG dan validasi model klasifikasi. Bertanggung jawab atas kualitas dan akurasi kategorisasi.</div>
+                <div class="team-social">
+                    <a href="#" title="ORCID"><i class="fab fa-orcid"></i></a>
+                    <a href="?page=contact" title="Contact"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
-            
-            <div class="team-member">
-                <div class="member-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h4>Emma Thompson</h4>
-                <p class="member-role">Head of Product</p>
-                <p class="member-bio">Product strategist focused on creating intuitive tools for researchers and institutions.</p>
-                <div class="member-social">
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">WA</div>
+                <div class="team-name">Wizdam AI Team</div>
+                <div class="team-role">Engineering &amp; Platform</div>
+                <div class="team-bio">Tim teknis yang menangani pengembangan full-stack platform, integrasi API multi-sumber, dan infrastruktur data.</div>
+                <div class="team-social">
+                    <a href="https://github.com/mokesano/SDGs-analytics" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="?page=contact" title="Contact"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
-            
-            <div class="team-member">
-                <div class="member-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h4>Dr. James Park</h4>
-                <p class="member-role">Lead Data Scientist</p>
-                <p class="member-bio">Machine learning specialist with expertise in large-scale text analysis and classification.</p>
-                <div class="member-social">
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                </div>
+        </div>
+        <div style="text-align:center;margin-top:1.5rem;">
+            <a href="?page=teams" class="btn btn-outline"><i class="fas fa-users"></i> Lihat Semua Anggota Tim</a>
+        </div>
+    </div>
+
+    <!-- Partner Badges -->
+    <div style="margin:3rem 0;">
+        <div class="section-label" style="text-align:center;margin-bottom:.5rem;">Integrasi Data</div>
+        <h2 style="text-align:center;font-size:1.5rem;margin-bottom:1.5rem;color:var(--dark,#1a2e45);">Sumber Data yang Kami Gunakan</h2>
+        <div class="about-partners-row">
+            <div class="about-partner-badge" style="border-color:#a6ce39;color:#5a7a0a;">
+                <i class="fab fa-orcid" style="color:#a6ce39;"></i> ORCID
+            </div>
+            <div class="about-partner-badge" style="border-color:#c32027;color:#c32027;">
+                <i class="fas fa-link"></i> CrossRef
+            </div>
+            <div class="about-partner-badge" style="border-color:#3b82f6;color:#1d4ed8;">
+                <i class="fas fa-database"></i> OpenAlex
+            </div>
+            <div class="about-partner-badge" style="border-color:#8b5cf6;color:#7c3aed;">
+                <i class="fas fa-brain"></i> Semantic Scholar
+            </div>
+            <div class="about-partner-badge" style="border-color:#f59e0b;color:#b45309;">
+                <i class="fas fa-chart-bar"></i> Dimensions
             </div>
         </div>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="info-general">
-        <h2><i class="fas fa-chart-bar"></i> Impact by Numbers</h2>
-        <div class="stats-showcase">
-            <div class="stat-showcase">
-                <div class="stat-number">2.5M+</div>
-                <div class="stat-label">Publications Analyzed</div>
-            </div>
-            <div class="stat-showcase">
-                <div class="stat-number">500+</div>
-                <div class="stat-label">Partner Institutions</div>
-            </div>
-            <div class="stat-showcase">
-                <div class="stat-number">95%</div>
-                <div class="stat-label">Classification Accuracy</div>
-            </div>
-            <div class="stat-showcase">
-                <div class="stat-number">150+</div>
-                <div class="stat-label">Countries Served</div>
-            </div>
+    <!-- CTA -->
+    <div class="section-dark" style="border-radius:16px;padding:3rem;text-align:center;">
+        <div class="section-label">Mulai Sekarang</div>
+        <h2 style="color:white;font-size:1.6rem;margin:1rem 0;">Mulai Analisis Penelitian Anda Sekarang</h2>
+        <p style="color:rgba(255,255,255,.65);max-width:520px;margin:0 auto 2rem;line-height:1.7;">
+            Masukkan ORCID ID atau DOI artikel Anda dan temukan kontribusi nyata riset Anda terhadap agenda SDG global.
+        </p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+            <a href="?page=home" class="btn btn-primary"><i class="fab fa-orcid"></i> Analisis ORCID</a>
+            <a href="?page=home" class="btn btn-outline-white"><i class="fas fa-file-alt"></i> Analisis DOI</a>
+            <a href="?page=documentation" class="btn btn-outline-white"><i class="fas fa-book"></i> Dokumentasi</a>
         </div>
     </div>
 
-    <!-- Values Section -->
-    <div class="info-general">
-        <h2><i class="fas fa-heart"></i> Our Values</h2>
-        <div class="values-grid">
-            <div class="value-item">
-                <div class="value-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h4>Transparency</h4>
-                <p>We believe in open, explainable AI that researchers can trust and understand.</p>
-            </div>
-            
-            <div class="value-item">
-                <div class="value-icon">
-                    <i class="fas fa-hands-helping"></i>
-                </div>
-                <h4>Collaboration</h4>
-                <p>We work closely with the research community to continuously improve our platform.</p>
-            </div>
-            
-            <div class="value-item">
-                <div class="value-icon">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <h4>Sustainability</h4>
-                <p>We're committed to environmental responsibility in all our operations and decisions.</p>
-            </div>
-            
-            <div class="value-item">
-                <div class="value-icon">
-                    <i class="fas fa-balance-scale"></i>
-                </div>
-                <h4>Equity</h4>
-                <p>We strive to make our tools accessible to researchers and institutions worldwide.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Call to Action -->
-    <div class="info-general cta-section">
-        <h2><i class="fas fa-rocket"></i> Join Our Mission</h2>
-        <p>Ready to discover the SDG impact of your research? Get started today or learn more about our enterprise solutions.</p>
-        <div class="cta-buttons">
-            <a href="?page=home" class="btn btn-primary">
-                <i class="fas fa-play"></i> Start Analyzing
-            </a>
-            <a href="?page=contact" class="btn btn-outline">
-                <i class="fas fa-envelope"></i> Contact Us
-            </a>
-            <a href="?page=documentation" class="btn btn-outline">
-                <i class="fas fa-book"></i> Learn More
-            </a>
-        </div>
-    </div>
 </div>
+</section>
 
-<!-- About Page Styles -->
 <style>
-.lead {
-    font-size: 1.2rem;
-    font-weight: 400;
-    line-height: 1.6;
-    color: #666;
-    margin-bottom: 30px;
-}
-
-.mission-grid {
+.about-stats-bar {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    background: linear-gradient(135deg, #1a2e45 0%, #2d4a6e 100%);
+    border-radius: 16px;
+    padding: 2rem;
 }
+.about-stat-item { text-align: center; }
+.about-stat-number { font-size: 2rem; font-weight: 800; color: #ff5627; }
+.about-stat-label { font-size: .8rem; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: .05em; margin-top: .25rem; }
 
-.mission-card {
-    text-align: center;
-    padding: 30px 20px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 15px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.mission-card:hover {
-    transform: translateY(-5px);
-    border-color: #667eea;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
-}
-
-.mission-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
+.about-mission-card {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    color: white;
-    font-size: 2rem;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-bottom: 2.5rem;
 }
-
-.story-timeline {
-    position: relative;
-    margin: 30px 0;
+.about-mission-icon {
+    flex-shrink: 0;
+    width: 64px; height: 64px;
+    background: rgba(255,86,39,.1);
+    color: #ff5627;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.75rem;
 }
+.about-mission-body { flex: 1; }
 
-.story-timeline::before {
-    content: '';
+/* Timeline */
+.about-timeline { position: relative; max-width: 860px; margin: 0 auto; }
+.about-timeline-line {
     position: absolute;
-    left: 50px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, #667eea, #764ba2);
+    left: 50%; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #ff5627, #1a2e45);
+    transform: translateX(-50%);
 }
-
-.timeline-item {
+.about-timeline-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 30px;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
     position: relative;
+    padding-right: 52%;
 }
-
-.timeline-year {
-    min-width: 100px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.about-timeline-item-right {
+    flex-direction: row-reverse;
+    padding-right: 0;
+    padding-left: 52%;
+}
+.about-timeline-year {
+    flex-shrink: 0;
+    background: #ff5627;
     color: white;
-    padding: 10px 15px;
+    font-weight: 700;
+    font-size: .9rem;
+    padding: .4rem 1rem;
     border-radius: 20px;
-    font-weight: 600;
-    text-align: center;
-    position: relative;
+    white-space: nowrap;
+}
+.about-timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: .4rem;
+    width: 14px; height: 14px;
+    background: white;
+    border: 3px solid #ff5627;
+    border-radius: 50%;
+    transform: translateX(-50%);
     z-index: 2;
 }
-
-.timeline-year::after {
-    content: '';
-    position: absolute;
-    right: -10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border: 10px solid transparent;
-    border-left-color: #764ba2;
-}
-
-.timeline-content {
+.about-timeline-content {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
     flex: 1;
-    margin-left: 30px;
-    padding: 15px 20px;
+}
+.about-timeline-content h4 { color: #ff5627; margin-bottom: .4rem; font-size: 1rem; }
+.about-timeline-content p { color: var(--gray-600, #64748b); font-size: .875rem; line-height: 1.65; }
+
+/* Values */
+.about-value-card {
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    transition: transform .2s, box-shadow .2s;
 }
-
-.timeline-content h4 {
-    color: #667eea;
-    margin-bottom: 10px;
-}
-
-.tech-features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.tech-feature {
-    padding: 25px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    border-left: 4px solid #667eea;
-    transition: all 0.3s ease;
-}
-
-.tech-feature:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-}
-
-.tech-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
+.about-value-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,.1); }
+.about-value-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.5rem;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
+.about-value-card h3 { font-size: 1.1rem; color: var(--dark,#1a2e45); margin-bottom: .5rem; }
+.about-value-card p { font-size: .875rem; color: var(--gray-600, #64748b); line-height: 1.65; }
 
-.tech-weight {
-    display: inline-block;
-    background: #e9ecef;
-    color: #495057;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-top: 10px;
-}
-
-.team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.team-member {
-    text-align: center;
-    padding: 30px 20px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-}
-
-.team-member:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-}
-
-.member-avatar {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
+/* Partners */
+.about-partners-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    color: white;
-    font-size: 2.5rem;
-}
-
-.member-role {
-    color: #667eea;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.member-bio {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 15px;
-}
-
-.member-social {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.member-social a {
-    width: 40px;
-    height: 40px;
-    background: #f8f9fa;
-    color: #667eea;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.member-social a:hover {
-    background: #667eea;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.stats-showcase {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.stat-showcase {
-    text-align: center;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.stat-showcase .stat-number {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.stat-showcase .stat-label {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-.values-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.value-item {
-    padding: 30px 20px;
-    text-align: center;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-}
-
-.value-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-}
-
-.value-icon {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    color: white;
-    font-size: 1.8rem;
-}
-
-.cta-section {
-    text-align: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 2px solid #667eea;
-}
-
-.cta-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
+    gap: 1rem;
     flex-wrap: wrap;
+    justify-content: center;
 }
-
-.btn {
-    display: inline-flex;
+.about-partner-badge {
+    display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 15px 30px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
+    gap: .5rem;
+    padding: .65rem 1.25rem;
+    border: 2px solid;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: .95rem;
+    background: white;
+    transition: transform .15s;
 }
+.about-partner-badge:hover { transform: translateY(-2px); }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-}
-
-.btn-outline {
-    background: transparent;
-    color: #667eea;
-    border-color: #667eea;
-}
-
-.btn-outline:hover {
-    background: #667eea;
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .story-timeline::before {
-        left: 20px;
-    }
-    
-    .timeline-item {
+@media (max-width: 640px) {
+    .about-mission-card { flex-direction: column; }
+    .about-timeline-line { left: 20px; }
+    .about-timeline-item, .about-timeline-item-right {
         flex-direction: column;
-        margin-left: 40px;
+        padding: 0 0 0 48px;
     }
-    
-    .timeline-year {
-        margin-bottom: 15px;
-    }
-    
-    .timeline-year::after {
-        display: none;
-    }
-    
-    .timeline-content {
-        margin-left: 0;
-    }
-    
-    .cta-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .btn {
-        width: 100%;
-        max-width: 250px;
-    }
+    .about-timeline-dot { left: 20px; }
 }
 </style>
