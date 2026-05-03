@@ -121,6 +121,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['_sdg'])) {
 }
 
 // ================================================================
+// BAGIAN #0b — PUBLIC API (GET ?api=journal)
+// GET dengan api=journal → sajikan JSON langsung, exit.
+// ================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['api'])) {
+    $api_action = trim($_GET['api']);
+    if ($api_action === 'journal') {
+        while (ob_get_level()) ob_end_clean();
+        $api_file = PROJECT_ROOT . '/api/journal.php';
+        if (file_exists($api_file)) {
+            require $api_file;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(503);
+            echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
+        }
+        exit;
+    }
+    // Unknown api= values fall through to normal page routing
+}
+
+// ================================================================
 // BAGIAN #1 — PAGE ROUTER (GET requests)
 // ================================================================
 session_start();
