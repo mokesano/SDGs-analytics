@@ -137,6 +137,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['api'])) {
             echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
         }
         exit;
+    } elseif ($api_action === 'researcher') {
+        while (ob_get_level()) ob_end_clean();
+        $api_file = PROJECT_ROOT . '/api/researcher.php';
+        if (file_exists($api_file)) {
+            require $api_file;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(503);
+            echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
+        }
+        exit;
     }
     // Unknown api= values fall through to normal page routing
 }
@@ -166,7 +177,7 @@ $allowed_pages = [
     'community-forum', 'blog', 'careers', 'partners', 'press-kit',
     'privacy-policy',
     'login', 'register', 'forgot-password', 'leaderboard', 'orcid-profile',
-    'journal-profile', 'journal-archive',
+    'journal-profile', 'journal-archive', 'sdg-researcher-list',
 ];
 if (!in_array($page, $allowed_pages)) $page = 'home';
 
@@ -217,6 +228,10 @@ switch ($page) {
     case 'journal-archive':
         $page_title       = 'Journal Archive — SDGs Classification Analysis';
         $page_description = 'Browse all Scopus journals checked on Wizdam AI.';
+        break;
+    case 'sdg-researcher-list':
+        $page_title       = 'Peneliti per SDG — SDGs Classification Analysis';
+        $page_description = 'Browse researchers by SDG category and contribution type.';
         break;
     default:
         $page_title       = ucfirst(str_replace('-', ' ', $page)) . ' - SDGs Classification Analysis';

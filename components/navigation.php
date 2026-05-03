@@ -134,7 +134,13 @@ $tools_items = [
         'icon' => 'fas fa-book-open',
         'url' => '?page=journal-archive',
         'description' => 'Arsip jurnal Scopus'
-    ]
+    ],
+    'sdg-researcher-list' => [
+        'title' => 'SDG Researchers',
+        'icon' => 'fas fa-users',
+        'url' => '?page=sdg-researcher-list',
+        'description' => 'Daftar peneliti per SDG'
+    ],
 ];
 ?>
 
