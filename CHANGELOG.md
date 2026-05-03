@@ -5,6 +5,20 @@ Semua perubahan signifikan dicatat di sini.
 
 ---
 
+## [Unreleased] — Phase 3 (Aktif)
+
+### ✅ Ditambahkan — Scopus Journal Integration
+- **feat/journal-sdg-mapping**: `includes/sdg_subject_mapping.php` — konstanta `SUBJECT_SDG_MAP` + fungsi `mapSubjectsToSdgs()` memetakan subject area Scopus ASJC ke 17 kode SDG UN
+- **feat/scopus-journal-api**: `api/scopus.php` — proxy handler Scopus ISSN lookup dengan validasi ISSN, gzip cache 7 hari (`cache/journal_{ISSN}.json.gz`), persistence ke SQLite (`journals` + `journal_subjects`), mapping subject→SDG
+- **feat/journal-profile**: `pages/journal-profile.php` — halaman profil jurnal Scopus lengkap: metrik CiteScore/SJR/SNIP/Quartile, SDG chips, subject area tags, 3 state (no ISSN / not found / full profile)
+- **feat/journal-archive**: `pages/journal-archive.php` — arsip jurnal dengan sticky filter bar, quartile pill filter, real-time search, card grid, pagination, ISSN lookup inline
+- **feat/issn-routing**: `public/index.php` — case `journal` di POST proxy switch → `api/scopus.php`; halaman `journal-profile` + `journal-archive` ditambahkan ke `$allowed_pages` + routing metadata
+- **feat/issn-home**: `pages/home.php` — deteksi ISSN di `detectType()` (format `XXXX-XXXX`), redirect otomatis ke `?page=journal-profile&issn=`, update placeholder + hint text
+- **feat/journal-archive-nav**: `components/navigation.php` — Journal Archive ditambahkan ke Tools dropdown
+- **fix/archived-page**: `pages/archived.php` — diganti dari data statis menjadi query SQLite real dengan search, pagination, link ke orcid-profile
+
+---
+
 ## [Unreleased] — Phase 2 (Aktif)
 
 ### ✅ Ditambahkan

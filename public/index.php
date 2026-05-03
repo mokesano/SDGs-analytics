@@ -60,6 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['_sdg'])) {
             $rawDoi = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', $rawDoi);
             $params['doi'] = $rawDoi;
             break;
+        case 'journal':
+            if (empty($_POST['issn'])) { http_response_code(400); echo json_encode(['status'=>'error','message'=>'issn required']); exit; }
+            $rawIssn = preg_replace('/[^0-9X]/', '', strtoupper(trim($_POST['issn'])));
+            if (strlen($rawIssn) !== 8) { http_response_code(400); echo json_encode(['status'=>'error','message'=>'Format ISSN tidak valid']); exit; }
+            $params['issn']   = $rawIssn;
+            $params['action'] = 'journal';
+            $api_file = PROJECT_ROOT . '/api/scopus.php';
+            break;
         default:
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Action tidak dikenal: ' . htmlspecialchars($action)]);
@@ -113,6 +121,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['_sdg'])) {
 }
 
 // ================================================================
+// BAGIAN #0b — PUBLIC API (GET ?api=journal)
+// GET dengan api=journal → sajikan JSON langsung, exit.
+// ================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['api'])) {
+    $api_action = trim($_GET['api']);
+    if ($api_action === 'journal') {
+        while (ob_get_level()) ob_end_clean();
+        $api_file = PROJECT_ROOT . '/api/journal.php';
+        if (file_exists($api_file)) {
+            require $api_file;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(503);
+            echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
+        }
+        exit;
+    } elseif ($api_action === 'researcher') {
+        while (ob_get_level()) ob_end_clean();
+        $api_file = PROJECT_ROOT . '/api/researcher.php';
+        if (file_exists($api_file)) {
+            require $api_file;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(503);
+            echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
+        }
+        exit;
+    }
+    // Unknown api= values fall through to normal page routing
+}
+
+// ================================================================
 // BAGIAN #1 — PAGE ROUTER (GET requests)
 // ================================================================
 session_start();
@@ -137,6 +177,7 @@ $allowed_pages = [
     'community-forum', 'blog', 'careers', 'partners', 'press-kit',
     'privacy-policy',
     'login', 'register', 'forgot-password', 'leaderboard', 'orcid-profile',
+    'journal-profile', 'journal-archive', 'sdg-researcher-list',
 ];
 if (!in_array($page, $allowed_pages)) $page = 'home';
 
@@ -178,6 +219,19 @@ switch ($page) {
         break;
     case 'orcid-profile':
         $page_title = 'Researcher Profile - SDGs Classification Analysis';
+        break;
+    case 'journal-profile':
+        $issn_param   = isset($_GET['issn']) ? htmlspecialchars(trim($_GET['issn'])) : '';
+        $page_title   = ($issn_param ? $issn_param . ' — ' : '') . 'Journal Profile | SDGs Classification Analysis';
+        $page_description = 'Scopus journal metrics, quartile, SJR, SDG mapping, and research overview.';
+        break;
+    case 'journal-archive':
+        $page_title       = 'Journal Archive — SDGs Classification Analysis';
+        $page_description = 'Browse all Scopus journals checked on Wizdam AI.';
+        break;
+    case 'sdg-researcher-list':
+        $page_title       = 'Peneliti per SDG — SDGs Classification Analysis';
+        $page_description = 'Browse researchers by SDG category and contribution type.';
         break;
     default:
         $page_title       = ucfirst(str_replace('-', ' ', $page)) . ' - SDGs Classification Analysis';

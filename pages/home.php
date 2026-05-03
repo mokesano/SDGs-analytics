@@ -82,7 +82,7 @@ define('HOME_AJAX_BATCH', 3);
                                 id="input_value"
                                 name="input_value"
                                 class="hero-input"
-                                placeholder="Cari artikel, judul, penulis, atau ORCID / DOI..."
+                                placeholder="Masukkan ORCID, DOI, atau ISSN jurnal..."
                                 required autocomplete="off" spellcheck="false"
                             >
                             <button type="submit" class="hero-search-btn" id="submitBtn">
@@ -832,6 +832,8 @@ define('HOME_AJAX_BATCH', 3);
         // DOI: bare prefix or exact doi.org / dx.doi.org URL
         if (/^10\.\d{4,}\/\S+/.test(v))                              return 'doi';
         if (/^https?:\/\/(dx\.)?doi\.org\/10\.\d{4,}\//i.test(v))    return 'doi';
+        // ISSN: XXXX-XXXX (8 digits with optional hyphen)
+        if (/^\d{4}-\d{3}[\dX]$/i.test(v))                           return 'issn';
         return null;
     }
     function validateOrcid(orcid) {
@@ -862,7 +864,7 @@ define('HOME_AJAX_BATCH', 3);
         const v = value.trim();
         if (!v) {
             icon.className = 'fas fa-info-circle'; icon.style.color = 'rgba(255,255,255,.4)';
-            text.innerHTML = 'Contoh: <code style="color:rgba(255,255,255,.7);">0000-0002-5152-9727</code> (ORCID) &nbsp;|&nbsp; <code style="color:rgba(255,255,255,.7);">10.1038/nature12373</code> (DOI)';
+            text.innerHTML = 'Contoh: <code style="color:rgba(255,255,255,.7);">0000-0002-5152-9727</code> (ORCID) &nbsp;|&nbsp; <code style="color:rgba(255,255,255,.7);">10.1038/nature12373</code> (DOI) &nbsp;|&nbsp; <code style="color:rgba(255,255,255,.7);">1234-5678</code> (ISSN)';
             text.style.color = 'rgba(255,255,255,.4)';
             inp.style.borderColor = ''; return;
         }
@@ -883,9 +885,14 @@ define('HOME_AJAX_BATCH', 3);
                                   : 'DOI tidak valid — format: 10.xxxx/xxxxx';
             text.style.color = ok ? '#22c55e' : '#ef4444';
             inp.style.borderColor = ok ? 'rgba(34,197,94,.5)' : 'rgba(239,68,68,.5)';
+        } else if (type === 'issn') {
+            icon.className = 'fas fa-check-circle'; icon.style.color = '#22c55e';
+            text.textContent = 'Valid ISSN — siap cek profil jurnal Scopus';
+            text.style.color = '#22c55e';
+            inp.style.borderColor = 'rgba(34,197,94,.5)';
         } else {
             icon.className = 'fas fa-exclamation-circle'; icon.style.color = '#f59e0b';
-            text.textContent = 'Format tidak dikenali. Gunakan ORCID (XXXX-XXXX-XXXX-XXXX) atau DOI (10.xxxx/xxxxx).';
+            text.textContent = 'Format tidak dikenali. Gunakan ORCID (XXXX-XXXX-XXXX-XXXX), DOI (10.xxxx/xxxxx), atau ISSN (XXXX-XXXX).';
             text.style.color = '#f59e0b';
             inp.style.borderColor = 'rgba(245,158,11,.5)';
         }
@@ -1305,7 +1312,7 @@ define('HOME_AJAX_BATCH', 3);
 
                 const type = detectType(value);
                 if (!type) {
-                    showError('Format not recognized. Enter a valid ORCID ID (0000-0000-0000-0000) or DOI (10.xxxx/xxxxx).');
+                    showError('Format not recognized. Enter a valid ORCID ID (0000-0000-0000-0000), DOI (10.xxxx/xxxxx), or ISSN (XXXX-XXXX).');
                     return;
                 }
 
@@ -1335,6 +1342,9 @@ define('HOME_AJAX_BATCH', 3);
                     isSubmitting = true;
                     if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing…'; btn.disabled = true; }
                     startDoiAjax(cleanDoi, forceRefresh);
+
+                } else if (type === 'issn') {
+                    window.location.href = '?page=journal-profile&issn=' + encodeURIComponent(value.trim());
                 }
             });
         }
