@@ -34,7 +34,7 @@ header('Access-Control-Allow-Methods: GET, OPTIONS');
 // -----------------------------------------------------------------
 // KONFIGURASI
 // -----------------------------------------------------------------
-define('BATCH_SIZE', 3); // Jumlah karya diproses per request batch
+define('BATCH_SIZE', 5); // Jumlah karya diproses per request batch
 
 $CACHE_DIR = __DIR__ . '/cache';
 if (!is_dir($CACHE_DIR)) {
@@ -205,16 +205,21 @@ function handleOrcidInitRequest($orcid, $force_refresh = false) {
         }
     }
 
-    // Ambil data person, employments & works dari ORCID API
+    // Ambil data person, employments, educations & works dari ORCID API
     $person_data     = fetchOrcidPersonData($orcid);
     $employment_data = fetchOrcidEmployments($orcid);
+    $education_data  = fetchOrcidEducations($orcid);
     $works_data      = fetchOrcidData($orcid);
 
-    $name         = extractOrcidName($person_data);
-    $institutions = extractOrcidInstitutionsEnhanced($person_data, $employment_data);
-    $bio          = extractOrcidBio($person_data);
-    $emails       = extractOrcidEmails($person_data);
-    $kw_tags      = extractOrcidKeywords($person_data);
+    $name             = extractOrcidName($person_data);
+    $institutions     = extractOrcidInstitutionsEnhanced($person_data, $employment_data);
+    $bio              = extractOrcidBio($person_data);
+    $emails           = extractOrcidEmails($person_data);
+    $kw_tags          = extractOrcidKeywords($person_data);
+    $external_ids     = extractOrcidExternalIds($person_data);
+    $researcher_urls  = extractOrcidResearcherUrls($person_data);
+    $all_affiliations = extractAllAffiliations($employment_data);
+    $education_history = extractEducationHistory($education_data);
 
     // Kumpulkan stubs (judul + doi) tanpa analisis SDG
     $works_stubs = [];
@@ -242,13 +247,17 @@ function handleOrcidInitRequest($orcid, $force_refresh = false) {
         'action'       => 'init',
         'api_version'  => 'v1.0.0',
         'personal_info' => [
-            'name'         => $name ?: 'Peneliti ' . $orcid,
-            'institutions' => $institutions,
-            'orcid'        => $orcid,
-            'bio'          => $bio,
-            'emails'       => $emails,
-            'keywords'     => $kw_tags,
-            'data_source'  => !empty($person_data) ? 'ORCID API' : 'Fallback',
+            'name'              => $name ?: 'Peneliti ' . $orcid,
+            'institutions'      => $institutions,
+            'orcid'             => $orcid,
+            'bio'               => $bio,
+            'emails'            => $emails,
+            'keywords'          => $kw_tags,
+            'external_ids'      => $external_ids,
+            'researcher_urls'   => $researcher_urls,
+            'affiliations'      => $all_affiliations,
+            'education_history' => $education_history,
+            'data_source'       => !empty($person_data) ? 'ORCID API' : 'Fallback',
         ],
         'total_works'  => count($works_stubs),
         'works_stubs'  => $works_stubs,
@@ -638,6 +647,20 @@ function handleDoiRequest($doi, $force_refresh = false) {
     $doi = trim($doi);
     if (empty($doi)) throw new Exception('DOI tidak boleh kosong', 400);
 
+    // Bersihkan prefix URL doi.org dan doi: jika ada
+    $clean_doi = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', $doi);
+    $clean_doi = preg_replace('/^doi:/i', '', $clean_doi);
+    $clean_doi = trim($clean_doi);
+
+    // Validasi: DOI valid wajib diawali dengan 10.NNNN/
+    if (!preg_match('/^10\.\d{4,}\//', $clean_doi)) {
+        throw new Exception(
+            'Input bukan DOI valid. DOI harus mengandung "doi.org" atau diawali dengan "10.xxxx/". Input: ' . htmlspecialchars($doi, ENT_QUOTES),
+            400
+        );
+    }
+    $doi = $clean_doi;
+
     $cache_file = getCacheFilename('article', $doi);
     if (!$force_refresh && file_exists($cache_file)) {
         $cached = readFromCache($cache_file);
@@ -712,6 +735,120 @@ function fetchOrcidEmployments($orcid) {
     if ($errno || $http_code != 200) return [];
     $data = json_decode($response, true);
     return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
+}
+
+function fetchOrcidEducations($orcid) {
+    $url = "https://pub.orcid.org/v3.0/{$orcid}/educations";
+    $ch  = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT        => 6,
+    ]);
+    $response  = curl_exec($ch);
+    $errno     = curl_errno($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($errno || $http_code != 200) return [];
+    $data = json_decode($response, true);
+    return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
+}
+
+/**
+ * Format date array from ORCID (year/month/day nested) to YYYY-MM-DD string.
+ */
+function formatOrcidDateParts($date_array) {
+    if (!is_array($date_array)) return null;
+    $parts = [];
+    if (!empty($date_array['year']['value']))  $parts[] = $date_array['year']['value'];
+    if (!empty($date_array['month']['value'])) $parts[] = str_pad($date_array['month']['value'], 2, '0', STR_PAD_LEFT);
+    if (!empty($date_array['day']['value']))   $parts[] = str_pad($date_array['day']['value'],   2, '0', STR_PAD_LEFT);
+    return !empty($parts) ? implode('-', $parts) : null;
+}
+
+function extractOrcidExternalIds($person_data) {
+    $external_ids = [];
+    if (!empty($person_data['external-identifiers']['external-identifier'])) {
+        foreach ($person_data['external-identifiers']['external-identifier'] as $ext_id) {
+            $external_ids[] = [
+                'type'  => isset($ext_id['external-id-type'])        ? $ext_id['external-id-type']        : null,
+                'value' => isset($ext_id['external-id-value'])        ? $ext_id['external-id-value']        : null,
+                'url'   => isset($ext_id['external-id-url']['value']) ? $ext_id['external-id-url']['value'] : null,
+            ];
+        }
+    }
+    return $external_ids;
+}
+
+function extractOrcidResearcherUrls($person_data) {
+    $urls = [];
+    if (!empty($person_data['researcher-urls']['researcher-url'])) {
+        foreach ($person_data['researcher-urls']['researcher-url'] as $u) {
+            $urls[] = [
+                'name' => isset($u['url-name'])     ? $u['url-name']     : null,
+                'url'  => isset($u['url']['value']) ? $u['url']['value'] : null,
+            ];
+        }
+    }
+    return $urls;
+}
+
+/**
+ * Returns all employments with is_current flag (no end-date = current).
+ */
+function extractAllAffiliations($employment_data) {
+    $affiliations = [];
+    if (!empty($employment_data['affiliation-group'])) {
+        foreach ($employment_data['affiliation-group'] as $group) {
+            $summary = isset($group['summaries'][0]['employment-summary'])
+                ? $group['summaries'][0]['employment-summary'] : null;
+            if (!$summary) continue;
+            $org = isset($summary['organization']['name']) ? trim($summary['organization']['name']) : '';
+            if (strlen($org) < 2) continue;
+            $affiliations[] = [
+                'type'         => 'employment',
+                'organization' => $org,
+                'department'   => isset($summary['department-name']) ? $summary['department-name'] : null,
+                'role'         => isset($summary['role-title'])      ? $summary['role-title']      : null,
+                'start_date'   => formatOrcidDateParts(isset($summary['start-date']) ? $summary['start-date'] : null),
+                'end_date'     => formatOrcidDateParts(isset($summary['end-date'])   ? $summary['end-date']   : null),
+                'is_current'   => empty($summary['end-date']),
+                'address'      => [
+                    'city'    => isset($summary['organization']['address']['city'])    ? $summary['organization']['address']['city']    : null,
+                    'region'  => isset($summary['organization']['address']['region'])  ? $summary['organization']['address']['region']  : null,
+                    'country' => isset($summary['organization']['address']['country']) ? $summary['organization']['address']['country'] : null,
+                ],
+            ];
+        }
+    }
+    return $affiliations;
+}
+
+function extractEducationHistory($education_data) {
+    $educations = [];
+    if (!empty($education_data['affiliation-group'])) {
+        foreach ($education_data['affiliation-group'] as $group) {
+            $summary = isset($group['summaries'][0]['education-summary'])
+                ? $group['summaries'][0]['education-summary'] : null;
+            if (!$summary) continue;
+            $org = isset($summary['organization']['name']) ? trim($summary['organization']['name']) : '';
+            if (strlen($org) < 2) continue;
+            $educations[] = [
+                'organization' => $org,
+                'department'   => isset($summary['department-name']) ? $summary['department-name'] : null,
+                'degree'       => isset($summary['role-title'])      ? $summary['role-title']      : null,
+                'start_date'   => formatOrcidDateParts(isset($summary['start-date']) ? $summary['start-date'] : null),
+                'end_date'     => formatOrcidDateParts(isset($summary['end-date'])   ? $summary['end-date']   : null),
+                'address'      => [
+                    'city'    => isset($summary['organization']['address']['city'])    ? $summary['organization']['address']['city']    : null,
+                    'region'  => isset($summary['organization']['address']['region'])  ? $summary['organization']['address']['region']  : null,
+                    'country' => isset($summary['organization']['address']['country']) ? $summary['organization']['address']['country'] : null,
+                ],
+            ];
+        }
+    }
+    return $educations;
 }
 
 function extractOrcidBio($person_data) {
