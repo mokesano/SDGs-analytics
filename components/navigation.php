@@ -128,6 +128,12 @@ $tools_items = [
         'icon' => 'fas fa-plug',
         'url' => '?page=integration-tools',
         'description' => 'Integration tools'
+    ],
+    'journal-archive' => [
+        'title' => 'Journal Archive',
+        'icon' => 'fas fa-book-open',
+        'url' => '?page=journal-archive',
+        'description' => 'Arsip jurnal Scopus'
     ]
 ];
 ?>
