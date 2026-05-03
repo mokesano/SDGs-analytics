@@ -405,9 +405,9 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
 
         // Analisis SDG
         $sdg_analysis = [];
-        foreach ($SDG_KEYWORDS as $sdg => $keywords) {
+        foreach ($SDG_KEYWORDS as $sdg => $sdg_kw_list) {
             $matched = false;
-            foreach ($keywords as $keyword) {
+            foreach ($sdg_kw_list as $keyword) {
                 if (stripos($preprocessed_text, $keyword) !== false) {
                     $matched = true;
                     break;

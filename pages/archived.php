@@ -27,7 +27,7 @@ try {
         $conditions = ['1=1'];
         $params = [];
         if ($search) {
-            $conditions[] = '(name LIKE :q OR orcid LIKE :q OR institution LIKE :q)';
+            $conditions[] = '(name LIKE :q OR orcid LIKE :q OR institutions LIKE :q)';
             $params[':q'] = '%' . $search . '%';
         }
         $where = 'WHERE ' . implode(' AND ', $conditions);
@@ -37,16 +37,16 @@ try {
         $total_count = (int)$c->fetchColumn();
 
         $stmt = $pdo->prepare("
-            SELECT r.id, r.orcid, r.name, r.institution,
+            SELECT r.id, r.orcid, r.name, r.institutions,
                    COUNT(DISTINCT w.id) AS work_count,
                    COUNT(DISTINCT ws.sdg_code) AS sdg_count,
-                   r.last_updated
+                   r.last_fetched
             FROM researchers r
-            LEFT JOIN works w ON w.orcid = r.orcid
+            LEFT JOIN works w ON w.researcher_id = r.id
             LEFT JOIN work_sdgs ws ON ws.work_id = w.id
             $where
             GROUP BY r.id
-            ORDER BY r.last_updated DESC
+            ORDER BY r.last_fetched DESC
             LIMIT :lim OFFSET :off
         ");
         $params[':lim'] = $per_page;
@@ -142,12 +142,19 @@ $total_pages = $total_count > 0 ? (int)ceil($total_count / $per_page) : 0;
                             <code style="font-size:.8rem;color:var(--gray-600);"><?= htmlspecialchars($r['orcid'] ?? '') ?></code>
                         </td>
                         <td style="font-size:.875rem;color:var(--gray-500);">
-                            <?= htmlspecialchars(mb_substr($r['institution'] ?? '–', 0, 40)) ?>
+                            <?php
+                                $inst = $r['institutions'] ?? '–';
+                                if ($inst && $inst !== '–') {
+                                    $decoded = json_decode($inst, true);
+                                    $inst = is_array($decoded) ? ($decoded[0] ?? '–') : $inst;
+                                }
+                                echo htmlspecialchars(mb_substr($inst, 0, 40));
+                            ?>
                         </td>
                         <td><span class="badge badge-dark"><?= (int)$r['work_count'] ?> karya</span></td>
                         <td><span class="badge badge-brand"><?= (int)$r['sdg_count'] ?> SDG</span></td>
                         <td style="font-size:.8rem;color:var(--gray-400);">
-                            <?= $r['last_updated'] ? date('d M Y', strtotime($r['last_updated'])) : '–' ?>
+                            <?= !empty($r['last_fetched']) ? date('d M Y', strtotime($r['last_fetched'])) : '–' ?>
                         </td>
                         <td>
                             <a href="?page=orcid-profile&orcid=<?= urlencode($r['orcid'] ?? '') ?>" class="btn btn-primary btn-sm">

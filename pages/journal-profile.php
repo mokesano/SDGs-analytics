@@ -41,9 +41,9 @@ if ($formatted_issn) {
     } catch (Exception $e) { /* silent */ }
 
     // 2. Try gzip cache
+    $cache_dir  = PROJECT_ROOT . '/cache';
+    $cache_file = $cache_dir . '/journal_' . $issn_clean . '.json.gz';
     if (!$journal) {
-        $cache_dir  = PROJECT_ROOT . '/cache';
-        $cache_file = $cache_dir . '/journal_' . $issn_clean . '.json.gz';
         if (file_exists($cache_file) && (time() - filemtime($cache_file)) < 604800) {
             $cached = @json_decode((string)gzdecode(file_get_contents($cache_file)), true);
             if (!empty($cached['success'])) {
@@ -53,6 +53,71 @@ if ($formatted_issn) {
                     : [];
                 $sdg_codes = $cached['sdg_codes'] ?? mapSubjectsToSdgs($subjects);
             }
+        }
+    }
+
+    // 3. Live Scopus fetch (first-time visit or forced refresh)
+    $force_fetch = !empty($_GET['refresh']);
+    if (!$journal || $force_fetch) {
+        try {
+            require_once PROJECT_ROOT . '/api/SCOPUS_Journal-Checker_API.php';
+            global $SCOPUS_API_KEY;
+            $api    = new ScopusAPI($SCOPUS_API_KEY);
+            $result = $api->searchByISSN($formatted_issn);
+            if (!empty($result['success'])) {
+                $result['sdg_codes'] = mapSubjectsToSdgs($result['subject_areas'] ?? []);
+                $result['status']    = 'success';
+                // Persist to SQLite inline (mirrors _scopusPersist in api/scopus.php)
+                try {
+                    $db = function_exists('getDb') ? getDb() : new PDO('sqlite:' . PROJECT_ROOT . '/database/wizdam.db');
+                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $ins = $db->prepare("
+                        INSERT INTO journals (issn,eissn,title,publisher,scopus_id,sjr,quartile,open_access,country,last_fetched)
+                        VALUES (:issn,:eissn,:title,:publisher,:scopus_id,:sjr,:quartile,:oa,:country,datetime('now'))
+                        ON CONFLICT(issn) DO UPDATE SET
+                          title=excluded.title,publisher=excluded.publisher,
+                          sjr=excluded.sjr,quartile=excluded.quartile,
+                          open_access=excluded.open_access,country=excluded.country,
+                          last_fetched=excluded.last_fetched
+                    ");
+                    $ins->execute([
+                        ':issn'      => $result['issn'] ?? $formatted_issn,
+                        ':eissn'     => $result['eissn'] ?? null,
+                        ':title'     => $result['title'] ?? null,
+                        ':publisher' => $result['publisher'] ?? null,
+                        ':scopus_id' => $result['scopus_id'] ?? null,
+                        ':sjr'       => isset($result['sjr']) ? (float)$result['sjr'] : null,
+                        ':quartile'  => $result['quartile'] ?? null,
+                        ':oa'        => !empty($result['open_access']) ? 1 : 0,
+                        ':country'   => $result['country'] ?? null,
+                    ]);
+                    $jid = (int)$db->lastInsertId();
+                    if (!$jid) {
+                        $s = $db->prepare('SELECT id FROM journals WHERE issn=?');
+                        $s->execute([$result['issn'] ?? $formatted_issn]);
+                        $jid = (int)$s->fetchColumn();
+                    }
+                    if ($jid && !empty($result['subject_areas'])) {
+                        $db->prepare('DELETE FROM journal_subjects WHERE journal_id=?')->execute([$jid]);
+                        $si = $db->prepare('INSERT INTO journal_subjects (journal_id,subject,asjc_code) VALUES (?,?,?)');
+                        foreach ($result['subject_areas'] as $subj) {
+                            $si->execute([$jid, is_array($subj) ? ($subj['name'] ?? '') : $subj, is_array($subj) ? ($subj['code'] ?? null) : null]);
+                        }
+                    }
+                } catch (Throwable $de) {
+                    error_log('[journal-profile persist] ' . $de->getMessage());
+                }
+                // Write cache
+                if (!is_dir($cache_dir)) mkdir($cache_dir, 0755, true);
+                file_put_contents($cache_file, gzencode(json_encode($result), 6), LOCK_EX);
+                $journal   = $result;
+                $subjects  = is_array($result['subject_areas'] ?? null)
+                    ? array_map(fn($s) => is_array($s) ? ($s['name'] ?? '') : $s, $result['subject_areas'])
+                    : [];
+                $sdg_codes = $result['sdg_codes'];
+            }
+        } catch (Throwable $e) {
+            error_log('[journal-profile live fetch] ' . $e->getMessage());
         }
     }
 }
