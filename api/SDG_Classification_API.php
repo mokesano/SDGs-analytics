@@ -628,13 +628,35 @@ function handleOrcidSummaryRequest($orcid) {
 
 /**
  * Persist ORCID summary + individual works / SDG mappings to the SQLite database.
- * Wrapped in try/catch — if bootstrap.php was not loaded (direct API call), fails silently.
+ * Self-contained: works whether bootstrap.php was loaded or not (POST proxy never loads it).
  */
 function persistOrcidResultsToDb(array $summary): void {
     try {
-        $db = getDb();
+        if (function_exists('getDb')) {
+            $db = getDb();
+        } else {
+            // POST proxy path — bootstrap.php is never required, so open PDO directly.
+            $db_path = defined('PROJECT_ROOT')
+                ? PROJECT_ROOT . '/database/wizdam.db'
+                : dirname(__DIR__)  . '/database/wizdam.db';
+            $db_dir = dirname($db_path);
+            if (!is_dir($db_dir)) {
+                mkdir($db_dir, 0755, true);
+            }
+            $db = new PDO('sqlite:' . $db_path);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db->exec('PRAGMA journal_mode=WAL');
+            $db->exec('PRAGMA foreign_keys=ON');
+            // Bootstrap schema so tables exist on first run
+            $schema = defined('PROJECT_ROOT')
+                ? PROJECT_ROOT . '/database/schema.sql'
+                : dirname(__DIR__)  . '/database/schema.sql';
+            if (file_exists($schema)) {
+                $db->exec((string) file_get_contents($schema));
+            }
+        }
     } catch (Throwable $e) {
-        // bootstrap not loaded — skip persistence silently
+        error_log('[persistOrcidResultsToDb] DB init failed: ' . $e->getMessage());
         return;
     }
 
