@@ -3,7 +3,7 @@
  * SDG Classification System Configuration
  * Konfigurasi utama sistem
  * 
- * @version 2.3
+ * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team
  * Last update: 2025-06-16
  */

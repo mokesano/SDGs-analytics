@@ -3,7 +3,7 @@
  * SDG Frontend - Navigation Component
  * Komponen navigasi responsif dengan semua fitur modern
  * 
- * @version 5.1.8
+ * @version 1.0.0
  * @author Rochmady and Wizdam Team
  * @license MIT
  */

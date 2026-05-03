@@ -3,7 +3,7 @@
  * SDG Frontend - SDG Definitions
  * Definisi lengkap 17 Sustainable Development Goals sesuai standar UN
  * 
- * @version 5.1.8
+ * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
