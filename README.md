@@ -163,4 +163,3 @@ Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) 
 ---
 
 **SDGs-analytics** – Memetakan riset, mengukur dampak, dan membangun masa depan berkelanjutan bersama.
-```
