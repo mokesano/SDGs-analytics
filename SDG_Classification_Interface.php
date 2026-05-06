@@ -123,7 +123,7 @@ $SDG_DEFINITIONS = [
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>SDGs Classification Analysis | Wizdam AI-sikola</title>
+    <title>SDGs Classification Analysis | Wizdam AI-scola</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -135,16 +135,16 @@ $SDG_DEFINITIONS = [
     <link rel="canonical" href="https://wizdam.sangia.org/" />
     <meta name="google-site-verification" content="9mVvrkXamiUxutovEQqEk2eiRcjLUWHLHcwssZo3GYs" />
     <meta name="referrer" content="origin-when-cross-origin" />
-    <meta property="og:title" content="SDGs Classification Analysis | Wizdam AI-sikola" />
+    <meta property="og:title" content="SDGs Classification Analysis | Wizdam AI-scola" />
     <meta property="og:url" content="https://wizdam.sangia.org/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Sangia Publishing" />
-    <meta property="og:image" content="https://assets.sangia.org/img/sdgs/sikola-cover.jpg" />
+    <meta property="og:image" content="https://assets.sangia.org/img/sdgs/scola-cover.jpg" />
     <meta property="og:description" content="This system uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research relevance to the SDGs." />
     <meta name="robots" content="max-image-preview:large" />
-    <meta name="twitter:site" content="@Sikola" />
+    <meta name="twitter:site" content="@Scola" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image:alt" content="SDGs Classification Analysis | Wizdam AI-sikola" />
+    <meta name="twitter:image:alt" content="SDGs Classification Analysis | Wizdam AI-scola" />
     <meta name="website_owner" content="www.sangia.org" />
     <meta name="owner" content="PT. Sangia Research Media and Publishing" />
     <meta name="design" content="Rochmady and Wizdam AI Team" />
@@ -440,7 +440,7 @@ $SDG_DEFINITIONS = [
 
     <!-- HEADER -->
     <div class="header">
-        <h1><i class="fas fa-globe"></i> Welcome! Wizdam AI-sikola</h1>
+        <h1><i class="fas fa-globe"></i> Welcome! Wizdam AI-scola</h1>
         <h2>Sustainable Development Goals (SDGs) Classification</h2>
         <p>Analysis of research contributions to Sustainable Development Goals using advanced AI classification</p>
     </div>

@@ -1,6 +1,6 @@
 /**
  * scroll-reveal.js — Intersection Observer animations + interactive effects
- * Wizdam AI-sikola SDG Analytics
+ * Wizdam AI-scola SDG Analytics
  */
 (function () {
   'use strict';
