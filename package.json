@@ -10,7 +10,7 @@
         "lint": "eslint assets/js/"
     },
     "dependencies": {
-        "apexcharts": "^3.45.0",
+        "apexcharts": "^5.10.6",
         "chart.js": "^4.4.0",
         "d3": "^7.8.5",
         "leaflet": "^1.9.4",
