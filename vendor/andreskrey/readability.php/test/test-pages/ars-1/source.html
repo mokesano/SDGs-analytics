@@ -555,7 +555,7 @@
                         <li><a href="http://www.details.com/">Details</a></li>
                     </ul>
                     <form method="get" action="#">
-                        <select id="mag_list" name="mag_list" onchange="(this.options[this.selectedIndex].value) ? (window.location = this.options[this.selectedIndex].value) : null">
+                        <select id="mag_list" name="mag_list" onchange="(function(v){ if(!v){ return; } var a=document.createElement('a'); a.href=v; if(a.protocol==='http:'||a.protocol==='https:'){ window.location=a.href; } })(this.options[this.selectedIndex].value)">
                             <option value="" selected="selected">Visit our sister sites</option>
                             <option value="">- - - - - - - - - - - - - -</option>
                             <option value="http://www.gq.com">GQ</option>
