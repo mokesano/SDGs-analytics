@@ -1,5 +1,5 @@
 -- ============================================================
--- schema.sql — Wizdam AI-sikola Database Schema
+-- schema.sql — Wizdam AI-scola Database Schema
 -- SQLite (compatible with PDO + future MySQL migration)
 -- ============================================================
 

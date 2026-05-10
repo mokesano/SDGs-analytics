@@ -4,7 +4,7 @@
  * 
  * API untuk menampilkan karya ilmiah peneliti berdasarkan Data ORCID.
  * @author Rochmady
- * @version 2.1.0 (PHP 5.4+ Compatible)
+ * @version 1.0.0 (PHP 7.4+ Compatible)
  * @license none
  * last update 2025-05-29
  */

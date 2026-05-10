@@ -13,7 +13,7 @@
  * - ?doi=xxx           → Analisis satu artikel
  *
  * @author Rochmady and Wizdam Team
- * @version 5.2.0
+ * @version 1.0.0
  * @license MIT
  */
 
@@ -23,7 +23,7 @@
 if (empty($_GET)) {
     http_response_code(200);
     header('Content-Type: application/json');
-    echo json_encode(['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v5.2.0']);
+    echo json_encode(['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v1.0.0']);
     exit;
 }
 
@@ -34,7 +34,7 @@ header('Access-Control-Allow-Methods: GET, OPTIONS');
 // -----------------------------------------------------------------
 // KONFIGURASI
 // -----------------------------------------------------------------
-define('BATCH_SIZE', 3); // Jumlah karya diproses per request batch
+define('BATCH_SIZE', 5); // Jumlah karya diproses per request batch
 
 $CACHE_DIR = __DIR__ . '/cache';
 if (!is_dir($CACHE_DIR)) {
@@ -190,7 +190,7 @@ function main() {
                 'Refresh Cache'    => 'tambahkan &refresh=true',
             ],
             'timestamp'   => date('c'),
-            'api_version' => 'v5.2.0',
+            'api_version' => 'v1.0.0',
         ];
     }
 }
@@ -214,16 +214,21 @@ function handleOrcidInitRequest($orcid, $force_refresh = false) {
         }
     }
 
-    // Ambil data person, employments & works dari ORCID API
+    // Ambil data person, employments, educations & works dari ORCID API
     $person_data     = fetchOrcidPersonData($orcid);
     $employment_data = fetchOrcidEmployments($orcid);
+    $education_data  = fetchOrcidEducations($orcid);
     $works_data      = fetchOrcidData($orcid);
 
-    $name         = extractOrcidName($person_data);
-    $institutions = extractOrcidInstitutionsEnhanced($person_data, $employment_data);
-    $bio          = extractOrcidBio($person_data);
-    $emails       = extractOrcidEmails($person_data);
-    $kw_tags      = extractOrcidKeywords($person_data);
+    $name             = extractOrcidName($person_data);
+    $institutions     = extractOrcidInstitutionsEnhanced($person_data, $employment_data);
+    $bio              = extractOrcidBio($person_data);
+    $emails           = extractOrcidEmails($person_data);
+    $kw_tags          = extractOrcidKeywords($person_data);
+    $external_ids     = extractOrcidExternalIds($person_data);
+    $researcher_urls  = extractOrcidResearcherUrls($person_data);
+    $all_affiliations = extractAllAffiliations($employment_data);
+    $education_history = extractEducationHistory($education_data);
 
     // Kumpulkan stubs (judul + doi) tanpa analisis SDG
     $works_stubs = [];
@@ -249,15 +254,19 @@ function handleOrcidInitRequest($orcid, $force_refresh = false) {
     $result = [
         'status'       => 'success',
         'action'       => 'init',
-        'api_version'  => 'v5.2.0',
+        'api_version'  => 'v1.0.0',
         'personal_info' => [
-            'name'         => $name ?: 'Peneliti ' . $orcid,
-            'institutions' => $institutions,
-            'orcid'        => $orcid,
-            'bio'          => $bio,
-            'emails'       => $emails,
-            'keywords'     => $kw_tags,
-            'data_source'  => !empty($person_data) ? 'ORCID API' : 'Fallback',
+            'name'              => $name ?: 'Peneliti ' . $orcid,
+            'institutions'      => $institutions,
+            'orcid'             => $orcid,
+            'bio'               => $bio,
+            'emails'            => $emails,
+            'keywords'          => $kw_tags,
+            'external_ids'      => $external_ids,
+            'researcher_urls'   => $researcher_urls,
+            'affiliations'      => $all_affiliations,
+            'education_history' => $education_history,
+            'data_source'       => !empty($person_data) ? 'ORCID API' : 'Fallback',
         ],
         'total_works'  => count($works_stubs),
         'works_stubs'  => $works_stubs,
@@ -293,7 +302,7 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
         return [
             'status'      => 'success',
             'action'      => 'batch',
-            'api_version' => 'v5.2.0',
+            'api_version' => 'v1.0.0',
             'orcid'       => $orcid,
             'offset'      => $offset,
             'limit'       => $limit,
@@ -408,9 +417,9 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
 
         // Analisis SDG
         $sdg_analysis = [];
-        foreach ($SDG_KEYWORDS as $sdg => $keywords) {
+        foreach ($SDG_KEYWORDS as $sdg => $sdg_kw_list) {
             $matched = false;
-            foreach ($keywords as $keyword) {
+            foreach ($sdg_kw_list as $keyword) {
                 if (stripos($preprocessed_text, $keyword) !== false) {
                     $matched = true;
                     break;
@@ -476,7 +485,7 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
     $result = [
         'status'      => 'success',
         'action'      => 'batch',
-        'api_version' => 'v5.2.0',
+        'api_version' => 'v1.0.0',
         'orcid'       => $orcid,
         'offset'      => $offset,
         'limit'       => $limit,
@@ -512,6 +521,7 @@ function handleOrcidSummaryRequest($orcid) {
 
     $researcher_sdg_summary = [];
     $total_analyzed         = 0;
+    $all_works              = [];
 
     // Baca semua batch cache dan agregasi
     for ($offset = 0; $offset < $total_works; $offset += $limit) {
@@ -524,6 +534,7 @@ function handleOrcidSummaryRequest($orcid) {
 
         foreach ($batch_data['works'] as $work) {
             $total_analyzed++;
+            $all_works[] = $work;
 
             foreach ($work['detailed_analysis'] as $sdg => $analysis) {
                 if ($analysis['score'] < $CONFIG['CONFIDENCE_THRESHOLD']) continue;
@@ -604,16 +615,194 @@ function handleOrcidSummaryRequest($orcid) {
         ];
     }
 
-    return [
+    $summary_result = [
         'status'               => 'success',
         'action'               => 'summary',
         'api_version'          => 'v5.2.0',
+        'orcid'                => $orcid,
         'personal_info'        => $init_data['personal_info'],
         'researcher_sdg_summary' => $researcher_sdg_summary,
         'contributor_profile'  => $contributor_profile,
+        'total_works'          => $total_works,
         'total_works_analyzed' => $total_analyzed,
+        'works'                => $all_works,
         'timestamp'            => date('c'),
     ];
+
+    // Persist results to database (silently — never crash the API)
+    persistOrcidResultsToDb($summary_result);
+
+    // Strip works array from response to avoid bloating the JSON output
+    unset($summary_result['works']);
+
+    return $summary_result;
+}
+
+/**
+ * Persist ORCID summary + individual works / SDG mappings to the SQLite database.
+ * Self-contained: works whether bootstrap.php was loaded or not (POST proxy never loads it).
+ */
+function persistOrcidResultsToDb(array $summary): void {
+    try {
+        if (function_exists('getDb')) {
+            $db = getDb();
+        } else {
+            // POST proxy path — bootstrap.php is never required, so open PDO directly.
+            $db_path = defined('PROJECT_ROOT')
+                ? PROJECT_ROOT . '/database/wizdam.db'
+                : dirname(__DIR__)  . '/database/wizdam.db';
+            $db_dir = dirname($db_path);
+            if (!is_dir($db_dir)) {
+                mkdir($db_dir, 0755, true);
+            }
+            $db = new PDO('sqlite:' . $db_path);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db->exec('PRAGMA journal_mode=WAL');
+            $db->exec('PRAGMA foreign_keys=ON');
+            // Bootstrap schema so tables exist on first run
+            $schema = defined('PROJECT_ROOT')
+                ? PROJECT_ROOT . '/database/schema.sql'
+                : dirname(__DIR__)  . '/database/schema.sql';
+            if (file_exists($schema)) {
+                $db->exec((string) file_get_contents($schema));
+            }
+        }
+    } catch (Throwable $e) {
+        error_log('[persistOrcidResultsToDb] DB init failed: ' . $e->getMessage());
+        return;
+    }
+
+    try {
+        $orcid        = $summary['orcid'] ?? null;
+        $name         = $summary['personal_info']['name'] ?? null;
+        $institutions = json_encode($summary['personal_info']['institutions'] ?? []);
+        $total_works  = $summary['total_works'] ?? 0;
+
+        if (empty($orcid)) return;
+
+        // ── Upsert researcher ─────────────────────────────────────
+        $stmt = $db->prepare(
+            'INSERT INTO researchers (orcid, name, institutions, total_works, last_fetched)
+             VALUES (?, ?, ?, ?, datetime(\'now\'))
+             ON CONFLICT(orcid) DO UPDATE SET
+               name=excluded.name,
+               institutions=excluded.institutions,
+               total_works=excluded.total_works,
+               last_fetched=excluded.last_fetched'
+        );
+        $stmt->execute([$orcid, $name, $institutions, $total_works]);
+
+        // Get researcher ID
+        $stmt = $db->prepare('SELECT id FROM researchers WHERE orcid=?');
+        $stmt->execute([$orcid]);
+        $researcher_id = $stmt->fetchColumn();
+        if (!$researcher_id) return;
+
+        // ── Upsert each work ──────────────────────────────────────
+        foreach ($summary['works'] ?? [] as $work) {
+            $title     = $work['title']     ?? null;
+            $doi       = $work['doi']       ?? null;
+            $abstract  = $work['abstract']  ?? null;
+            $authors   = json_encode($work['contributors'] ?? []);
+            $journal   = $work['journal']   ?? null;
+            $volume    = $work['volume']    ?? null;
+            $issue     = $work['issue']     ?? null;
+            $pages     = $work['pages']     ?? null;
+            $year      = isset($work['year']) ? (int)$work['year'] : null;
+            $keywords  = json_encode($work['keywords'] ?? []);
+            $work_type = $work['work_type'] ?? null;
+            $url       = $work['url']       ?? null;
+            $put_code  = $work['put_code']  ?? null;
+
+            // Upsert work (keyed on put_code + researcher_id when available, else title)
+            if ($put_code !== null) {
+                $stmt = $db->prepare(
+                    'INSERT INTO works
+                       (researcher_id, put_code, title, doi, abstract, authors, journal,
+                        volume, issue, pages, year, keywords, work_type, url)
+                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                     WHERE NOT EXISTS (
+                         SELECT 1 FROM works WHERE put_code=? AND researcher_id=?
+                     )'
+                );
+                $stmt->execute([
+                    $researcher_id, $put_code, $title, $doi, $abstract, $authors,
+                    $journal, $volume, $issue, $pages, $year, $keywords, $work_type, $url,
+                    $put_code, $researcher_id,
+                ]);
+
+                // Update existing record fields
+                $stmt = $db->prepare(
+                    'UPDATE works SET
+                       title=?, doi=?, abstract=?, authors=?, journal=?, volume=?,
+                       issue=?, pages=?, year=?, keywords=?, work_type=?, url=?
+                     WHERE put_code=? AND researcher_id=?'
+                );
+                $stmt->execute([
+                    $title, $doi, $abstract, $authors, $journal, $volume,
+                    $issue, $pages, $year, $keywords, $work_type, $url,
+                    $put_code, $researcher_id,
+                ]);
+            } else {
+                // No put_code — insert only if title+researcher_id combo is new
+                $stmt = $db->prepare(
+                    'INSERT INTO works
+                       (researcher_id, put_code, title, doi, abstract, authors, journal,
+                        volume, issue, pages, year, keywords, work_type, url)
+                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                     WHERE NOT EXISTS (
+                         SELECT 1 FROM works WHERE title=? AND researcher_id=?
+                     )'
+                );
+                $stmt->execute([
+                    $researcher_id, null, $title, $doi, $abstract, $authors,
+                    $journal, $volume, $issue, $pages, $year, $keywords, $work_type, $url,
+                    $title, $researcher_id,
+                ]);
+            }
+
+            // Get work ID
+            if ($put_code !== null) {
+                $stmt = $db->prepare('SELECT id FROM works WHERE put_code=? AND researcher_id=?');
+                $stmt->execute([$put_code, $researcher_id]);
+            } else {
+                $stmt = $db->prepare('SELECT id FROM works WHERE title=? AND researcher_id=?');
+                $stmt->execute([$title, $researcher_id]);
+            }
+            $work_id = $stmt->fetchColumn();
+            if (!$work_id) continue;
+
+            // ── Refresh SDG mappings for this work ────────────────
+            $stmt = $db->prepare('DELETE FROM work_sdgs WHERE work_id=?');
+            $stmt->execute([$work_id]);
+
+            $sdg_analysis    = $work['detailed_analysis']  ?? [];
+            $contributor_map = $work['contributor_types']  ?? [];
+
+            foreach ($sdg_analysis as $sdg_code => $analysis) {
+                $contributor_type = $analysis['contributor_type']['type'] ?? ($contributor_map[$sdg_code] ?? null);
+                if ($contributor_type === 'Not Relevant') continue;
+
+                $confidence_score = $analysis['score']             ?? null;
+                $keyword_score    = $analysis['keyword_score']     ?? null;
+                $similarity_score = $analysis['similarity_score']  ?? null;
+                $causal_score     = $analysis['causal_score']      ?? null;
+
+                $stmt = $db->prepare(
+                    'INSERT INTO work_sdgs
+                       (work_id, sdg_code, confidence_score, contributor_type,
+                        keyword_score, similarity_score, causal_score)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)'
+                );
+                $stmt->execute([
+                    $work_id, $sdg_code, $confidence_score, $contributor_type,
+                    $keyword_score, $similarity_score, $causal_score,
+                ]);
+            }
+        }
+    } catch (Throwable $e) {
+        error_log('[persistOrcidResultsToDb] DB error: ' . $e->getMessage());
+    }
 }
 
 /**
@@ -761,6 +950,20 @@ function handleDoiRequest($doi, $force_refresh = false) {
     $doi = trim($doi);
     if (empty($doi)) throw new Exception('DOI tidak boleh kosong', 400);
 
+    // Bersihkan prefix URL doi.org dan doi: jika ada
+    $clean_doi = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', $doi);
+    $clean_doi = preg_replace('/^doi:/i', '', $clean_doi);
+    $clean_doi = trim($clean_doi);
+
+    // Validasi: DOI valid wajib diawali dengan 10.NNNN/
+    if (!preg_match('/^10\.\d{4,}\//', $clean_doi)) {
+        throw new Exception(
+            'Input bukan DOI valid. DOI harus mengandung "doi.org" atau diawali dengan "10.xxxx/". Input: ' . htmlspecialchars($doi, ENT_QUOTES),
+            400
+        );
+    }
+    $doi = $clean_doi;
+
     $cache_file = getCacheFilename('article', $doi);
     if (!$force_refresh && file_exists($cache_file)) {
         $cached = readFromCache($cache_file);
@@ -835,6 +1038,120 @@ function fetchOrcidEmployments($orcid) {
     if ($errno || $http_code != 200) return [];
     $data = json_decode($response, true);
     return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
+}
+
+function fetchOrcidEducations($orcid) {
+    $url = "https://pub.orcid.org/v3.0/{$orcid}/educations";
+    $ch  = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT        => 6,
+    ]);
+    $response  = curl_exec($ch);
+    $errno     = curl_errno($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($errno || $http_code != 200) return [];
+    $data = json_decode($response, true);
+    return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
+}
+
+/**
+ * Format date array from ORCID (year/month/day nested) to YYYY-MM-DD string.
+ */
+function formatOrcidDateParts($date_array) {
+    if (!is_array($date_array)) return null;
+    $parts = [];
+    if (!empty($date_array['year']['value']))  $parts[] = $date_array['year']['value'];
+    if (!empty($date_array['month']['value'])) $parts[] = str_pad($date_array['month']['value'], 2, '0', STR_PAD_LEFT);
+    if (!empty($date_array['day']['value']))   $parts[] = str_pad($date_array['day']['value'],   2, '0', STR_PAD_LEFT);
+    return !empty($parts) ? implode('-', $parts) : null;
+}
+
+function extractOrcidExternalIds($person_data) {
+    $external_ids = [];
+    if (!empty($person_data['external-identifiers']['external-identifier'])) {
+        foreach ($person_data['external-identifiers']['external-identifier'] as $ext_id) {
+            $external_ids[] = [
+                'type'  => isset($ext_id['external-id-type'])        ? $ext_id['external-id-type']        : null,
+                'value' => isset($ext_id['external-id-value'])        ? $ext_id['external-id-value']        : null,
+                'url'   => isset($ext_id['external-id-url']['value']) ? $ext_id['external-id-url']['value'] : null,
+            ];
+        }
+    }
+    return $external_ids;
+}
+
+function extractOrcidResearcherUrls($person_data) {
+    $urls = [];
+    if (!empty($person_data['researcher-urls']['researcher-url'])) {
+        foreach ($person_data['researcher-urls']['researcher-url'] as $u) {
+            $urls[] = [
+                'name' => isset($u['url-name'])     ? $u['url-name']     : null,
+                'url'  => isset($u['url']['value']) ? $u['url']['value'] : null,
+            ];
+        }
+    }
+    return $urls;
+}
+
+/**
+ * Returns all employments with is_current flag (no end-date = current).
+ */
+function extractAllAffiliations($employment_data) {
+    $affiliations = [];
+    if (!empty($employment_data['affiliation-group'])) {
+        foreach ($employment_data['affiliation-group'] as $group) {
+            $summary = isset($group['summaries'][0]['employment-summary'])
+                ? $group['summaries'][0]['employment-summary'] : null;
+            if (!$summary) continue;
+            $org = isset($summary['organization']['name']) ? trim($summary['organization']['name']) : '';
+            if (strlen($org) < 2) continue;
+            $affiliations[] = [
+                'type'         => 'employment',
+                'organization' => $org,
+                'department'   => isset($summary['department-name']) ? $summary['department-name'] : null,
+                'role'         => isset($summary['role-title'])      ? $summary['role-title']      : null,
+                'start_date'   => formatOrcidDateParts(isset($summary['start-date']) ? $summary['start-date'] : null),
+                'end_date'     => formatOrcidDateParts(isset($summary['end-date'])   ? $summary['end-date']   : null),
+                'is_current'   => empty($summary['end-date']),
+                'address'      => [
+                    'city'    => isset($summary['organization']['address']['city'])    ? $summary['organization']['address']['city']    : null,
+                    'region'  => isset($summary['organization']['address']['region'])  ? $summary['organization']['address']['region']  : null,
+                    'country' => isset($summary['organization']['address']['country']) ? $summary['organization']['address']['country'] : null,
+                ],
+            ];
+        }
+    }
+    return $affiliations;
+}
+
+function extractEducationHistory($education_data) {
+    $educations = [];
+    if (!empty($education_data['affiliation-group'])) {
+        foreach ($education_data['affiliation-group'] as $group) {
+            $summary = isset($group['summaries'][0]['education-summary'])
+                ? $group['summaries'][0]['education-summary'] : null;
+            if (!$summary) continue;
+            $org = isset($summary['organization']['name']) ? trim($summary['organization']['name']) : '';
+            if (strlen($org) < 2) continue;
+            $educations[] = [
+                'organization' => $org,
+                'department'   => isset($summary['department-name']) ? $summary['department-name'] : null,
+                'degree'       => isset($summary['role-title'])      ? $summary['role-title']      : null,
+                'start_date'   => formatOrcidDateParts(isset($summary['start-date']) ? $summary['start-date'] : null),
+                'end_date'     => formatOrcidDateParts(isset($summary['end-date'])   ? $summary['end-date']   : null),
+                'address'      => [
+                    'city'    => isset($summary['organization']['address']['city'])    ? $summary['organization']['address']['city']    : null,
+                    'region'  => isset($summary['organization']['address']['region'])  ? $summary['organization']['address']['region']  : null,
+                    'country' => isset($summary['organization']['address']['country']) ? $summary['organization']['address']['country'] : null,
+                ],
+            ];
+        }
+    }
+    return $educations;
 }
 
 function extractOrcidBio($person_data) {
@@ -1249,7 +1566,7 @@ function processOrcidData($orcid, $works_data, $person_data) {
         'researcher_sdg_summary'=> $researcher_sdg_summary,
         'works'                 => $processed_works,
         'status'                => 'success',
-        'api_version'           => 'v5.2.0',
+        'api_version'           => 'v1.0.0',
         'timestamp'             => date('c'),
     ];
 }
@@ -1326,14 +1643,14 @@ function processDoiData($doi, $data) {
         'contributor_types'    => $ctypes,
         'contribution_pathways'=> $pathways,
         'detailed_analysis'    => $sdg_analysis,
-        'api_version'          => 'v5.2.0',
+        'api_version'          => 'v1.0.0',
         'status'               => 'success',
         'timestamp'            => date('c'),
     ];
 }
 
 // =================================================================
-// FUNGSI ANALISIS SDG (tidak berubah dari v5.1.8)
+// FUNGSI ANALISIS SDG (tidak berubah dari v1.0.0)
 // =================================================================
 
 function evaluateSDGContribution($text, $sdg) {
@@ -1793,5 +2110,5 @@ try {
     echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'code' => 500, 'message' => 'Internal error: ' . $e->getMessage(), 'timestamp' => date('c'), 'api_version' => 'v5.2.0'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    echo json_encode(['status' => 'error', 'code' => 500, 'message' => 'Internal error: ' . $e->getMessage(), 'timestamp' => date('c'), 'api_version' => 'v1.0.0'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

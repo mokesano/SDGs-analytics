@@ -1,4 +1,4 @@
-# Wizdam AI-sikola — Action Plan v1.0
+# Wizdam AI-scola — Action Plan v1.0
 
 > **SDGs Classification & Research Analytics Platform**  
 > PT. Sangia Research Media and Publishing · wizdam.sangia.org  
@@ -439,7 +439,7 @@ assets/css/
 ## 8. Struktur Repositori
 
 ```
-wizdam-ai-sikola/
+wizdam-ai-scola/
 │
 ├── public/                          # Document root (wizdam.sangia.org)
 │   ├── index.php                    # Front controller + router

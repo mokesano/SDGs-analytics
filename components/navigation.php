@@ -3,7 +3,7 @@
  * SDG Frontend - Navigation Component
  * Komponen navigasi responsif dengan semua fitur modern
  * 
- * @version 5.1.8
+ * @version 1.0.0
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
@@ -48,7 +48,19 @@ $navigation_items = [
         'icon' => 'fas fa-envelope',
         'url' => '?page=contact',
         'description' => 'Contact us'
-    ]
+    ],
+    'archived' => [
+        'title' => 'Archived',
+        'icon' => 'fas fa-archive',
+        'url' => '?page=archived',
+        'description' => 'Riwayat pencarian'
+    ],
+    'leaderboard' => [
+        'title' => 'Leaderboard',
+        'icon' => 'fas fa-trophy',
+        'url' => '?page=leaderboard',
+        'description' => 'Ranking peneliti SDG'
+    ],
 ];
 
 // Additional menu items (dropdown)
@@ -116,7 +128,19 @@ $tools_items = [
         'icon' => 'fas fa-plug',
         'url' => '?page=integration-tools',
         'description' => 'Integration tools'
-    ]
+    ],
+    'journal-archive' => [
+        'title' => 'Journal Archive',
+        'icon' => 'fas fa-book-open',
+        'url' => '?page=journal-archive',
+        'description' => 'Arsip jurnal Scopus'
+    ],
+    'sdg-researcher-list' => [
+        'title' => 'SDG Researchers',
+        'icon' => 'fas fa-users',
+        'url' => '?page=sdg-researcher-list',
+        'description' => 'Daftar peneliti per SDG'
+    ],
 ];
 ?>
 
@@ -130,7 +154,7 @@ $tools_items = [
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="brand-text">
-                    <span class="brand-name">Wizdam AI-sikola</span>
+                    <span class="brand-name">Wizdam AI-scola</span>
                     <span class="brand-version">v<?php echo VERSION; ?></span>
                 </div>
             </a>
@@ -273,12 +297,43 @@ $tools_items = [
                     <span class="notification-badge" id="notificationBadge" style="display: none;">3</span>
                 </button>
                 
-                <!-- Quick Access CTA -->
-                <a href="?page=api-access" class="navbar-item cta-btn">
-                    <i class="fas fa-rocket"></i>
-                    <span class="navbar-text">Get API Key</span>
+                <!-- Auth Section -->
+                <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="dropdown">
+                    <button class="dropdown-trigger navbar-item action-btn" onclick="toggleDropdown('userDropdown')" title="Akun Saya" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="navbar-text"><?php echo htmlspecialchars(isset($_SESSION['user_name']) ? mb_substr($_SESSION['user_name'], 0, 12) : 'User'); ?></span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userDropdown" role="menu">
+                        <div class="dropdown-content">
+                            <a href="?page=home" class="dropdown-item" role="menuitem">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <div class="dropdown-item-content"><span class="dropdown-item-title">Dashboard</span><span class="dropdown-item-desc">Halaman utama</span></div>
+                            </a>
+                            <a href="?page=archived" class="dropdown-item" role="menuitem">
+                                <i class="fas fa-history"></i>
+                                <div class="dropdown-item-content"><span class="dropdown-item-title">Riwayat Analisis</span></div>
+                            </a>
+                            <hr style="margin:4px 0;border-color:#f0f0f0;">
+                            <a href="#" class="dropdown-item" role="menuitem" onclick="logoutUser(); return false;">
+                                <i class="fas fa-sign-out-alt" style="color:#e74c3c;"></i>
+                                <div class="dropdown-item-content"><span class="dropdown-item-title" style="color:#e74c3c;">Keluar</span></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php else: ?>
+                <a href="?page=login" class="navbar-item cta-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span class="navbar-text">Masuk</span>
                 </a>
-                
+                <a href="?page=register" class="navbar-item" style="padding:6px 14px;background:transparent;border:1.5px solid var(--brand,#ff5627);border-radius:8px;color:var(--brand,#ff5627);font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-left:4px;transition:all .2s;">
+                    <i class="fas fa-user-plus"></i>
+                    <span class="navbar-text">Daftar</span>
+                </a>
+                <?php endif; ?>
+
             </div>
         </div>
     </div>
@@ -304,6 +359,15 @@ $tools_items = [
 
 <!-- Navigation Scripts -->
 <script>
+// Logout user
+function logoutUser() {
+    const fd = new FormData();
+    fd.append('action', 'logout');
+    fetch('../api/auth.php', { method: 'POST', body: fd })
+        .then(() => { window.location.href = '?page=home'; })
+        .catch(() => { window.location.href = '?page=home'; });
+}
+
 // Mobile menu toggle
 function toggleMobileMenu() {
     const menu = document.getElementById('navbarMenu');

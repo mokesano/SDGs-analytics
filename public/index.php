@@ -6,7 +6,7 @@
  * 1. AJAX Proxy  — Jika POST dengan _sdg, teruskan ke API via direct include
  * 2. Page Router — Jika GET, sajikan halaman HTML sesuai ?page=
  *
- * @version 5.2.0
+ * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
@@ -59,6 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['_sdg'])) {
             $rawDoi = trim($_POST['doi']);
             $rawDoi = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', $rawDoi);
             $params['doi'] = $rawDoi;
+            break;
+        case 'journal':
+            if (empty($_POST['issn'])) { http_response_code(400); echo json_encode(['status'=>'error','message'=>'issn required']); exit; }
+            $rawIssn = preg_replace('/[^0-9X]/', '', strtoupper(trim($_POST['issn'])));
+            if (strlen($rawIssn) !== 8) { http_response_code(400); echo json_encode(['status'=>'error','message'=>'Format ISSN tidak valid']); exit; }
+            $params['issn']   = $rawIssn;
+            $params['action'] = 'journal';
+            $api_file = PROJECT_ROOT . '/api/scopus.php';
             break;
         default:
             http_response_code(400);
@@ -113,6 +121,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['_sdg'])) {
 }
 
 // ================================================================
+// BAGIAN #0b — PUBLIC API (GET ?api=journal)
+// GET dengan api=journal → sajikan JSON langsung, exit.
+// ================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['api'])) {
+    $api_action = trim($_GET['api']);
+    if ($api_action === 'journal') {
+        while (ob_get_level()) ob_end_clean();
+        $api_file = PROJECT_ROOT . '/api/journal.php';
+        if (file_exists($api_file)) {
+            require $api_file;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(503);
+            echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
+        }
+        exit;
+    } elseif ($api_action === 'researcher') {
+        while (ob_get_level()) ob_end_clean();
+        $api_file = PROJECT_ROOT . '/api/researcher.php';
+        if (file_exists($api_file)) {
+            require $api_file;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(503);
+            echo json_encode(['status' => 'error', 'message' => 'API endpoint tidak ditemukan.']);
+        }
+        exit;
+    }
+    // Unknown api= values fall through to normal page routing
+}
+
+// ================================================================
 // BAGIAN #1 — PAGE ROUTER (GET requests)
 // ================================================================
 session_start();
@@ -125,6 +165,7 @@ ini_set('error_log', PROJECT_ROOT . '/logs/error.log');
 require_once PROJECT_ROOT . '/includes/config.php';
 require_once PROJECT_ROOT . '/includes/functions.php';
 require_once PROJECT_ROOT . '/includes/sdg_definitions.php';
+require_once PROJECT_ROOT . '/includes/bootstrap.php';
 
 // Routing sederhana via ?page=
 $page = isset($_GET['page']) ? trim($_GET['page']) : 'home';
@@ -134,7 +175,9 @@ $allowed_pages = [
     'documentation', 'analitics-dashboard', 'api-access', 'bulk-analysis',
     'integration-tools', 'tutorials', 'research-papers', 'api-reference',
     'community-forum', 'blog', 'careers', 'partners', 'press-kit',
-    'privacy-policy', 'orcid-profile', 'journal-profile',
+    'privacy-policy',
+    'login', 'register', 'forgot-password', 'leaderboard', 'orcid-profile',
+    'journal-profile', 'journal-archive', 'sdg-researcher-list',
 ];
 if (!in_array($page, $allowed_pages)) $page = 'home';
 
@@ -161,6 +204,35 @@ switch ($page) {
         $page_title       = 'Contact Us - SDGs Classification Analysis';
         $page_description = 'Get in touch with our team.';
         break;
+    case 'login':
+        $page_title = 'Login - SDGs Classification Analysis';
+        break;
+    case 'register':
+        $page_title = 'Register - SDGs Classification Analysis';
+        break;
+    case 'forgot-password':
+        $page_title = 'Reset Password - SDGs Classification Analysis';
+        break;
+    case 'leaderboard':
+        $page_title       = 'Leaderboard - SDGs Classification Analysis';
+        $page_description = 'Top researchers contributing to Sustainable Development Goals.';
+        break;
+    case 'orcid-profile':
+        $page_title = 'Researcher Profile - SDGs Classification Analysis';
+        break;
+    case 'journal-profile':
+        $issn_param   = isset($_GET['issn']) ? htmlspecialchars(trim($_GET['issn'])) : '';
+        $page_title   = ($issn_param ? $issn_param . ' — ' : '') . 'Journal Profile | SDGs Classification Analysis';
+        $page_description = 'Scopus journal metrics, quartile, SJR, SDG mapping, and research overview.';
+        break;
+    case 'journal-archive':
+        $page_title       = 'Journal Archive — SDGs Classification Analysis';
+        $page_description = 'Browse all Scopus journals checked on Wizdam AI.';
+        break;
+    case 'sdg-researcher-list':
+        $page_title       = 'Peneliti per SDG — SDGs Classification Analysis';
+        $page_description = 'Browse researchers by SDG category and contribution type.';
+        break;
     default:
         $page_title       = ucfirst(str_replace('-', ' ', $page)) . ' - SDGs Classification Analysis';
         $page_description = 'SDGs Classification Analysis - AI-powered platform for research analysis.';
@@ -169,7 +241,9 @@ switch ($page) {
 include PROJECT_ROOT . '/components/header.php';
 include PROJECT_ROOT . '/components/navigation.php';
 
-$page_file = PROJECT_ROOT . "/pages/{$page}.php";
+$auth_pages = ['login' => 'auth/login', 'register' => 'auth/register', 'forgot-password' => 'auth/forgot'];
+$page_slug = isset($auth_pages[$page]) ? $auth_pages[$page] : $page;
+$page_file = PROJECT_ROOT . "/pages/{$page_slug}.php";
 if (file_exists($page_file)) {
     include $page_file;
 } else {

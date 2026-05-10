@@ -2,6 +2,18 @@
 # Compiled and build artifacts
 *.pyc
 __pycache__/
+# Wizdam AI-scola .gitignore
+
+# Database
+/database/wizdam.db
+/database/*.db
+/database/*.sqlite
+
+# Runtime / Storage
+/storage/
+/api/cache/
+/logs/*.log
+!/logs/.gitkeep
 
 # Dependencies
 node_modules/
