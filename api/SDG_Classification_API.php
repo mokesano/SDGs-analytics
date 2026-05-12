@@ -152,7 +152,16 @@ function main() {
                     return handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh);
 
                 case 'summary':
-                    return handleOrcidSummaryRequest($orcid);
+                    // Ambil init data untuk persistensi
+                    $init_cache_file = getCacheFilename('orcid_init', $orcid);
+                    $init_data = readFromCache($init_cache_file);
+                    
+                    $result = handleOrcidSummaryRequest($orcid);
+                    // Simpan ke database setelah summary selesai
+                    if (!empty($result['personal_info']) && !empty($init_data)) {
+                        persistOrcidResultsToDatabase($orcid, $init_data, $result);
+                    }
+                    return $result;
 
                 default: // 'full' – backward compatible
                     return handleOrcidRequest($orcid, $force_refresh);
@@ -343,6 +352,9 @@ function handleOrcidBatchRequest($orcid, $offset, $limit, $force_refresh = false
                 $contributors  = $detail['contributors']  ?? [];
                 $journal_title = $detail['journal_title'] ?? '';
                 $pub_year      = $detail['pub_year']      ?? null;
+                $volume        = $detail['volume']        ?? '';
+                $issue         = $detail['issue']         ?? '';
+                $pages         = $detail['pages']         ?? '';
                 $keywords      = $detail['keywords']      ?? [];
                 $work_type     = $detail['work_type']     ?? '';
                 $work_url      = $detail['url']           ?? '';
@@ -793,6 +805,117 @@ function persistOrcidResultsToDb(array $summary): void {
     }
 }
 
+/**
+ * Simpan hasil analisis ORCID ke database
+ * Dipanggil setelah summary selesai untuk persistensi data
+ * 
+ * @param string $orcid ORCID peneliti
+ * @param array $init_data Data init dari cache
+ * @param array $summary_result Hasil summary analysis
+ * @return bool True jika berhasil disimpan
+ */
+function persistOrcidResultsToDatabase($orcid, $init_data, $summary_result) {
+    // Cek apakah database class tersedia
+    if (!class_exists('Database')) {
+        $dbFile = PROJECT_ROOT . '/includes/database.php';
+        if (file_exists($dbFile)) {
+            require_once $dbFile;
+        } else {
+            error_log('Database class not found: ' . $dbFile);
+            return false;
+        }
+    }
+    
+    try {
+        // Inisialisasi database jika belum
+        Database::initialize();
+        
+        // 1. Simpan peneliti
+        $personal_info = $init_data['personal_info'] ?? [];
+        $name = $personal_info['name'] ?? 'Unknown';
+        $institutions = $personal_info['institutions'] ?? [];
+        $total_works = $init_data['total_works'] ?? 0;
+        
+        $researcher_id = Database::saveResearcher($orcid, $name, $institutions, $total_works);
+        if (!$researcher_id) {
+            error_log('Failed to save researcher: ' . $orcid);
+            return false;
+        }
+        
+        // 2. Kumpulkan semua works dari batch cache
+        $limit = BATCH_SIZE;
+        $works_saved = 0;
+        $sdgs_saved = 0;
+        
+        for ($offset = 0; $offset < $total_works; $offset += $limit) {
+            $batch_cache_id = $orcid . '_' . $offset . '_' . $limit;
+            $batch_cache_file = getCacheFilename('orcid_batch', $batch_cache_id);
+            
+            if (!file_exists($batch_cache_file)) continue;
+            $batch_data = readFromCache($batch_cache_file);
+            if ($batch_data === false || empty($batch_data['works'])) continue;
+            
+            foreach ($batch_data['works'] as $work) {
+                // 3. Simpan karya
+                $work_data = [
+                    'put_code'   => $work['put_code'] ?? null,
+                    'title'      => $work['title'] ?? '',
+                    'doi'        => $work['doi'] ?? null,
+                    'abstract'   => $work['abstract'] ?? '',
+                    'contributors' => $work['contributors'] ?? [],
+                    'journal'    => $work['journal'] ?? '',
+                    'volume'     => $work['volume'] ?? '',
+                    'issue'      => $work['issue'] ?? '',
+                    'pages'      => $work['pages'] ?? '',
+                    'pub_year'   => $work['year'] ?? null,
+                    'keywords'   => $work['keywords'] ?? [],
+                    'work_type'  => $work['work_type'] ?? '',
+                    'url'        => $work['url'] ?? '',
+                ];
+                
+                $work_id = Database::saveWork($researcher_id, $work_data);
+                if (!$work_id) {
+                    error_log('Failed to save work: ' . ($work['doi'] ?? $work['title']));
+                    continue;
+                }
+                $works_saved++;
+                
+                // 4. Simpan relasi work-SDG
+                if (!empty($work['detailed_analysis'])) {
+                    foreach ($work['detailed_analysis'] as $sdg_code => $analysis) {
+                        if ($analysis['score'] < 0.30) continue; // Skip low confidence
+                        
+                        $contributor_type = $analysis['contributor_type']['type'] ?? 'Discutor';
+                        $keyword_score = $analysis['keyword_match']['normalized_score'] ?? 0;
+                        $similarity_score = $analysis['semantic_similarity'] ?? 0;
+                        $causal_score = $analysis['causal_relationship']['score'] ?? 0;
+                        $impact_score = $analysis['impact_orientation']['score'] ?? 0;
+                        
+                        Database::saveWorkSdg(
+                            $work_id,
+                            $sdg_code,
+                            $analysis['score'],
+                            $contributor_type,
+                            $keyword_score,
+                            $similarity_score,
+                            $causal_score,
+                            $impact_score
+                        );
+                        $sdgs_saved++;
+                    }
+                }
+            }
+        }
+        
+        error_log("Successfully persisted ORCID $orcid: $works_saved works, $sdgs_saved SDG relations");
+        return true;
+        
+    } catch (Exception $e) {
+        error_log('Error persisting ORCID results: ' . $e->getMessage());
+        return false;
+    }
+}
+
 // =================================================================
 // HANDLER LAMA (backward-compatible)
 // =================================================================
@@ -1171,6 +1294,20 @@ function fetchOrcidWorkDetail($orcid, $put_code) {
         $pub_year = (int)$data['publication-date']['year']['value'];
     }
 
+    // Volume, Issue, Pages dari ORCID
+    $volume = '';
+    $issue  = '';
+    $pages  = '';
+    if (isset($data['citation']['volume'])) {
+        $volume = $data['citation']['volume']['value'] ?? '';
+    }
+    if (isset($data['citation']['issue'])) {
+        $issue = $data['citation']['issue']['value'] ?? '';
+    }
+    if (isset($data['citation']['page-range'])) {
+        $pages = $data['citation']['page-range']['value'] ?? '';
+    }
+
     // Keywords
     $keywords = [];
     if (isset($data['keywords']['keyword'])) {
@@ -1189,6 +1326,9 @@ function fetchOrcidWorkDetail($orcid, $put_code) {
         'contributors'  => $contributors,
         'journal_title' => $journal_title,
         'pub_year'      => $pub_year,
+        'volume'        => $volume,
+        'issue'         => $issue,
+        'pages'         => $pages,
         'keywords'      => $keywords,
         'work_type'     => $work_type,
         'url'           => $work_url,

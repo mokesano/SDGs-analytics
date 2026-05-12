@@ -3,6 +3,7 @@ Options -Indexes
 Options -MultiViews
 
 RewriteEngine On
+RewriteBase /public/
 
 # Security Headers
 Header always set X-Frame-Options "DENY"
@@ -11,7 +12,15 @@ Header always set X-XSS-Protection "1; mode=block"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header unset X-Powered-By
 
-# Route all requests to index.php (except static files)
+# Clean URLs for ORCID profiles
+# Example: /orcid/0000-0000-0000-0000 → index.php?page=orcid-profile&orcid=0000-0000-0000-0000
+RewriteRule ^orcid/([0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X])$ index.php?page=orcid-profile&orcid=$1 [QSA,L]
+
+# Clean URLs for Journal profiles
+# Example: /journal/1234-5678 → index.php?page=journal-profile&issn=1234-5678
+RewriteRule ^journal/([0-9]{4}-[0-9]{3}[0-9X])$ index.php?page=journal-profile&issn=$1 [QSA,L]
+
+# Route all other requests to index.php (except static files)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

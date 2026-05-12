@@ -753,23 +753,44 @@ define('HOME_AJAX_BATCH', 3);
     function showError(message) {
         const prog = document.getElementById('ajaxProgressSection');
         if (!prog) { console.error(message); return; }
+        
+        // Preserve the structure - only update content, don't replace innerHTML
         prog.style.display = 'block';
-        prog.innerHTML = `
-            <div style="display:flex;align-items:flex-start;gap:16px;padding:4px 0;">
-                <div style="width:44px;height:44px;background:#fff0f0;border-radius:50%;display:flex;align-items:center;
-                            justify-content:center;flex-shrink:0;border:2px solid #fca5a5;">
-                    <i class="fas fa-exclamation-triangle" style="color:#dc2626;font-size:18px;"></i>
-                </div>
-                <div style="flex:1;">
-                    <h3 style="color:#dc2626;margin:0 0 6px;font-size:1rem;">Analysis Failed</h3>
-                    <p style="color:#555;margin:0;font-size:.9rem;line-height:1.5;">${escH(message)}</p>
-                    <button onclick="document.getElementById('ajaxProgressSection').style.display='none';"
-                        style="margin-top:12px;padding:6px 16px;background:#dc2626;color:#fff;border:none;
-                               border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;">
-                        Close
-                    </button>
-                </div>
-            </div>`;
+        
+        const spinner = document.getElementById('ajaxSpinner');
+        const titleEl = document.getElementById('ajaxProgressTitle');
+        const subtitleEl = document.getElementById('ajaxProgressSubtitle');
+        const barContainer = document.getElementById('ajaxProgressBarContainer');
+        
+        // Hide spinner and progress bar, show error icon
+        if (spinner) spinner.style.display = 'none';
+        if (barContainer) barContainer.style.display = 'none';
+        
+        // Update title and subtitle with error message
+        if (titleEl) {
+            titleEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#dc2626;"></i> Analysis Failed';
+            titleEl.style.color = '#dc2626';
+        }
+        if (subtitleEl) {
+            subtitleEl.textContent = escH(message);
+            subtitleEl.style.color = '#555';
+        }
+        
+        // Add a retry button if not already present
+        let retryBtn = document.getElementById('ajaxRetryButton');
+        if (!retryBtn) {
+            const btnContainer = document.createElement('div');
+            btnContainer.style.marginTop = '12px';
+            btnContainer.innerHTML = `
+                <button id="ajaxRetryButton" onclick="document.getElementById('ajaxProgressSection').style.display='none';"
+                    style="padding:8px 20px;background:#dc2626;color:#fff;border:none;
+                           border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;">
+                    Close
+                </button>`;
+            if (subtitleEl && subtitleEl.parentNode) {
+                subtitleEl.parentNode.appendChild(btnContainer);
+            }
+        }
     }
 
     // ── Progress ───────────────────────────────────────────────────
@@ -777,12 +798,30 @@ define('HOME_AJAX_BATCH', 3);
         const prog = document.getElementById('ajaxProgressSection');
         if (!prog) return;
         prog.style.display = 'block';
+        
+        // Reset any error state
         const spinner = document.getElementById('ajaxSpinner');
         if (spinner) spinner.style.display = showSpinner === false ? 'none' : 'block';
+        
+        const barContainer = document.getElementById('ajaxProgressBarContainer');
+        if (barContainer) barContainer.style.display = 'block';
+        
         const el_t = document.getElementById('ajaxProgressTitle');
         const el_s = document.getElementById('ajaxProgressSubtitle');
-        if (el_t) el_t.textContent = title   || '…';
-        if (el_s) el_s.textContent = subtitle || '';
+        if (el_t) {
+            el_t.textContent = title || '…';
+            el_t.style.color = '';  // Reset color
+        }
+        if (el_s) {
+            el_s.textContent = subtitle || '';
+            el_s.style.color = '';  // Reset color
+        }
+        
+        // Remove retry button if exists (from previous error)
+        const retryBtn = document.getElementById('ajaxRetryButton');
+        if (retryBtn && retryBtn.parentNode) {
+            retryBtn.parentNode.remove();
+        }
     }
     function hideProgress() {
         setTimeout(() => {
