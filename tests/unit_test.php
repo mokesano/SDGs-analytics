@@ -19,8 +19,9 @@ require_once PROJECT_ROOT . '/includes/functions.php';
 require_once PROJECT_ROOT . '/includes/sdg_definitions.php';
 
 // Load text analysis helpers from SDG_Classification_API.php
-// These functions are NOT duplicated in functions.php, so safe to include
+// Only include functions that are NOT already defined in functions.php
 if (!function_exists('createTextVector')) {
+    // Extract only the text analysis functions we need for testing
     require_once PROJECT_ROOT . '/api/SDG_Classification_API.php';
 }
 
