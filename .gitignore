@@ -1,5 +1,14 @@
 # SDGs Analytics .gitignore
 
+# Logs
+*.log
+
+# Database
+database/*.db
+
+# Cache
+cache/
+
 # Compiled and build artifacts
 *.pyc
 *.o
