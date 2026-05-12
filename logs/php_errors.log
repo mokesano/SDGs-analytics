@@ -1,0 +1,1 @@
+[13-May-2026 05:11:29 Asia/Jakarta] PHP Fatal error:  Cannot redeclare fetchOrcidData() (previously declared in /workspace/includes/functions.php:214) in /workspace/api/SDG_Classification_API.php on line 987
