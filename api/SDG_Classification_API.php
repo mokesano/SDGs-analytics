@@ -984,45 +984,90 @@ function handleDoiRequest($doi, $force_refresh = false) {
 // FUNGSI PENGAMBILAN DATA
 // =================================================================
 
-function fetchOrcidData($orcid) {
-    $url = "https://pub.orcid.org/v3.0/{$orcid}/works?pageSize=50";
-    $ch  = curl_init();
-    curl_setopt_array($ch, [
-        CURLOPT_URL           => $url,
-        CURLOPT_RETURNTRANSFER=> true,
-        CURLOPT_HTTPHEADER    => ['Accept: application/json'],
-        CURLOPT_CONNECTTIMEOUT=> 5,
-        CURLOPT_TIMEOUT       => 15,
-    ]);
-    $response = curl_exec($ch);
-    $errno    = curl_errno($ch);
-    $error    = curl_error($ch);
-    curl_close($ch);
-    if ($errno) throw new Exception('Gagal mengambil data ORCID: ' . $error, 500);
-    $data = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) throw new Exception('Data ORCID tidak valid', 500);
-    return $data;
+// Skip these functions if already defined in functions.php
+if (!function_exists('fetchOrcidData')) {
+    function fetchOrcidData($orcid) {
+        $url = "https://pub.orcid.org/v3.0/{$orcid}/works?pageSize=50";
+        $ch  = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL           => $url,
+            CURLOPT_RETURNTRANSFER=> true,
+            CURLOPT_HTTPHEADER    => ['Accept: application/json'],
+            CURLOPT_CONNECTTIMEOUT=> 5,
+            CURLOPT_TIMEOUT       => 15,
+        ]);
+        $response = curl_exec($ch);
+        $errno    = curl_errno($ch);
+        $error    = curl_error($ch);
+        curl_close($ch);
+        if ($errno) throw new Exception('Gagal mengambil data ORCID: ' . $error, 500);
+        $data = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) throw new Exception('Data ORCID tidak valid', 500);
+        return $data;
+    }
 }
 
-function fetchOrcidPersonData($orcid) {
-    $url = "https://pub.orcid.org/v3.0/{$orcid}/person";
-    $ch  = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER=> true,
-        CURLOPT_HTTPHEADER    => ['Accept: application/json'],
-        CURLOPT_CONNECTTIMEOUT=> 5,
-        CURLOPT_TIMEOUT       => 10,
-    ]);
-    $response  = curl_exec($ch);
-    $errno     = curl_errno($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($errno || $http_code != 200) return [];
-    $data = json_decode($response, true);
-    return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
+if (!function_exists('fetchDoiData')) {
+    function fetchDoiData($doi) {
+        $url     = "https://api.crossref.org/works/" . urlencode($doi);
+        $maxTry  = 3;
+        $delay   = 2;
+        $lastErr = '';
+
+        for ($attempt = 0; $attempt < $maxTry; $attempt++) {
+            if ($attempt > 0) sleep($delay * $attempt);
+
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HEADER         => true,
+                CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+                CURLOPT_CONNECTTIMEOUT => 5,
+                CURLOPT_TIMEOUT        => 12,
+            ]);
+            $raw       = curl_exec($ch);
+            $errno     = curl_errno($ch);
+            $errStr    = curl_error($ch);
+            $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $headerSize= curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $ctypeRaw  = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+            curl_close($ch);
+
+            if ($errno) { $lastErr = 'cURL error: ' . $errStr; continue; }
+
+            // Rate limit – tunggu lalu retry
+            if ($httpCode === 429) { $lastErr = 'Crossref rate limit (429)'; continue; }
+
+            // DOI tidak ditemukan
+            if ($httpCode === 404) throw new Exception('DOI tidak ditemukan di Crossref (404)', 404);
+
+            if ($httpCode !== 200) throw new Exception("Crossref HTTP $httpCode untuk DOI: $doi", 500);
+
+            // Validasi Content-Type: harus JSON
+            if ($ctypeRaw && stripos($ctypeRaw, 'json') === false) {
+                throw new Exception('Crossref tidak mengembalikan JSON (Content-Type: ' . $ctypeRaw . ')', 500);
+            }
+
+            $body = substr($raw, $headerSize);
+
+            // Validasi karakter pertama respons
+            $firstChar = ltrim($body)[0] ?? '';
+            if ($firstChar !== '{' && $firstChar !== '[') {
+                throw new Exception('Crossref mengembalikan respons non-JSON: ' . substr($body, 0, 80), 500);
+            }
+
+            $data = json_decode($body, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception('JSON Crossref tidak valid: ' . json_last_error_msg(), 500);
+            }
+            return $data;
+        }
+
+        throw new Exception('Gagal mengambil data Crossref setelah ' . $maxTry . ' percobaan. ' . $lastErr, 500);
+    }
 }
 
-function fetchOrcidEmployments($orcid) {
+function fetchAbstractFromAlternativeSource($doi) {
     $url = "https://pub.orcid.org/v3.0/{$orcid}/employments";
     $ch  = curl_init($url);
     curl_setopt_array($ch, [
