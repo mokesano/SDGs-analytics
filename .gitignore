@@ -1,1 +1,10 @@
-Nothing needs to be added to the .gitignore file since the changes only include source code files (.php) and there are no build artifacts, dependencies, or temporary files in the provided file changes.
+```
+# Logs
+*.log
+
+# Database
+database/*.db
+
+# Cache
+cache/
+```
