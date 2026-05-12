@@ -13,10 +13,16 @@
 define('PROJECT_ROOT', dirname(__DIR__));
 define('TEST_MODE', true);
 
-// Load dependencies
+// Load core dependencies first
 require_once PROJECT_ROOT . '/includes/config.php';
 require_once PROJECT_ROOT . '/includes/functions.php';
 require_once PROJECT_ROOT . '/includes/sdg_definitions.php';
+
+// Load text analysis helpers from SDG_Classification_API.php
+// These functions are NOT duplicated in functions.php, so safe to include
+if (!function_exists('createTextVector')) {
+    require_once PROJECT_ROOT . '/api/SDG_Classification_API.php';
+}
 
 class TestResult {
     public $passed = 0;
