@@ -2,6 +2,17 @@
 
 # Compiled and build artifacts
 *.pyc
+*.o
+*.obj
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
+
+# Compiled and build artifacts
+*.pyc
 __pycache__/
 
 # Database
@@ -23,6 +34,21 @@ frontend/package-lock.json
 backend/package-lock.json
 venv/
 .venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+dist/
+build/
+target/
+.gradle/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Environment
 .env
 .env.local
 .env.*
@@ -32,15 +58,37 @@ composer.lock
 # Editors
 .vscode/
 .idea/
-
-# Logs and temp files
-*.log
-*.tmp
 *.swp
+*.swo
 
-# OS generated files
+# System files
 .DS_Store
 Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
 
 # Build directories
 dist/
