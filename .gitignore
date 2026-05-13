@@ -1,9 +1,12 @@
 ```
-# Cache and test results
-.phpunit.cache/
-
 # Database files
+database/*.db-shm
+database/*.db-wal
 database/*.db
+
+# Dependencies
+vendor/
+composer.lock
 
 # Logs and temp files
 *.log
@@ -13,11 +16,6 @@ database/*.db
 .env
 .env.local
 .env.*
-
-# Dependencies
-vendor/
-node_modules/
-composer.lock
 
 # Editors
 .vscode/

@@ -36,15 +36,15 @@ class ApplicationTest extends TestCase
      */
     protected function tearDown(): void
     {
-        // Restore original handlers
-        restore_error_handler();
-        restore_exception_handler();
-        
-        // Reset singleton instance
+        // Reset singleton instance first
         $reflection = new \ReflectionClass(Application::class);
         $instanceProperty = $reflection->getProperty('instance');
         $instanceProperty->setAccessible(true);
         $instanceProperty->setValue(null, null);
+        
+        // Restore default PHP error handler
+        while (@restore_error_handler());
+        while (@restore_exception_handler());
     }
 
     /**
