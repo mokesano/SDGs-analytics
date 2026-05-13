@@ -2,26 +2,21 @@
 # Cache and test results
 .phpunit.cache/
 
-# Database files
-*.db
-
-# Dependencies
-vendor/
-
 # Logs and temp files
 *.log
 *.tmp
+*.swp
 
 # Environment
 .env
 .env.local
-*.env.*
+.env.*
 
 # Editors
 .vscode/
 .idea/
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# Dependencies
+vendor/
+node_modules/
 ```
