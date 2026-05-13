@@ -344,4 +344,123 @@ class Database
         self::$instance = null;
         self::$dbPath = '';
     }
+
+    /**
+     * Execute a SELECT query with optional parameters
+     */
+    public static function query(string $sql, array $params = []): array
+    {
+        try {
+            $db = self::getInstance();
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Query failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Execute an INSERT/UPDATE/DELETE query with parameters
+     */
+    public static function execute(string $sql, array $params = []): int
+    {
+        try {
+            $db = self::getInstance();
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            error_log('Execute failed: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get last inserted ID
+     */
+    public static function getLastInsertId(): int
+    {
+        $db = self::getInstance();
+        return (int)$db->lastInsertId();
+    }
+
+    /**
+     * Begin a transaction
+     */
+    public static function beginTransaction(): bool
+    {
+        $db = self::getInstance();
+        return $db->beginTransaction();
+    }
+
+    /**
+     * Commit a transaction
+     */
+    public static function commit(): bool
+    {
+        $db = self::getInstance();
+        return $db->commit();
+    }
+
+    /**
+     * Rollback a transaction
+     */
+    public static function rollback(): bool
+    {
+        $db = self::getInstance();
+        return $db->rollBack();
+    }
+
+    /**
+     * Check if in transaction
+     */
+    public static function inTransaction(): bool
+    {
+        $db = self::getInstance();
+        return $db->inTransaction();
+    }
+
+    /**
+     * Fetch single row
+     */
+    public static function fetchOne(string $sql, array $params = []): ?array
+    {
+        $result = self::query($sql, $params);
+        return !empty($result) ? $result[0] : null;
+    }
+
+    /**
+     * Fetch single column value
+     */
+    public static function fetchColumn(string $sql, array $params = [])
+    {
+        try {
+            $db = self::getInstance();
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log('FetchColumn failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Check if table exists
+     */
+    public static function tableExists(string $tableName): bool
+    {
+        try {
+            $db = self::getInstance();
+            $stmt = $db->prepare(
+                \"SELECT name FROM sqlite_master WHERE type='table' AND name=:name\"
+            );
+            $stmt->execute(['name' => $tableName]);
+            return (bool)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }

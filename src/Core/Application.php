@@ -677,10 +677,14 @@ class Application
 
     /**
      * Get a registered service
+     * @throws \InvalidArgumentException if service not found
      */
     public function getService(string $name)
     {
-        return $this->services[$name] ?? null;
+        if (!isset($this->services[$name])) {
+            throw new \InvalidArgumentException("Service '{$name}' is not registered");
+        }
+        return $this->services[$name];
     }
 
     /**
@@ -689,6 +693,22 @@ class Application
     public function registerService(string $name, $service): void
     {
         $this->services[$name] = $service;
+    }
+
+    /**
+     * Check if application has a service registered
+     */
+    public function hasService(string $name): bool
+    {
+        return isset($this->services[$name]);
+    }
+
+    /**
+     * Get all configuration as array
+     */
+    public function getAllConfig(): array
+    {
+        return $this->config;
     }
 
     /**
