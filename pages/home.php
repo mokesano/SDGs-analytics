@@ -12,6 +12,9 @@
  * @author Rochmady and Wizdam Team
  */
 
+// Akses variabel global $SDG_DEFINITIONS yang didefinisikan di index.php
+global $SDG_DEFINITIONS;
+
 define('HOME_AJAX_BATCH', 3);
 ?>
 
