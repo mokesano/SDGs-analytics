@@ -1,6 +1,7 @@
 <?php
 
-namespace Wizdam\Core;
+declare(strict_types=1);
+
 
 /**
  * Application Class - Main Application Container
@@ -10,7 +11,7 @@ namespace Wizdam\Core;
  * 
  * @package Wizdam\Core
  * @author Rochmady and Wizdam Team
- * @version 2.0.0
+ * @version 2.0.0 (PSR-4/PSR-12 Compliant)
  */
 class Application
 {

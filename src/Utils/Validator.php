@@ -168,6 +168,62 @@ class Validator
     }
 
     /**
+     * Validate ISSN format (XXXX-XXXX)
+     */
+    public static function validateIssn(string $issn): bool
+    {
+        // Remove any spaces or hyphens for validation
+        $cleanIssn = preg_replace('/[^0-9X]/', '', strtoupper($issn));
+        
+        // ISSN must be exactly 8 characters
+        if (strlen($cleanIssn) !== 8) {
+            return false;
+        }
+        
+        // First 7 characters must be digits
+        if (!ctype_digit(substr($cleanIssn, 0, 7))) {
+            return false;
+        }
+        
+        // Last character can be digit or X
+        if (!preg_match('/^[0-9]{7}[0-9X]$/', $cleanIssn)) {
+            return false;
+        }
+        
+        // Validate ISSN checksum
+        return self::validateIssnChecksum($cleanIssn);
+    }
+
+    /**
+     * Validate ISSN checksum
+     */
+    public static function validateIssnChecksum(string $issn): bool
+    {
+        $digits = str_split(substr($issn, 0, 7));
+        $checkDigit = strtoupper(substr($issn, -1));
+        
+        $total = 0;
+        for ($i = 0; $i < 7; $i++) {
+            $total += intval($digits[$i]) * (8 - $i);
+        }
+        
+        $remainder = $total % 11;
+        $result = (12 - $remainder) % 11;
+        $expectedCheckDigit = ($result == 10) ? 'X' : strval($result);
+        
+        return $checkDigit === $expectedCheckDigit;
+    }
+
+    /**
+     * Format ISSN to standard XXXX-XXXX format
+     */
+    public static function formatIssn(string $issn): string
+    {
+        $cleanIssn = preg_replace('/[^0-9X]/', '', strtoupper($issn));
+        return substr($cleanIssn, 0, 4) . '-' . substr($cleanIssn, 4, 4);
+    }
+
+    /**
      * Calculate execution time
      */
     public static function calculateExecutionTime(float $startTime): float
