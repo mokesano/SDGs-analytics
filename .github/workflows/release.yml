@@ -1,0 +1,68 @@
+# Workflow: Release Otomatis (Semantic Release) untuk Library PHP
+#
+# Deskripsi:
+#   Workflow ini berjalan setiap kali ada push ke branch `master` (bukan `main`).
+#   Ia akan menganalisis commit-commit baru, menentukan versi rilis
+#   berikutnya berdasarkan aturan Semantic Versioning (major.minor.patch),
+#   membuat Git tag, dan menerbitkan GitHub Release.
+#
+#   Aturan penentuan versi:
+#   - Commit dengan `fix:`        → bump patch (1.2.3 → 1.2.4)
+#   - Commit dengan `feat:`       → bump minor (1.2.3 → 1.3.0)
+#   - Commit dengan `BREAKING CHANGE:` atau tanda `!` setelah tipe
+#                                 → bump major (1.2.3 → 2.0.0)
+#
+# Catatan:
+#   Pastikan Anda menggunakan format commit Conventional Commits.
+#   Token GITHUB_TOKEN sudah tersedia otomatis di Actions.
+
+name: Release Otomatis (Semantic Release)
+
+# Jalankan workflow ketika ada push ke branch master (default branch repositori)
+on:
+  push:
+    branches:
+      - master
+
+# Izin yang diperlukan untuk membuat release dan tag
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository dengan riwayat penuh (agar semantic-release bisa
+      #    melihat commit dan tag sebelumnya)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Setup Node.js (dibutuhkan oleh semantic-release yang berjalan di atas Node)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      # 3. Install semantic-release dan plugin yang diperlukan
+      #    (plugin tambahan bisa disesuaikan, yang di bawah sudah mencukupi)
+      - name: Install semantic-release dan plugin
+        run: |
+          npm init -y
+          npm install --save-dev \
+            semantic-release \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            @semantic-release/github \
+            @semantic-release/git
+
+      # 4. Jalankan semantic-release
+      #    Environment variable GITHUB_TOKEN sudah otomatis tersedia
+      - name: Jalankan semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
