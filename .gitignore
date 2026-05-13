@@ -1,13 +1,4 @@
 ```
-# Cache and temporary data
-cache/
-*.db-shm
-*.db-wal
+# Cache and test results
 .phpunit.cache/
-
-# Database files
-*.db
-
-# Test files (if not part of main source)
-tests/
 ```
