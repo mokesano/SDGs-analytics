@@ -10,7 +10,6 @@
 # https://github.com/codacy/codacy-analysis-cli-action.
 # For more information on Codacy Analysis CLI in general, see
 # https://github.com/codacy/codacy-analysis-cli.
-
 # .github/workflows/codacy-security-scan.yml
 name: Codacy Security Scan
 
@@ -22,14 +21,13 @@ on:
   schedule:
     - cron: '33 18 * * 1'  # Setiap Senin pukul 18:33 UTC
 
-# Permissions di level job saja (jangan di root agar tidak konflik)
 jobs:
   codacy-security-scan:
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read              # Untuk actions/checkout
-      security-events: write      # Wajib untuk upload SARIF ke GitHub [[11]]
+      security-events: write      # Wajib untuk upload SARIF ke GitHub
       actions: read               # Untuk status check pada private repo
     
     steps:
@@ -39,7 +37,7 @@ jobs:
           fetch-depth: 0  # Penting untuk analisis diff yang akurat
 
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@d433603c6e8a5e8e5e5e5e5e5e5e5e5e5e5e5e5e  # Update ke SHA terbaru [[4]]
+        uses: codacy/codacy-analysis-cli-action@v4.4.7  # Gunakan version tag resmi [[1]]
         with:
           # Token proyek Codacy (opsional jika hanya ingin generate SARIF lokal)
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -51,19 +49,15 @@ jobs:
           # Kompatibilitas dengan GitHub Code Scanning
           gh-code-scanning-compat: true
           
-          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue [[4]]
+          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue
           max-allowed-issues: 2147483647
           
           # Verbosity untuk debugging
           verbose: true
-          
-          # Opsional: batasi direktori yang discan (sesuaikan dengan struktur proyek)
-          # directory: src/
 
       - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v3  # Gunakan tag stabil
         if: always()  # Tetap upload meski step sebelumnya warning/error
         with:
           sarif_file: results.sarif
-          category: codacy-security  # Penting jika ada multiple tools [[18]]
-          # checkout_path: ${{ github.workspace }}  # Default, bisa di-omit
+          category: codacy-security  # Penting jika ada multiple tools
