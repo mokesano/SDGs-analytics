@@ -1,20 +1,25 @@
-```php
 # Compiled and build artifacts
 *.pyc
+__pycache__/
 *.o
 *.obj
-dist/
-build/
-target/
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
 
 # Dependencies
 .venv/
 venv/
-__pycache__/
 node_modules/
-.julia/
-zig*/
-julia-*/
+dist/
+build/
+target/
+.gradle/
+.mypy_cache/
+.pytest_cache/
 
 # Logs and temp files
 *.log
@@ -30,8 +35,6 @@ julia-*/
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # System files
 .DS_Store
@@ -42,19 +45,7 @@ coverage/
 htmlcov/
 .coverage
 
-# Python specific
-*.pyc
-__pycache__/
-.mypy_cache/
-.pytest_cache/
-
-# Node specific
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Compression files
+# Compressed files
 *.zip
 *.gz
 *.tar
@@ -77,4 +68,3 @@ yarn-error.log*
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```
