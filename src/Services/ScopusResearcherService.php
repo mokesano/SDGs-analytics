@@ -26,13 +26,13 @@ class ScopusResearcherService
     /**
      * Constructor
      * 
+     * @param string|null $apiKey Scopus API key (optional, will use default if not provided)
      * @param string $projectRoot Root directory proyek
-     * @param string $apiKey Scopus API key
      * @param int $cacheTTL Cache time-to-live dalam detik (default: 7 hari)
      */
     public function __construct(
+        ?string $apiKey = null,
         string $projectRoot = '',
-        string $apiKey = '',
         int $cacheTTL = 604800
     ) {
         $this->projectRoot = $projectRoot ?: dirname(__DIR__, 2);
@@ -137,6 +137,73 @@ class ScopusResearcherService
         }
 
         return $metrics;
+    }
+
+    /**
+     * Get complete researcher profile by Scopus Author ID
+     * This is a wrapper method compatible with ResearcherAggregatorService
+     * 
+     * @param string $scopusId Scopus Author ID
+     * @param bool $forceRefresh Force refresh cache
+     * @return array Complete profile with metrics and publications
+     */
+    public function getResearcherProfile(string $scopusId, bool $forceRefresh = false): array
+    {
+        // Validate Scopus ID format (10-11 digits)
+        if (!preg_match('/^\d{10,11}$/', $scopusId)) {
+            return ['error' => 'Invalid Scopus Author ID format'];
+        }
+
+        // Check cache
+        $cacheKey = 'scopus_author_' . $scopusId;
+        $cachedData = $this->getFromCache($cacheKey);
+        
+        if ($cachedData !== null && !$forceRefresh) {
+            return $cachedData;
+        }
+
+        // Call Scopus API directly using author ID
+        $result = $this->callScopusAuthorApi($scopusId);
+        
+        // Handle API errors gracefully - return partial data or fallback
+        if (empty($result) || isset($result['error'])) {
+            // If API fails, return basic info without metrics
+            error_log("Scopus API Error for ID $scopusId: " . ($result['error'] ?? 'Unknown error'));
+            
+            // Return structure with minimal data to prevent breaking the flow
+            return [
+                'author_id' => $scopusId,
+                'name' => 'Unknown (API Error)',
+                'metrics' => [
+                    'h_index' => null,
+                    'cited_by_count' => null,
+                    'document_count' => null,
+                ],
+                'affiliation' => null,
+                'subject_areas' => [],
+                'publications' => [],
+                'api_error' => $result['error'] ?? 'Failed to fetch data from Scopus API',
+            ];
+        }
+
+        // Build profile structure
+        $profile = [
+            'author_id' => $scopusId,
+            'name' => $result['preferred_name'] ?? 'Unknown',
+            'metrics' => [
+                'h_index' => $result['h_index'] ?? 0,
+                'cited_by_count' => $result['cited_by_count'] ?? 0,
+                'document_count' => $result['document_count'] ?? 0,
+            ],
+            'affiliation' => $result['affiliation'] ?? null,
+            'subject_areas' => $result['subject_areas'] ?? [],
+            'publications' => $result['documents'] ?? [],
+        ];
+
+        // Cache result
+        $this->saveToCache($cacheKey, $profile);
+
+        return $profile;
     }
 
     /**
@@ -287,6 +354,87 @@ class ScopusResearcherService
         ob_end_clean();
         
         return ['status' => 'error', 'message' => 'API file not found'];
+    }
+
+    /**
+     * Call Scopus Author API directly using Author ID
+     * 
+     * @param string $scopusId Scopus Author ID
+     * @return array Author profile data
+     */
+    private function callScopusAuthorApi(string $scopusId): array
+    {
+        $url = 'https://api.elsevier.com/content/author/author_id/' . $scopusId;
+        $headers = [
+            'Accept: application/json',
+            'X-ELS-APIKey: ' . $this->apiKey,
+            'X-ELS-ResourceVersion: FULL', // Required for full author data
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return ['error' => 'CURL error: ' . $error];
+        }
+
+        if ($httpCode !== 200) {
+            $errorMsg = "HTTP error: $httpCode";
+            // Try to parse error message from response
+            $data = json_decode($response, true);
+            if ($data && isset($data['service-error']['status']['statusText'])) {
+                $errorMsg .= " - " . $data['service-error']['status']['statusText'];
+            }
+            return ['error' => $errorMsg, 'http_code' => $httpCode, 'response' => $response];
+        }
+
+        $data = json_decode($response, true);
+        
+        if (!$data || !isset($data['author-retrieval-response'])) {
+            return ['error' => 'Invalid response format from Scopus API'];
+        }
+
+        $authorData = $data['author-retrieval-response'];
+        
+        // Handle array response (sometimes API returns array with single item)
+        if (is_array($authorData) && isset($authorData[0])) {
+            $authorData = $authorData[0];
+        }
+
+        // Extract relevant information
+        $coredata = $authorData['coredata'] ?? [];
+        $preferredName = $authorData['preferred-name'] ?? $coredata['preferred-name'] ?? [];
+        
+        $profile = [
+            'preferred_name' => trim(($preferredName['given-name'] ?? '') . ' ' . ($preferredName['surname'] ?? $coredata['surname'] ?? '')),
+            'h_index' => (int)($authorData['h-index'] ?? $coredata['h-index'] ?? 0),
+            'cited_by_count' => (int)($coredata['citation-count'] ?? 0),
+            'document_count' => (int)($coredata['document-count'] ?? 0),
+            'affiliation' => $authorData['affiliation-current']['affiliation-name'] ?? null,
+            'subject_areas' => [],
+            'documents' => [],
+        ];
+
+        // Extract subject areas
+        if (!empty($authorData['subject-areas']['subject-area'])) {
+            $areas = $authorData['subject-areas']['subject-area'];
+            if (!is_array($areas) || !isset($areas[0])) {
+                $areas = [$areas];
+            }
+            foreach ($areas as $area) {
+                $profile['subject_areas'][] = $area['$'] ?? $area;
+            }
+        }
+
+        return $profile;
     }
 
     /**
