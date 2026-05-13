@@ -1,4 +1,27 @@
 ```
 # Cache and test results
 .phpunit.cache/
+
+# Database files
+*.db
+
+# Dependencies
+vendor/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
 ```
