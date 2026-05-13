@@ -28,7 +28,8 @@ class Database
     {
         if (self::$instance === null) {
             if (empty(self::$dbPath)) {
-                self::$dbPath = PROJECT_ROOT . '/database/wizdam.db';
+                $projectRoot = dirname(__DIR__, 2); // Go up from src/Core to project root
+                self::$dbPath = $projectRoot . '/database/wizdam.db';
             }
 
             try {
@@ -61,7 +62,8 @@ class Database
     {
         try {
             $db = self::getInstance();
-            $schemaFile = PROJECT_ROOT . '/database/schema.sql';
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Core to project root
+            $schemaFile = $projectRoot . '/database/schema.sql';
 
             if (!file_exists($schemaFile)) {
                 error_log('Schema file not found: ' . $schemaFile);

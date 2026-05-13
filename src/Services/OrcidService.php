@@ -80,7 +80,7 @@ class OrcidService
             }
         }
 
-        // Fetch from API
+        // Fetch from API - get both person and works
         $profileUrl = $this->apiBaseUrl . '/' . $cleanOrcid;
         $data = $this->makeRequest($profileUrl);
 
@@ -90,6 +90,11 @@ class OrcidService
 
         // Extract relevant profile information
         $profile = $this->extractProfileData($data);
+        
+        // Also fetch works separately
+        $works = $this->getWorks($cleanOrcid, 100, $forceRefresh);
+        $profile['works'] = $works ?? [];
+        $profile['works_count'] = is_array($works) ? count($works) : 0;
 
         // Cache the result
         $this->cacheManager->write($cacheFile, $profile);

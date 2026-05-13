@@ -28,7 +28,13 @@ class SdgClassificationService
      */
     public function __construct(string $apiFilePath = '')
     {
-        $this->apiFilePath = $apiFilePath ?: PROJECT_ROOT . '/api/SDG_Classification_API.php';
+        // Use provided path or default to project root /api/SDG_Classification_API.php
+        if ($apiFilePath === '') {
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Services to project root
+            $apiFilePath = $projectRoot . '/api/SDG_Classification_API.php';
+        }
+        
+        $this->apiFilePath = $apiFilePath;
         
         if (!file_exists($this->apiFilePath)) {
             throw new Exception('SDG Classification API file not found: ' . $this->apiFilePath);

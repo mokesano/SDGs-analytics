@@ -28,7 +28,14 @@ class CacheManager
         int $ttl = 3600,
         bool $compressionEnabled = true
     ) {
-        $this->cacheDir = $cacheDir ?: PROJECT_ROOT . '/cache';
+        // Use provided cacheDir or default to project root /cache
+        if ($cacheDir === '') {
+            // Fallback: use relative path from current file or default
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Utils to project root
+            $cacheDir = $projectRoot . '/cache';
+        }
+        
+        $this->cacheDir = $cacheDir;
         $this->enabled = $enabled;
         $this->ttl = $ttl;
         $this->compressionEnabled = $compressionEnabled;

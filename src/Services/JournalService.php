@@ -36,7 +36,13 @@ class JournalService
     ) {
         $this->scopusService = new ScopusJournalService($scopusApiFilePath, $apiKey);
         
-        $this->cacheDir = $cacheDir ?: PROJECT_ROOT . '/cache';
+        // Use provided cacheDir or default to project root /cache
+        if ($cacheDir === '') {
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Services to project root
+            $cacheDir = $projectRoot . '/cache';
+        }
+        
+        $this->cacheDir = $cacheDir;
         $this->cacheTtl = $cacheTtl;
         
         if (!is_dir($this->cacheDir)) {
@@ -128,7 +134,8 @@ class JournalService
     private function mapSubjectsToSdgs(array $subjects): array
     {
         // Load subject mapping
-        $mappingFile = PROJECT_ROOT . '/includes/sdg_subject_mapping.php';
+        $projectRoot = dirname(__DIR__, 2); // Go up from src/Services to project root
+        $mappingFile = $projectRoot . '/includes/sdg_subject_mapping.php';
         $subjectMapping = [];
         
         if (file_exists($mappingFile)) {

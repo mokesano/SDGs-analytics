@@ -34,13 +34,25 @@ class OrcidProfileService
         int $abstractCacheTtl = 604800,
         int $apiTimeout = 5
     ) {
-        $this->apiFilePath = $apiFilePath ?: PROJECT_ROOT . '/api/ORCID_Profile_API.php';
+        // Use provided path or default to api/ORCID_Profile_API.php
+        if ($apiFilePath === '') {
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Services to project root
+            $apiFilePath = $projectRoot . '/api/ORCID_Profile_API.php';
+        }
+        
+        $this->apiFilePath = $apiFilePath;
         
         if (!file_exists($this->apiFilePath)) {
             throw new Exception('ORCID Profile API file not found: ' . $this->apiFilePath);
         }
 
-        $this->cacheDir = $cacheDir ?: PROJECT_ROOT . '/api/cache';
+        // Use provided cacheDir or default to api/cache
+        if ($cacheDir === '') {
+            $projectRoot = dirname(__DIR__, 2);
+            $cacheDir = $projectRoot . '/api/cache';
+        }
+        
+        $this->cacheDir = $cacheDir;
         $this->cacheTtl = $cacheTtl;
         $this->abstractCacheTtl = $abstractCacheTtl;
         $this->apiTimeout = $apiTimeout;

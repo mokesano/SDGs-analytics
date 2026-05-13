@@ -26,7 +26,13 @@ class SdgDefinitionsService
      */
     public function __construct(string $definitionsFile = '')
     {
-        $this->definitionsFile = $definitionsFile ?: PROJECT_ROOT . '/includes/sdg_definitions.php';
+        // Use provided path or default to includes/sdg_definitions.php
+        if ($definitionsFile === '') {
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Services to project root
+            $definitionsFile = $projectRoot . '/includes/sdg_definitions.php';
+        }
+        
+        $this->definitionsFile = $definitionsFile;
         
         if (!file_exists($this->definitionsFile)) {
             throw new Exception('SDG definitions file not found: ' . $this->definitionsFile);

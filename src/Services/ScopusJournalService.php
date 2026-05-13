@@ -27,7 +27,13 @@ class ScopusJournalService
      */
     public function __construct(string $apiFilePath = '', string $apiKey = '')
     {
-        $this->apiFilePath = $apiFilePath ?: PROJECT_ROOT . '/api/SCOPUS_Journal-Checker_API.php';
+        // Use provided path or default to api/SCOPUS_Journal-Checker_API.php
+        if ($apiFilePath === '') {
+            $projectRoot = dirname(__DIR__, 2); // Go up from src/Services to project root
+            $apiFilePath = $projectRoot . '/api/SCOPUS_Journal-Checker_API.php';
+        }
+        
+        $this->apiFilePath = $apiFilePath;
         
         if (!file_exists($this->apiFilePath)) {
             throw new Exception('Scopus Journal Checker API file not found: ' . $this->apiFilePath);
