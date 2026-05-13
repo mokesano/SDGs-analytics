@@ -250,16 +250,45 @@ class OrcidProfileService
         $basicInfo = $cachedData['basic_info'] ?? [];
         $activities = $cachedData['activities'] ?? [];
         
+        // Support dua format nama: nested (name['given']) dan flat (given_names)
+        $givenNames = '';
+        $familyName = '';
+        $fullName = '';
+        
+        if (isset($basicInfo['name'])) {
+            // Format nested dari ORCID_Profile_API.php
+            $givenNames = $basicInfo['name']['given'] ?? '';
+            $familyName = $basicInfo['name']['family'] ?? '';
+            $fullName = trim($givenNames . ' ' . $familyName);
+        } else {
+            // Format flat
+            $givenNames = $basicInfo['given_names'] ?? '';
+            $familyName = $basicInfo['family_name'] ?? '';
+            $fullName = $basicInfo['full_name'] ?? trim($givenNames . ' ' . $familyName);
+        }
+        
+        // Ekstrak external_ids dari berbagai format
+        $externalIds = [];
+        if (isset($basicInfo['external_ids'])) {
+            // Format dari ORCID_Profile_API.php
+            $externalIds = $basicInfo['external_ids'];
+        } elseif (isset($basicInfo['external_urls'])) {
+            // Format lama
+            $externalIds = $basicInfo['external_urls'];
+        }
+        
         return [
-            'name' => $basicInfo['full_name'] ?? ($basicInfo['given_names'] ?? '') . ' ' . ($basicInfo['family_name'] ?? ''),
-            'given_names' => $basicInfo['given_names'] ?? '',
-            'family_name' => $basicInfo['family_name'] ?? '',
+            'name' => $fullName,
+            'given_names' => $givenNames,
+            'family_name' => $familyName,
             'keywords' => $basicInfo['keywords'] ?? [],
-            'urls' => $basicInfo['external_urls'] ?? [],
+            'urls' => $externalIds,
             'biography' => $basicInfo['biography'] ?? '',
             'country' => $basicInfo['country'] ?? '',
             'status' => 'success',
-            'orcid' => $cachedData['orcid'] ?? ''
+            'orcid' => $cachedData['orcid'] ?? '',
+            // Simpan juga raw data untuk ResearcherIdentityService
+            'external_ids' => $externalIds,
         ];
     }
 
@@ -396,6 +425,24 @@ class OrcidProfileService
         $person = $data['person'] ?? [];
         $name = $person['name'] ?? [];
 
+        // Ekstrak external IDs (termasuk Scopus Author ID)
+        $externalIds = [];
+        if (!empty($person['external-identifiers']['external-identifier'])) {
+            foreach ($person['external-identifiers']['external-identifier'] as $extId) {
+                $type = $extId['external-id-type'] ?? '';
+                $value = $extId['external-id-value'] ?? '';
+                $url = $extId['external-id-url']['value'] ?? '';
+                
+                if ($type && $value) {
+                    $externalIds[] = [
+                        'type' => $type,
+                        'value' => $value,
+                        'url' => $url,
+                    ];
+                }
+            }
+        }
+
         return [
             'given_names' => $name['given-names']['value'] ?? '',
             'family_name' => $name['family-name']['value'] ?? '',
@@ -407,6 +454,7 @@ class OrcidProfileService
             'keywords' => $this->extractKeywords($person),
             'urls' => $this->extractExternalUrls($person),
             'external_urls' => $this->extractExternalUrls($person),
+            'external_ids' => $externalIds,  // Tambahkan external_ids
         ];
     }
 

@@ -39,17 +39,17 @@ class ResearcherIdentityService
     {
         $identifiers = [];
         
-        // Ekstrak dari external-identifiers
-        if (!empty($personData['external-identifiers']['external-identifier'])) {
-            foreach ($personData['external-identifiers']['external-identifier'] as $extId) {
-                $type = isset($extId['external-id-type']) 
-                    ? strtolower(trim($extId['external-id-type'])) 
+        // Format 1: Ekstrak dari external_ids (format flat yang digunakan OrcidProfileService)
+        if (!empty($personData['external_ids'])) {
+            foreach ($personData['external_ids'] as $extId) {
+                $type = isset($extId['type']) 
+                    ? strtolower(trim($extId['type'])) 
                     : null;
-                $value = isset($extId['external-id-value']) 
-                    ? trim($extId['external-id-value']) 
+                $value = isset($extId['value']) 
+                    ? trim($extId['value']) 
                     : null;
-                $url = isset($extId['external-id-url']['value']) 
-                    ? trim($extId['external-id-url']['value']) 
+                $url = isset($extId['url']['value']) || isset($extId['url'])
+                    ? (is_array($extId['url']) ? ($extId['url']['value'] ?? null) : $extId['url'])
                     : null;
 
                 if ($type && $value) {
@@ -65,12 +65,57 @@ class ResearcherIdentityService
                 }
             }
         }
+        
+        // Format 2: Ekstrak dari external-identifiers['external-identifier'] (format nested dari API langsung)
+        if (!empty($personData['external-identifiers']['external-identifier'])) {
+            foreach ($personData['external-identifiers']['external-identifier'] as $extId) {
+                $type = isset($extId['external-id-type']) 
+                    ? strtolower(trim($extId['external-id-type'])) 
+                    : null;
+                $value = isset($extId['external-id-value']) 
+                    ? trim($extId['external-id-value']) 
+                    : null;
+                $url = isset($extId['external-id-url']['value']) 
+                    ? trim($extId['external-id-url']['value']) 
+                    : null;
+
+                if ($type && $value) {
+                    $normalizedType = $this->normalizeIdentifierType($type);
+                    // Hanya tambahkan jika belum ada (prioritaskan format 1)
+                    if (!isset($identifiers[$normalizedType])) {
+                        $identifiers[$normalizedType] = [
+                            'type' => $normalizedType,
+                            'original_type' => $type,
+                            'value' => $value,
+                            'url' => $url,
+                            'display_name' => self::SUPPORTED_TYPES[$normalizedType] ?? ucfirst($type),
+                            'is_supported' => array_key_exists($normalizedType, self::SUPPORTED_TYPES),
+                        ];
+                    }
+                }
+            }
+        }
 
         // Ekstrak dari researcher-urls (untuk ID yang mungkin ada di URL)
         if (!empty($personData['researcher-urls']['researcher-url'])) {
             foreach ($personData['researcher-urls']['researcher-url'] as $urlData) {
                 $urlName = isset($urlData['url-name']) ? trim($urlData['url-name']) : '';
                 $urlValue = isset($urlData['url']['value']) ? trim($urlData['url']['value']) : '';
+                
+                $extractedIds = $this->extractIdsFromUrl($urlName, $urlValue);
+                foreach ($extractedIds as $type => $data) {
+                    if (!isset($identifiers[$type])) {
+                        $identifiers[$type] = $data;
+                    }
+                }
+            }
+        }
+        
+        // Ekstrak dari urls (format flat)
+        if (!empty($personData['urls'])) {
+            foreach ($personData['urls'] as $urlData) {
+                $urlName = isset($urlData['name']) ? trim($urlData['name']) : '';
+                $urlValue = isset($urlData['url']) ? trim($urlData['url']) : '';
                 
                 $extractedIds = $this->extractIdsFromUrl($urlName, $urlValue);
                 foreach ($extractedIds as $type => $data) {

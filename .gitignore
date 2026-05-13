@@ -1,7 +1,14 @@
-```
-# Cache and test results
+# SDG Analytics
+
+# Cache and temporary files
+api/cache/
 .phpunit.cache/
 
+# Compressed files
+*.gz
+
+# Logs
+*.log
 # Logs and temp files
 *.log
 *.tmp
@@ -19,4 +26,3 @@
 # Dependencies
 vendor/
 node_modules/
-```
