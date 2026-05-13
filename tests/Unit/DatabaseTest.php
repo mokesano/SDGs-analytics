@@ -302,8 +302,6 @@ class DatabaseTest extends TestCase
 
     /**
      * Test tableExists method
-    /**
-     * Test tableExists method
      */
     public function testTableExists(): void
     {
@@ -323,13 +321,5 @@ class DatabaseTest extends TestCase
             // Cleanup
             $db->exec("DROP TABLE IF EXISTS {$tableName}");
         }
-    }
-
-        
-        $db = Database::getInstance();
-        $db->exec('CREATE TEMPORARY TABLE test_exists (id INTEGER PRIMARY KEY)');
-        
-        $this->assertTrue(Database::tableExists('test_exists'));
-        $this->assertFalse(Database::tableExists('nonexistent_table'));
     }
 }

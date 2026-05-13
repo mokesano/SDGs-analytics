@@ -12,33 +12,39 @@ use Wizdam\Core\Application;
  */
 class ApplicationTest extends TestCase
 {
+    private $originalErrorHandler = null;
+    private $originalExceptionHandler = null;
+
     /**
      * Reset singleton instance sebelum setiap test
      */
     protected function setUp(): void
     {
+        // Simpan handler asli dan set custom handler
+        $this->originalErrorHandler = set_error_handler(fn($errno, $errstr) => throw new \ErrorException($errstr, 0, $errno));
+        $this->originalExceptionHandler = set_exception_handler(fn($e) => throw $e);
+        
         // Gunakan reflection untuk reset singleton instance
         $reflection = new \ReflectionClass(Application::class);
         $instanceProperty = $reflection->getProperty('instance');
         $instanceProperty->setAccessible(true);
         $instanceProperty->setValue(null, null);
-        
-        // Set error handler untuk menghindari risky test warning
-        set_error_handler(function($errno, $errstr) {
-            throw new \ErrorException($errstr, 0, $errno);
-        });
-        set_exception_handler(function($e) {
-            throw $e;
-        });
     }
     
     /**
-     * Cleanup setelah setiap test
+     * Cleanup setelah setiap test - restore handlers
      */
     protected function tearDown(): void
     {
+        // Restore original handlers
         restore_error_handler();
         restore_exception_handler();
+        
+        // Reset singleton instance
+        $reflection = new \ReflectionClass(Application::class);
+        $instanceProperty = $reflection->getProperty('instance');
+        $instanceProperty->setAccessible(true);
+        $instanceProperty->setValue(null, null);
     }
 
     /**
@@ -46,10 +52,10 @@ class ApplicationTest extends TestCase
      */
     public function testGetInstanceReturnsSameInstance(): void
     {
-        $instance1 = Application::get();
-        $instance2 = Application::get();
+        $app1 = Application::get();
+        $app2 = Application::get();
         
-        $this->assertSame($instance1, $instance2);
+        $this->assertSame($app1, $app2);
     }
 
     /**
