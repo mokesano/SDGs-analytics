@@ -302,12 +302,29 @@ class DatabaseTest extends TestCase
 
     /**
      * Test tableExists method
+    /**
+     * Test tableExists method
      */
     public function testTableExists(): void
     {
         if (!defined('PROJECT_ROOT')) {
             define('PROJECT_ROOT', dirname(__DIR__, 2));
         }
+
+        // Use a unique table name to avoid conflicts
+        $tableName = 'test_exists_' . uniqid();
+        $db = Database::getInstance();
+        $db->exec("CREATE TABLE {$tableName} (id INTEGER PRIMARY KEY)");
+
+        try {
+            $this->assertTrue(Database::tableExists($tableName), "Table {$tableName} should exist");
+            $this->assertFalse(Database::tableExists('nonexistent_table_' . uniqid()), "Non-existent table should return false");
+        } finally {
+            // Cleanup
+            $db->exec("DROP TABLE IF EXISTS {$tableName}");
+        }
+    }
+
         
         $db = Database::getInstance();
         $db->exec('CREATE TEMPORARY TABLE test_exists (id INTEGER PRIMARY KEY)');

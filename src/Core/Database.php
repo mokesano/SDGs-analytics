@@ -455,10 +455,11 @@ class Database
         try {
             $db = self::getInstance();
             $stmt = $db->prepare(
-                \"SELECT name FROM sqlite_master WHERE type='table' AND name=:name\"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=:name"
             );
             $stmt->execute(['name' => $tableName]);
-            return (bool)$stmt->fetchColumn();
+            $result = $stmt->fetchColumn();
+            return $result !== false && $result !== null;
         } catch (PDOException $e) {
             return false;
         }
