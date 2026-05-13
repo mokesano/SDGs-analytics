@@ -48,7 +48,8 @@ class SdgDefinitionsService
             return;
         }
 
-        require $this->definitionsFile;
+        // Use require_once to prevent redeclaration errors in tests
+        require_once $this->definitionsFile;
         
         // Access global variable
         if (isset($GLOBALS['SDG_DEFINITIONS']) && is_array($GLOBALS['SDG_DEFINITIONS'])) {

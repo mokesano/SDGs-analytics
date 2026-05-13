@@ -23,6 +23,7 @@ class OrcidProfileService
     private int $cacheTtl;
     private int $abstractCacheTtl;
     private int $apiTimeout;
+    private ?array $lastFetchedData = null;
 
     /**
      * Constructor
@@ -50,6 +51,11 @@ class OrcidProfileService
         if ($cacheDir === '') {
             $projectRoot = dirname(__DIR__, 2);
             $cacheDir = $projectRoot . '/api/cache';
+        }
+        
+        // Fallback to project cache directory
+        if (!is_dir($cacheDir)) {
+            $cacheDir = dirname(__DIR__, 2) . '/cache';
         }
         
         $this->cacheDir = $cacheDir;
@@ -117,25 +123,26 @@ class OrcidProfileService
     }
 
     /**
-     * Read from cache
+     * Read profile from cache
      */
-    private function readFromCache(string $key): mixed
+    private function readProfileFromCache(string $orcid): ?array
     {
-        $cacheFile = $this->cacheDir . '/' . $key . '.json.gz';
+        $cacheKey = $this->getCacheKey($orcid);
+        $cacheFile = $this->cacheDir . '/' . $cacheKey . '.json.gz';
         
         if (!file_exists($cacheFile)) {
-            return false;
+            return null;
         }
 
         $content = @gzdecode(file_get_contents($cacheFile));
         if ($content === false) {
-            return false;
+            return null;
         }
 
         $data = json_decode($content, true);
         
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return false;
+            return null;
         }
 
         // Check TTL
@@ -144,27 +151,53 @@ class OrcidProfileService
             : $this->cacheTtl;
 
         if (time() - filemtime($cacheFile) > $ttl) {
-            unlink($cacheFile);
-            return false;
+            @unlink($cacheFile);
+            return null;
         }
 
         return $data;
     }
 
     /**
-     * Write to cache
+     * Read works from cache
      */
-    private function writeToCache(string $key, array $data): bool
+    private function readWorksFromCache(string $orcid, int $limit = 100): ?array
     {
-        $cacheFile = $this->cacheDir . '/' . $key . '.json.gz';
-        $jsonData = json_encode($data, JSON_UNESCAPED_UNICODE);
-        $compressed = gzencode($jsonData, 6);
+        $cacheKey = 'orcid_works_' . substr(md5($orcid), 0, 8) . '_' . $orcid . '_' . $limit;
+        $cacheFile = $this->cacheDir . '/' . $cacheKey . '.json.gz';
         
-        if ($compressed === false) {
-            return false;
+        if (!file_exists($cacheFile)) {
+            // Try without limit suffix
+            $cacheKey = 'orcid_works_' . substr(md5($orcid), 0, 8) . '_' . $orcid;
+            $cacheFile = $this->cacheDir . '/' . $cacheKey . '.json.gz';
+            
+            if (!file_exists($cacheFile)) {
+                // Try plain filename
+                $cacheFile = $this->cacheDir . '/orcid_works_' . $orcid . '.json';
+                if (!file_exists($cacheFile)) {
+                    return null;
+                }
+            }
         }
 
-        return file_put_contents($cacheFile, $compressed, LOCK_EX) !== false;
+        $content = @file_get_contents($cacheFile);
+        if ($content === false) {
+            return null;
+        }
+
+        // Try gzdecode first
+        $decoded = @gzdecode($content);
+        if ($decoded !== false) {
+            $content = $decoded;
+        }
+
+        $data = json_decode($content, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        return $data;
     }
 
     /**
@@ -183,11 +216,11 @@ class OrcidProfileService
         }
 
         // Check cache first
-        $cacheKey = $this->getCacheKey($cleanOrcid);
         if (!$forceRefresh) {
-            $cached = $this->readFromCache($cacheKey);
-            if ($cached !== false && isset($cached['status']) && $cached['status'] === 'success') {
-                return $cached;
+            $cached = $this->readProfileFromCache($cleanOrcid);
+            if ($cached !== null) {
+                // Extract profile data from cached response
+                return $this->extractProfileFromCachedData($cached);
             }
         }
 
@@ -204,10 +237,110 @@ class OrcidProfileService
         $profile['status'] = 'success';
         $profile['orcid'] = $cleanOrcid;
 
-        // Cache the result
-        $this->writeToCache($cacheKey, $profile);
+        $this->lastFetchedData = ['profile' => $profile, 'raw' => $data];
 
         return $profile;
+    }
+
+    /**
+     * Extract profile from cached API data
+     */
+    private function extractProfileFromCachedData(array $cachedData): array
+    {
+        $basicInfo = $cachedData['basic_info'] ?? [];
+        $activities = $cachedData['activities'] ?? [];
+        
+        return [
+            'name' => $basicInfo['full_name'] ?? ($basicInfo['given_names'] ?? '') . ' ' . ($basicInfo['family_name'] ?? ''),
+            'given_names' => $basicInfo['given_names'] ?? '',
+            'family_name' => $basicInfo['family_name'] ?? '',
+            'keywords' => $basicInfo['keywords'] ?? [],
+            'urls' => $basicInfo['external_urls'] ?? [],
+            'biography' => $basicInfo['biography'] ?? '',
+            'country' => $basicInfo['country'] ?? '',
+            'status' => 'success',
+            'orcid' => $cachedData['orcid'] ?? ''
+        ];
+    }
+
+    /**
+     * Get works/publications for an ORCID
+     * 
+     * @param string $orcid Researcher ORCID
+     * @param int $limit Maximum number of works to return
+     * @return array List of works
+     */
+    public function getWorks(string $orcid, int $limit = 100): array
+    {
+        $cleanOrcid = $this->cleanOrcid($orcid);
+
+        if (!$this->isValidOrcid($cleanOrcid)) {
+            throw new Exception('Invalid ORCID format: ' . $orcid);
+        }
+
+        // Check cache first
+        $cachedWorks = $this->readWorksFromCache($cleanOrcid, $limit);
+        if ($cachedWorks !== null && is_array($cachedWorks)) {
+            return $this->extractWorksFromCachedData($cachedWorks, $limit);
+        }
+
+        // If no cached works, try to fetch from profile
+        $profileData = $this->readProfileFromCache($cleanOrcid);
+        if ($profileData !== null && isset($profileData['activities']['works'])) {
+            return $this->extractWorksFromCachedData($profileData, $limit);
+        }
+
+        // No data available
+        return [];
+    }
+
+    /**
+     * Extract works from cached data
+     */
+    private function extractWorksFromCachedData(array $cachedData, int $limit = 100): array
+    {
+        $works = [];
+        
+        // Check if it's a full profile cache
+        if (isset($cachedData['activities']['works'])) {
+            $worksData = $cachedData['activities']['works'];
+            if (is_array($worksData)) {
+                foreach ($worksData as $work) {
+                    if (count($works) >= $limit) {
+                        break;
+                    }
+                    $works[] = $this->extractWorkItem($work);
+                }
+            }
+        }
+        
+        // Check if it's a works-only cache
+        if (isset($cachedData['works']) && is_array($cachedData['works'])) {
+            $worksData = $cachedData['works'];
+            foreach ($worksData as $work) {
+                if (count($works) >= $limit) {
+                    break;
+                }
+                $works[] = $this->extractWorkItem($work);
+            }
+        }
+
+        return $works;
+    }
+
+    /**
+     * Extract individual work item
+     */
+    private function extractWorkItem(array $workData): array
+    {
+        return [
+            'title' => $workData['title'] ?? $workData['publication-title'] ?? 'Unknown Title',
+            'year' => $workData['year'] ?? $workData['publication-date']['year'] ?? date('Y'),
+            'doi' => $workData['doi'] ?? $workData['external-ids']['doi'] ?? '',
+            'abstract' => $workData['abstract'] ?? '',
+            'journal' => $workData['journal-title'] ?? '',
+            'type' => $workData['type'] ?? 'work'
+        ];
     }
 
     /**
@@ -267,10 +400,12 @@ class OrcidProfileService
             'given_names' => $name['given-names']['value'] ?? '',
             'family_name' => $name['family-name']['value'] ?? '',
             'full_name' => trim(($name['given-names']['value'] ?? '') . ' ' . ($name['family-name']['value'] ?? '')),
+            'name' => trim(($name['given-names']['value'] ?? '') . ' ' . ($name['family-name']['value'] ?? '')),
             'credit_name' => $name['credit-name']['value'] ?? '',
             'biography' => $person['biography']['content'] ?? '',
             'country' => $person['addresses']['address'][0]['country']['name'] ?? '',
             'keywords' => $this->extractKeywords($person),
+            'urls' => $this->extractExternalUrls($person),
             'external_urls' => $this->extractExternalUrls($person),
         ];
     }
@@ -333,5 +468,13 @@ class OrcidProfileService
     public function setCacheTtl(int $ttl): void
     {
         $this->cacheTtl = $ttl;
+    }
+
+    /**
+     * Get last fetched raw data
+     */
+    public function getLastFetchedData(): ?array
+    {
+        return $this->lastFetchedData;
     }
 }
