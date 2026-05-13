@@ -1,24 +1,13 @@
 ```
-# Cache and test results
+# Cache and temporary data
+cache/
+*.db-shm
+*.db-wal
 .phpunit.cache/
 
-# Dependencies
-vendor/
+# Database files
+*.db
 
-# Logs and temp files
-*.log
-*.tmp
-
-# Environment
-.env
-.env.local
-.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
+# Test files (if not part of main source)
+tests/
 ```
