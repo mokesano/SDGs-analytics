@@ -1,1 +1,34 @@
-Nothing should be ignored since the changes only include source code files (.php) without any build artifacts, dependencies, or temporary files.
+```gitignore
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+
+# Dependencies
+vendor/
+composer.lock
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage and testing
+.coverage
+coverage/
+htmlcov/
+.phpunit.result.cache
+
+# Distribution and build
+dist/
+build/
+*.phar
+```
