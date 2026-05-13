@@ -26,13 +26,13 @@ class ScopusResearcherService
     /**
      * Constructor
      * 
+     * @param string|null $apiKey Scopus API key (optional, will use default if not provided)
      * @param string $projectRoot Root directory proyek
-     * @param string $apiKey Scopus API key
      * @param int $cacheTTL Cache time-to-live dalam detik (default: 7 hari)
      */
     public function __construct(
+        ?string $apiKey = null,
         string $projectRoot = '',
-        string $apiKey = '',
         int $cacheTTL = 604800
     ) {
         $this->projectRoot = $projectRoot ?: dirname(__DIR__, 2);
@@ -165,8 +165,25 @@ class ScopusResearcherService
         // Call Scopus API directly using author ID
         $result = $this->callScopusAuthorApi($scopusId);
         
+        // Handle API errors gracefully - return partial data or fallback
         if (empty($result) || isset($result['error'])) {
-            return $result ?: ['error' => 'Failed to fetch data from Scopus API'];
+            // If API fails, return basic info without metrics
+            error_log("Scopus API Error for ID $scopusId: " . ($result['error'] ?? 'Unknown error'));
+            
+            // Return structure with minimal data to prevent breaking the flow
+            return [
+                'author_id' => $scopusId,
+                'name' => 'Unknown (API Error)',
+                'metrics' => [
+                    'h_index' => null,
+                    'cited_by_count' => null,
+                    'document_count' => null,
+                ],
+                'affiliation' => null,
+                'subject_areas' => [],
+                'publications' => [],
+                'api_error' => $result['error'] ?? 'Failed to fetch data from Scopus API',
+            ];
         }
 
         // Build profile structure
@@ -351,6 +368,7 @@ class ScopusResearcherService
         $headers = [
             'Accept: application/json',
             'X-ELS-APIKey: ' . $this->apiKey,
+            'X-ELS-ResourceVersion: FULL', // Required for full author data
         ];
 
         $ch = curl_init();
@@ -369,7 +387,13 @@ class ScopusResearcherService
         }
 
         if ($httpCode !== 200) {
-            return ['error' => 'HTTP error: ' . $httpCode, 'response' => $response];
+            $errorMsg = "HTTP error: $httpCode";
+            // Try to parse error message from response
+            $data = json_decode($response, true);
+            if ($data && isset($data['service-error']['status']['statusText'])) {
+                $errorMsg .= " - " . $data['service-error']['status']['statusText'];
+            }
+            return ['error' => $errorMsg, 'http_code' => $httpCode, 'response' => $response];
         }
 
         $data = json_decode($response, true);
@@ -386,12 +410,14 @@ class ScopusResearcherService
         }
 
         // Extract relevant information
+        $coredata = $authorData['coredata'] ?? [];
+        $preferredName = $authorData['preferred-name'] ?? $coredata['preferred-name'] ?? [];
+        
         $profile = [
-            'preferred_name' => $authorData['coredata']['preferred-name']['given-name'] . ' ' . 
-                               ($authorData['coredata']['preferred-name']['surname'] ?? ''),
-            'h_index' => (int)($authorData['h-index'] ?? 0),
-            'cited_by_count' => (int)($authorData['coredata']['citation-count'] ?? 0),
-            'document_count' => (int)($authorData['coredata']['document-count'] ?? 0),
+            'preferred_name' => trim(($preferredName['given-name'] ?? '') . ' ' . ($preferredName['surname'] ?? $coredata['surname'] ?? '')),
+            'h_index' => (int)($authorData['h-index'] ?? $coredata['h-index'] ?? 0),
+            'cited_by_count' => (int)($coredata['citation-count'] ?? 0),
+            'document_count' => (int)($coredata['document-count'] ?? 0),
             'affiliation' => $authorData['affiliation-current']['affiliation-name'] ?? null,
             'subject_areas' => [],
             'documents' => [],
