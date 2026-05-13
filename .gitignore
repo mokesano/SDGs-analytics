@@ -1,4 +1,5 @@
-```
+# SDG Analytics
+
 # Cache and temporary files
 api/cache/
 .phpunit.cache/
@@ -8,4 +9,20 @@ api/cache/
 
 # Logs
 *.log
-```
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies
+vendor/
+node_modules/
