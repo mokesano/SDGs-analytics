@@ -44,12 +44,12 @@ class ResearcherAggregatorService
         int $cacheTtl = 604800
     ) {
         $this->identityService = new ResearcherIdentityService();
-        $this->orcidService = new OrcidProfileService($cacheDir, $cacheTtl);
+        $this->orcidService = new OrcidProfileService('', $cacheDir, $cacheTtl);
         $this->sdgService = new SdgClassificationService();
         
         // Inisialisasi services jika API key tersedia atau gunakan fallback
         try {
-            $this->scopusService = new ScopusResearcherService('', $scopusApiKey ?: '', $cacheDir, $cacheTtl);
+            $this->scopusService = new ScopusResearcherService('', $scopusApiKey ?: '', $cacheTtl);
         } catch (\Exception $e) {
             $this->scopusService = null;
         }
@@ -77,7 +77,7 @@ class ResearcherAggregatorService
     public function getCompleteProfile(string $orcid): array
     {
         // Validasi ORCID
-        if (!$this->orcidService->validateOrcidFormat($orcid)) {
+        if (!$this->orcidService->isValidOrcid($orcid)) {
             return [
                 'success' => false,
                 'error' => 'Invalid ORCID format',
@@ -257,7 +257,7 @@ class ResearcherAggregatorService
      */
     public function extractIdentifiersOnly(string $orcid): array
     {
-        if (!$this->orcidService->validateOrcidFormat($orcid)) {
+        if (!$this->orcidService->isValidOrcid($orcid)) {
             return ['success' => false, 'error' => 'Invalid ORCID format'];
         }
 
