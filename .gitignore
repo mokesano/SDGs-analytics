@@ -1,16 +1,8 @@
-# SDGs Analytics .gitignore
-
-# Logs
-*.log
-
-# Database
-database/*.db
-
-# Cache
-cache/
+# SDG Analytics
 
 # Compiled and build artifacts
 *.pyc
+__pycache__/
 *.o
 *.obj
 *.class
@@ -20,66 +12,54 @@ cache/
 *.a
 *.out
 
-# Compiled and build artifacts
-*.pyc
-__pycache__/
-
-# Database
-/database/wizdam.db
-/database/*.db
-/database/*.sqlite
-
-# Runtime / Storage
-/storage/
-/api/cache/
-/logs/*.log
-!/logs/.gitkeep
+# Cache and temporary files
+api/cache/
+.phpunit.cache/
 
 # Dependencies
 node_modules/
-frontend/node_modules/
-backend/node_modules/
-frontend/package-lock.json
-backend/package-lock.json
 venv/
 .venv/
-__pycache__/
-.mypy_cache/
-.pytest_cache/
-dist/
-build/
-target/
-.gradle/
+.env
+.env.local
+.env.*
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
-*.swo
 
 # Environment
 .env
 .env.local
 .env.*
-package-lock.json
-composer.lock
 
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# System files
-.DS_Store
-Thumbs.db
-
-# Coverage reports
+# Coverage
 coverage/
 htmlcov/
 .coverage
 
-# Compressed files
+# Build directories
+dist/
+build/
+target/
+.gradle/
+
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Compression
 *.zip
 *.gz
 *.tar
@@ -98,8 +78,11 @@ htmlcov/
 *.Z
 *.lz
 *.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 
-# Build directories
-dist/
-build/
-target/
+# Dependencies
+vendor/
+node_modules/
