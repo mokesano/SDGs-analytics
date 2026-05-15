@@ -82,8 +82,8 @@ class ScopusResearcherService
     }
 
     /**
-     * Get researcher publications with citation data
-     * 
+     * Get researcher publications with citation data (by ORCID)
+     *
      * @param string $orcid ORCID identifier
      * @param int $limit Maximum number of publications
      * @param bool $forceRefresh Force refresh cache
@@ -92,22 +92,101 @@ class ScopusResearcherService
     public function getPublications(string $orcid, int $limit = 20, bool $forceRefresh = false): array
     {
         $researcherData = $this->searchByOrcid($orcid, $forceRefresh);
-        
+
         if (empty($researcherData['works'])) {
             return [];
         }
 
         $publications = array_slice($researcherData['works'], 0, $limit);
-        
-        // Enhance with citation data if available
+
+        // Enrich with Scopus citation count only when not already set accurately
         foreach ($publications as &$pub) {
-            if (!empty($pub['doi'])) {
+            if (!empty($pub['doi']) && empty($pub['citation_count'])) {
                 $citationData = $this->getCitationCount($pub['doi']);
-                $pub['citation_count'] = $citationData['count'] ?? 0;
-                $pub['cited_by'] = $citationData['documents'] ?? [];
+                if ($citationData['count'] > 0) {
+                    $pub['citation_count'] = $citationData['count'];
+                    $pub['cited_by']       = $citationData['documents'] ?? [];
+                }
             }
         }
+        unset($pub);
 
+        return $publications;
+    }
+
+    /**
+     * Get publications by Scopus Author ID via Scopus Search API
+     *
+     * @param string $scopusId Scopus Author ID (10-11 digits)
+     * @param int $limit Maximum publications to return
+     * @param bool $forceRefresh Force cache bypass
+     * @return array Publications with title, doi, year, journal, citation_count
+     */
+    public function getPublicationsByScopusId(string $scopusId, int $limit = 25, bool $forceRefresh = false): array
+    {
+        if (!preg_match('/^\d{10,11}$/', $scopusId)) {
+            return [];
+        }
+
+        $cacheKey = 'scopus_pubs_' . $scopusId . '_' . $limit;
+        $cached   = $this->getFromCache($cacheKey);
+        if ($cached !== null && !$forceRefresh) {
+            return $cached;
+        }
+
+        $url = 'https://api.elsevier.com/content/search/scopus?' . http_build_query([
+            'query'  => 'AU-ID(' . $scopusId . ')',
+            'count'  => min($limit, 200),
+            'start'  => 0,
+            'field'  => 'dc:title,prism:doi,prism:coverDate,prism:publicationName,citedby-count,dc:description,prism:volume,prism:issueIdentifier',
+            'sort'   => '-coverDate',
+        ]);
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_HTTPHEADER     => [
+                'Accept: application/json',
+                'X-ELS-APIKey: ' . $this->apiKey,
+            ],
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+        curl_close($ch);
+
+        if ($curlErr || $httpCode !== 200) {
+            error_log("[ScopusResearcherService] Search API error for AU-ID($scopusId): HTTP $httpCode $curlErr");
+            return [];
+        }
+
+        $data    = json_decode($response, true);
+        $entries = $data['search-results']['entry'] ?? [];
+        if (!is_array($entries)) {
+            return [];
+        }
+
+        $publications = [];
+        foreach ($entries as $entry) {
+            $coverDate = $entry['prism:coverDate'] ?? '';
+            $year      = $coverDate ? (int)substr($coverDate, 0, 4) : null;
+
+            $publications[] = [
+                'title'          => $entry['dc:title']                ?? 'Unknown Title',
+                'doi'            => $entry['prism:doi']               ?? null,
+                'year'           => $year,
+                'journal'        => $entry['prism:publicationName']   ?? null,
+                'citation_count' => (int)($entry['citedby-count']     ?? 0),
+                'abstract'       => $entry['dc:description']          ?? null,
+                'volume'         => $entry['prism:volume']            ?? null,
+                'issue'          => $entry['prism:issueIdentifier']   ?? null,
+                'source'         => 'Scopus',
+            ];
+        }
+
+        $this->saveToCache($cacheKey, $publications);
         return $publications;
     }
 
@@ -220,29 +299,56 @@ class ScopusResearcherService
     }
 
     /**
-     * Get citation count for a specific DOI
-     * 
+     * Get citation count for a specific DOI via Scopus Abstract/Citation API
+     *
      * @param string $doi Document DOI
-     * @return array Citation count and citing documents
+     * @return array ['count' => int, 'documents' => [], 'doi' => string]
      */
     public function getCitationCount(string $doi): array
     {
-        $cacheKey = 'scopus_citation_' . md5($doi);
+        $cacheKey   = 'scopus_citation_' . md5($doi);
         $cachedData = $this->getFromCache($cacheKey);
-        
         if ($cachedData !== null) {
             return $cachedData;
         }
 
-        // Simulate citation lookup (in real implementation, call Scopus Citation API)
-        $result = [
-            'count' => 0,
-            'documents' => [],
-            'doi' => $doi,
-        ];
+        $cleanDoi = ltrim($doi, '/');
+        $url      = 'https://api.elsevier.com/content/abstract/doi/' . rawurlencode($cleanDoi)
+                  . '?field=citedby-count';
 
-        $this->saveToCache($cacheKey, $result);
-        
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_HTTPHEADER     => [
+                'Accept: application/json',
+                'X-ELS-APIKey: ' . $this->apiKey,
+            ],
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+        curl_close($ch);
+
+        $count = 0;
+        if (!$curlErr && $httpCode === 200) {
+            $data  = json_decode($response, true);
+            $count = (int)(
+                $data['abstracts-retrieval-response']['coredata']['citedby-count']
+                ?? $data['abstracts-retrieval-response']['item']['bibrecord']['head']['citation-info']['citationnumber']['$']
+                ?? 0
+            );
+        } else {
+            error_log("[ScopusResearcherService] Citation API error for DOI $doi: HTTP $httpCode $curlErr");
+        }
+
+        $result = ['count' => $count, 'documents' => [], 'doi' => $doi];
+        // Only cache successful hits to avoid persisting API failures
+        if (!$curlErr && $httpCode === 200) {
+            $this->saveToCache($cacheKey, $result);
+        }
+
         return $result;
     }
 
@@ -326,34 +432,42 @@ class ScopusResearcherService
     }
 
     /**
-     * Call legacy researcher API
-     * 
-     * @param string $orcid ORCID identifier
+     * Call legacy researcher API via output-buffered include
+     *
+     * @param string $orcid ORCID identifier (already validated)
      * @return array API response
      */
     private function callResearcherApi(string $orcid): array
     {
-        // Simulate API call by including the file and capturing output
-        // In production, this would be a proper HTTP request or direct method call
-        
-        ob_start();
-        
-        // Set up environment for API
-        $_GET['orcid'] = $orcid;
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        
         $apiFile = $this->projectRoot . '/api/researcher.php';
-        
-        if (file_exists($apiFile)) {
-            // Capture and decode JSON output
-            include $apiFile;
-            $output = ob_get_clean();
-            return json_decode($output, true) ?? ['status' => 'error', 'message' => 'Invalid JSON response'];
+
+        if (!file_exists($apiFile)) {
+            return ['status' => 'error', 'message' => 'API file not found'];
         }
 
-        ob_end_clean();
-        
-        return ['status' => 'error', 'message' => 'API file not found'];
+        $origGet    = $_GET;
+        $origMethod = $_SERVER['REQUEST_METHOD'];
+
+        $_GET['orcid']              = $orcid;
+        $_SERVER['REQUEST_METHOD']  = 'GET';
+
+        ob_start();
+        try {
+            include $apiFile;
+            $output = ob_get_clean();
+        } catch (\Throwable $e) {
+            ob_end_clean();
+            $_GET                       = $origGet;
+            $_SERVER['REQUEST_METHOD']  = $origMethod;
+            error_log('[ScopusResearcherService] callResearcherApi include error: ' . $e->getMessage());
+            return ['status' => 'error', 'message' => 'API include error: ' . $e->getMessage()];
+        } finally {
+            $_GET                       = $origGet;
+            $_SERVER['REQUEST_METHOD']  = $origMethod;
+        }
+
+        $decoded = json_decode($output, true);
+        return $decoded ?? ['status' => 'error', 'message' => 'Invalid JSON from researcher API'];
     }
 
     /**
@@ -413,14 +527,23 @@ class ScopusResearcherService
         $coredata = $authorData['coredata'] ?? [];
         $preferredName = $authorData['preferred-name'] ?? $coredata['preferred-name'] ?? [];
         
+        // Scopus Author API nests current affiliation under affiliation-current.affiliation-name
+        // OR affiliation-current.affiliation[0].affiliation-name (multiple affiliations)
+        $affiliationBlock = $authorData['affiliation-current'] ?? [];
+        $affiliationName  = $affiliationBlock['affiliation-name']
+            ?? $affiliationBlock['affiliation']['affiliation-name']
+            ?? (is_array($affiliationBlock['affiliation'] ?? null)
+                ? ($affiliationBlock['affiliation'][0]['affiliation-name'] ?? null)
+                : null);
+
         $profile = [
             'preferred_name' => trim(($preferredName['given-name'] ?? '') . ' ' . ($preferredName['surname'] ?? $coredata['surname'] ?? '')),
-            'h_index' => (int)($authorData['h-index'] ?? $coredata['h-index'] ?? 0),
-            'cited_by_count' => (int)($coredata['citation-count'] ?? 0),
+            'h_index'        => (int)($authorData['h-index'] ?? $coredata['h-index'] ?? 0),
+            'cited_by_count' => (int)($coredata['citation-count'] ?? $coredata['citedby-count'] ?? 0),
             'document_count' => (int)($coredata['document-count'] ?? 0),
-            'affiliation' => $authorData['affiliation-current']['affiliation-name'] ?? null,
-            'subject_areas' => [],
-            'documents' => [],
+            'affiliation'    => $affiliationName,
+            'subject_areas'  => [],
+            'documents'      => [],
         ];
 
         // Extract subject areas

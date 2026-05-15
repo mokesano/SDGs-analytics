@@ -48,8 +48,9 @@ class ResearcherAggregatorService
         $this->sdgService = new SdgClassificationService();
         
         // Inisialisasi services jika API key tersedia atau gunakan fallback
+        // Parameter order: ScopusResearcherService($apiKey, $projectRoot, $cacheTTL)
         try {
-            $this->scopusService = new ScopusResearcherService('', $scopusApiKey ?: '', $cacheTtl);
+            $this->scopusService = new ScopusResearcherService($scopusApiKey ?: null, '', $cacheTtl);
         } catch (\Exception $e) {
             $this->scopusService = null;
         }
@@ -153,8 +154,9 @@ class ResearcherAggregatorService
                         $profile['metrics']['sources'][] = 'Scopus';
                     }
                     
-                    // Ambil publikasi dari Scopus
-                    $scopusPubs = $this->scopusService->getPublications($scopusId, 25);
+                    // Ambil publikasi dari Scopus menggunakan Scopus Author ID
+                    // (getPublications() membutuhkan ORCID, bukan Scopus ID)
+                    $scopusPubs = $this->scopusService->getPublicationsByScopusId($scopusId, 25);
                     $profile['publications'] = array_merge(
                         $profile['publications'],
                         $this->normalizePublications($scopusPubs, 'Scopus')
