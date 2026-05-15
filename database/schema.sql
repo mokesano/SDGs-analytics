@@ -84,6 +84,56 @@ CREATE TABLE IF NOT EXISTS users (
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ── Delight-im/Auth tables ───────────────────────────────────────────────
+-- Required when the delight-im/auth library is installed (composer.json).
+-- Prefix 'delight_' avoids column conflicts with the legacy users table
+-- (which uses password_hash/name/role instead of Delight's password/roles_mask).
+-- Bootstrap applies this schema before api/auth.php checks class_exists(),
+-- so the tables always exist before the Delight adapter can be activated.
+CREATE TABLE IF NOT EXISTS delight_users (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    email        TEXT UNIQUE NOT NULL,
+    password     TEXT NOT NULL,
+    verified     INTEGER NOT NULL DEFAULT 0,
+    resettable   INTEGER NOT NULL DEFAULT 1,
+    roles_mask   INTEGER NOT NULL DEFAULT 0,
+    registered   INTEGER NOT NULL,
+    last_login   INTEGER DEFAULT NULL,
+    force_logout INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS delight_users_throttling (
+    selector     TEXT NOT NULL,
+    failures     INTEGER NOT NULL DEFAULT 0,
+    last_attempt INTEGER NOT NULL,
+    PRIMARY KEY (selector)
+);
+
+CREATE TABLE IF NOT EXISTS delight_users_remembered (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    user     INTEGER NOT NULL REFERENCES delight_users(id) ON DELETE CASCADE,
+    selector TEXT UNIQUE NOT NULL,
+    token    TEXT NOT NULL,
+    expires  INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS delight_users_resets (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    user     INTEGER NOT NULL REFERENCES delight_users(id) ON DELETE CASCADE,
+    selector TEXT UNIQUE NOT NULL,
+    token    TEXT NOT NULL,
+    expires  INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS delight_users_confirmations (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id  INTEGER NOT NULL REFERENCES delight_users(id) ON DELETE CASCADE,
+    email    TEXT NOT NULL,
+    selector TEXT UNIQUE NOT NULL,
+    token    TEXT NOT NULL,
+    expires  INTEGER NOT NULL
+);
+
 -- ── Riwayat pencarian (untuk arsip & analytics) ───────────────────────────
 CREATE TABLE IF NOT EXISTS search_history (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
