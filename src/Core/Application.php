@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+namespace Wizdam\Core;
 
 /**
  * Application Class - Main Application Container
