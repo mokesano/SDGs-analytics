@@ -8,32 +8,99 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  # ── Build & Validate ─────────────────────────────────────────────────────
+  build:
+    name: Build & Validate
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }} # Menggunakan nama branch sebagai environment
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4' # Sesuaikan dengan versi proyek Anda
+          php-version: '8.2'
+          extensions: pdo, pdo_sqlite, sqlite3
+          coverage: none
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php82-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-php82-composer-
 
       - name: Install Dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-      # Contoh logika deployment berbeda per branch
+      - name: PHP Syntax Check
+        run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} +
+
+      - name: Apply & Validate SQLite Schema
+        run: |
+          mkdir -p database
+          php -r "
+            \$db = new PDO('sqlite:database/wizdam.db');
+            \$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            \$db->exec(file_get_contents('database/schema.sql'));
+            echo 'Schema applied successfully.' . PHP_EOL;
+          "
+
+  # ── Deploy ───────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy (${{ github.ref_name }})
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_sqlite, sqlite3
+          coverage: none
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php82-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-php82-composer-
+
+      - name: Install Dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
       - name: Deploy to Dev Server
         if: github.ref_name == 'develop'
-        run: ./scripts/deploy-dev.sh  # Jalankan script deploy dev
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEV_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEV_HOST }}
+          DEPLOY_USER: ${{ secrets.DEV_USER }}
+          DEPLOY_PATH: ${{ secrets.DEV_PATH }}
+        run: bash scripts/deploy-dev.sh
 
-      - name: Run Migration & Deploy Staging
+      - name: Deploy to Staging
         if: github.ref_name == 'master'
-        run: |
-          php artisan migrate --force
-          ./scripts/deploy-staging.sh
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.STAGING_HOST }}
+          DEPLOY_USER: ${{ secrets.STAGING_USER }}
+          DEPLOY_PATH: ${{ secrets.STAGING_PATH }}
+        run: bash scripts/deploy-staging.sh
 
       - name: Deploy to Production
         if: github.ref_name == 'production'
-        run: ./scripts/deploy-prod.sh  # Script produksi (lebih ketat)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.PROD_HOST }}
+          DEPLOY_USER: ${{ secrets.PROD_USER }}
+          DEPLOY_PATH: ${{ secrets.PROD_PATH }}
+        run: bash scripts/deploy-prod.sh
