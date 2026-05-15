@@ -1,0 +1,39 @@
+name: Deploy Workflow
+
+on:
+  push:
+    branches: [ "develop", "master", "production" ]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }} # Menggunakan nama branch sebagai environment
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4' # Sesuaikan dengan versi proyek Anda
+
+      - name: Install Dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      # Contoh logika deployment berbeda per branch
+      - name: Deploy to Dev Server
+        if: github.ref_name == 'develop'
+        run: ./scripts/deploy-dev.sh  # Jalankan script deploy dev
+
+      - name: Run Migration & Deploy Staging
+        if: github.ref_name == 'master'
+        run: |
+          php artisan migrate --force
+          ./scripts/deploy-staging.sh
+
+      - name: Deploy to Production
+        if: github.ref_name == 'production'
+        run: ./scripts/deploy-prod.sh  # Script produksi (lebih ketat)

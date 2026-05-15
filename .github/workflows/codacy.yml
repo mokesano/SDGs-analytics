@@ -10,52 +10,54 @@
 # https://github.com/codacy/codacy-analysis-cli-action.
 # For more information on Codacy Analysis CLI in general, see
 # https://github.com/codacy/codacy-analysis-cli.
-
+# .github/workflows/codacy-security-scan.yml
 name: Codacy Security Scan
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "develop", "master", "production" ]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "master" ]
+    branches: [ "develop", "master", "production" ]
   schedule:
-    - cron: '33 18 * * 1'
-
-permissions:
-  contents: read
+    - cron: '33 18 * * 1'  # Setiap Senin pukul 18:33 UTC
 
 jobs:
   codacy-security-scan:
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     name: Codacy Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read              # Untuk actions/checkout
+      security-events: write      # Wajib untuk upload SARIF ke GitHub
+      actions: read               # Untuk status check pada private repo
+    
     steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      # Execute Codacy Analysis CLI and generate a SARIF output with the security issues identified during the analysis
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
         with:
-          # Check https://github.com/codacy/codacy-analysis-cli#project-token to get your project token from your Codacy repository
-          # You can also omit the token and run the tools that support default configurations
+          fetch-depth: 0  # Penting untuk analisis diff yang akurat
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@v4.4.7  # Gunakan version tag resmi [[1]]
+        with:
+          # Token proyek Codacy (opsional jika hanya ingin generate SARIF lokal)
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          verbose: true
+          
+          # Output SARIF untuk GitHub Code Scanning
           output: results.sarif
           format: sarif
-          # Adjust severity of non-security issues
+          
+          # Kompatibilitas dengan GitHub Code Scanning
           gh-code-scanning-compat: true
-          # Force 0 exit code to allow SARIF file generation
-          # This will handover control about PR rejection to the GitHub side
+          
+          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue
           max-allowed-issues: 2147483647
+          
+          # Verbosity untuk debugging
+          verbose: true
 
-      # Upload the SARIF file generated in the previous step
-      - name: Upload SARIF results file
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3  # Gunakan tag stabil
+        if: always()  # Tetap upload meski step sebelumnya warning/error
         with:
           sarif_file: results.sarif
+          category: codacy-security  # Penting jika ada multiple tools
