@@ -1,0 +1,61 @@
+# .github/workflows/release.yml
+name: Release Otomatis (Semantic Release)
+
+on:
+  push:
+    branches:
+      - master  # Hanya trigger release dari branch master
+  workflow_dispatch:  # Tambahkan manual trigger untuk debugging
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Generate Release
+    runs-on: ubuntu-latest
+    if: github.repository == 'mokesano/SDGs-analytics'  # Opsional: batasi hanya repo ini
+
+    steps:
+      # 1. Checkout dengan history lengkap
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false  # Akan menggunakan token khusus di step release
+
+      # 2. Setup Node.js (dibutuhkan semantic-release)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      # 3. Konfigurasi Git Identity (WAJIB agar bisa commit/tag)
+      - name: Configure Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 4. Install dependencies semantic-release
+      - name: Install semantic-release
+        run: |
+          npm init -y
+          npm install --save-dev \
+            semantic-release@21 \
+            @semantic-release/commit-analyzer@10 \
+            @semantic-release/release-notes-generator@11 \
+            @semantic-release/github@9 \
+            @semantic-release/git@10 \
+            @semantic-release/changelog@6 \
+            conventional-changelog-conventionalcommits@6
+
+      # 5. Jalankan semantic-release
+      - name: Run semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Jika butuh push ke protected branch, gunakan PAT:
+          # GH_TOKEN: ${{ secrets.SEMANTIC_RELEASE_PAT }}

@@ -25,8 +25,10 @@ if (!defined('PROJECT_ROOT')) {
 define('SDG_API_FILE', PROJECT_ROOT . '/api/SDG_Classification_API.php');
 
 // Pengaturan environment
-define('ENVIRONMENT', 'production'); // 'development' atau 'production'
-define('DEBUG_MODE', false); // Set true untuk debugging
+if (!defined('ENVIRONMENT')) {
+    define('ENVIRONMENT', defined('TEST_MODE') && TEST_MODE ? 'test' : 'production');
+}
+define('DEBUG_MODE', defined('TEST_MODE') && TEST_MODE ? true : false);
 
 // Timezone
 date_default_timezone_set('Asia/Jakarta');
@@ -66,17 +68,19 @@ $CONFIG = [
 ];
 
 // ==============================================
-// KONFIGURASI DATABASE (OPSIONAL)
+// KONFIGURASI DATABASE
 // ==============================================
+
+// SQLite database path
+define('DB_PATH', PROJECT_ROOT . '/database/wizdam.db');
+define('DB_SCHEMA_FILE', PROJECT_ROOT . '/database/schema.sql');
 
 // Jika Anda menggunakan database untuk logging atau caching
 $DB_CONFIG = [
-    'host' => 'localhost',
-    'database' => 'sdg_analysis',
-    'username' => 'your_username',
-    'password' => 'your_password',
+    'driver' => 'sqlite',
+    'database' => DB_PATH,
     'charset' => 'utf8mb4',
-    'enabled' => false // Set true jika menggunakan database
+    'enabled' => true // Set true jika menggunakan database
 ];
 
 // ==============================================
@@ -178,7 +182,7 @@ if ($LOG_CONFIG['enabled'] && !file_exists(dirname($LOG_CONFIG['file']))) {
 }
 
 // Set Content Security Policy headers
-if (ENVIRONMENT === 'production') {
+if (ENVIRONMENT === 'production' && !defined('TEST_MODE')) {
     $csp_string = '';
     foreach ($CSP_POLICY as $directive => $value) {
         $csp_string .= $directive . ' ' . $value . '; ';

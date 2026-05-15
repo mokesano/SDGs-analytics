@@ -154,7 +154,7 @@ $tools_items = [
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="brand-text">
-                    <span class="brand-name">Wizdam AI-sikola</span>
+                    <span class="brand-name">Wizdam AI-scola</span>
                     <span class="brand-version">v<?php echo VERSION; ?></span>
                 </div>
             </a>

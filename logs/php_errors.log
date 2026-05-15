@@ -1,0 +1,24 @@
+[13-May-2026 05:11:29 Asia/Jakarta] PHP Fatal error:  Cannot redeclare fetchOrcidData() (previously declared in /workspace/includes/functions.php:214) in /workspace/api/SDG_Classification_API.php on line 987
+[13-May-2026 05:25:00 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:03 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:12 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:15 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:41 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:44 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:50 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 05:25:55 Asia/Jakarta] Uncaught exception: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver
+[13-May-2026 15:31:09 Asia/Jakarta] Database connection failed: could not find driver

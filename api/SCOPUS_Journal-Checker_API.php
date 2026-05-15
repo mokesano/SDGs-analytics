@@ -2289,7 +2289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
         <div class="navbar-container">
             <a href="#" class="navbar-brand">
                 <i class="fas fa-chart-line"></i>
-                WIZDAM AI-sikola
+                WIZDAM AI-scola
             </a>
             
             <ul class="navbar-nav">
@@ -2752,7 +2752,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
                 <div class="footer-section brand-wide">
                     <div class="footer-brand">
                         <i class="fas fa-chart-line"></i>
-                        WIZDAM AI-sikola
+                        WIZDAM AI-scola
                     </div>
                     <div class="brand-description">
                         <p>Platform visualisasi hasil analisis metrik jurnal ilmiah yang memberikan informasi terkini dan akurat tentang CiteScore, Quartile, SJR, dan SNIP dari database Scopus.

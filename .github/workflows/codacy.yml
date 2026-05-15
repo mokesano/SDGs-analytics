@@ -1,0 +1,63 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow checks out code, performs a Codacy security scan
+# and integrates the results with the
+# GitHub Advanced Security code scanning feature.  For more information on
+# the Codacy security scan action usage and parameters, see
+# https://github.com/codacy/codacy-analysis-cli-action.
+# For more information on Codacy Analysis CLI in general, see
+# https://github.com/codacy/codacy-analysis-cli.
+# .github/workflows/codacy-security-scan.yml
+name: Codacy Security Scan
+
+on:
+  push:
+    branches: [ "develop", "master", "production" ]
+  pull_request:
+    branches: [ "develop", "master", "production" ]
+  schedule:
+    - cron: '33 18 * * 1'  # Setiap Senin pukul 18:33 UTC
+
+jobs:
+  codacy-security-scan:
+    name: Codacy Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read              # Untuk actions/checkout
+      security-events: write      # Wajib untuk upload SARIF ke GitHub
+      actions: read               # Untuk status check pada private repo
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Penting untuk analisis diff yang akurat
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@v4.4.7  # Gunakan version tag resmi [[1]]
+        with:
+          # Token proyek Codacy (opsional jika hanya ingin generate SARIF lokal)
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          
+          # Output SARIF untuk GitHub Code Scanning
+          output: results.sarif
+          format: sarif
+          
+          # Kompatibilitas dengan GitHub Code Scanning
+          gh-code-scanning-compat: true
+          
+          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue
+          max-allowed-issues: 2147483647
+          
+          # Verbosity untuk debugging
+          verbose: true
+
+      - name: Upload SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3  # Gunakan tag stabil
+        if: always()  # Tetap upload meski step sebelumnya warning/error
+        with:
+          sarif_file: results.sarif
+          category: codacy-security  # Penting jika ada multiple tools

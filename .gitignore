@@ -1,44 +1,88 @@
-# Wizdam AI-sikola .gitignore
+# SDG Analytics
 
-# Database
-/database/wizdam.db
-/database/*.db
-/database/*.sqlite
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
 
-# Runtime / Storage
-/storage/
-/api/cache/
-/logs/*.log
-!/logs/.gitkeep
+# Cache and temporary files
+api/cache/
+.phpunit.cache/
 
 # Dependencies
-/vendor/
-/node_modules/
+node_modules/
+venv/
+.venv/
+.env
+.env.local
+.env.*
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
 # Environment
-*.env
 .env
+.env.local
 .env.*
-!.env.example
 
-# Build artifacts
-/dist/
-/public/build/
-
-# Editor / OS
-.DS_Store
-.DS_Store?
-Thumbs.db
-.idea/
+# Editors
 .vscode/
-*.swp
-*.swo
-*~
+.idea/
 
-# PHP
-*.phar
-/composer.lock
-/package-lock.json
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
-# Debug files
-/public/debug.php
+# Build directories
+dist/
+build/
+target/
+.gradle/
+
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Compression
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+
+# Dependencies
+vendor/
+node_modules/

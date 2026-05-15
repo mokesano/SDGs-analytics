@@ -1030,8 +1030,8 @@ $performance_timers = [];
 // Start main timer
 startTimer('main');
 
-// Force HTTPS in production
-if (ENVIRONMENT === 'production') {
+// Force HTTPS in production (skip for CLI and test mode)
+if (ENVIRONMENT === 'production' && !defined('TEST_MODE') && php_sapi_name() !== 'cli') {
     redirectToHttps();
 }
 

@@ -12,6 +12,7 @@
 // DEFINISI 17 SDGs DENGAN DATA LENGKAP
 // ==============================================
 
+// Define as global variable for backward compatibility
 $SDG_DEFINITIONS = [
     'SDG1' => [
         'number' => 1,
@@ -510,6 +511,15 @@ function getSdgKeywordMapping($sdg_code = null) {
     }
     
     return $SDG_KEYWORD_MAPPING;
+}
+
+// ==============================================
+// ALIAS FOR BACKWARD COMPATIBILITY
+// ==============================================
+// Test suite expects $SDG_KEYWORDS array
+$SDG_KEYWORDS = [];
+foreach ($SDG_DEFINITIONS as $code => $definition) {
+    $SDG_KEYWORDS[$code] = $definition['keywords'];
 }
 
 ?>

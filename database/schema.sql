@@ -1,5 +1,5 @@
 -- ============================================================
--- schema.sql — Wizdam AI-sikola Database Schema
+-- schema.sql — Wizdam AI-scola Database Schema
 -- SQLite (compatible with PDO + future MySQL migration)
 -- ============================================================
 
@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS researchers (
 CREATE TABLE IF NOT EXISTS works (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     researcher_id INTEGER REFERENCES researchers(id) ON DELETE CASCADE,
-    put_code      TEXT,
+    put_code      TEXT UNIQUE,  -- UNIQUE constraint untuk ON CONFLICT (fallback jika DOI kosong)
     title         TEXT,
-    doi           TEXT,
+    doi           TEXT UNIQUE,  -- UNIQUE constraint untuk ON CONFLICT
     abstract      TEXT,
     authors       TEXT,          -- JSON array [{"name": "...", "orcid": "..."}]
     journal       TEXT,
