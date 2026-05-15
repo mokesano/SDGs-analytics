@@ -56,4 +56,10 @@ function getDb(): PDO {
     return $GLOBALS['db'];
 }
 
+// i18n and auth helpers (order matters: i18n before auth)
+require_once PROJECT_ROOT . '/includes/i18n.php';
+i18nInit();
+
+require_once PROJECT_ROOT . '/includes/auth.php';
+
 return $db;

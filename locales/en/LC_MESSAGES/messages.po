@@ -1,0 +1,404 @@
+# English translations for SDGs Analytics / Wizdam AI
+# Copyright (C) PT. Sangia Research Media and Publishing
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+# Navigation - primary items
+msgid "Home"
+msgstr "Home"
+
+msgid "About"
+msgstr "About"
+
+msgid "Apps"
+msgstr "Apps"
+
+msgid "Teams"
+msgstr "Teams"
+
+msgid "Help"
+msgstr "Help"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Archived"
+msgstr "Archived"
+
+msgid "Leaderboard"
+msgstr "Leaderboard"
+
+msgid "Resources"
+msgstr "Resources"
+
+msgid "Tools"
+msgstr "Tools"
+
+msgid "FAQ"
+msgstr "FAQ"
+
+# Navigation - tools/features
+msgid "Analytics"
+msgstr "Analytics"
+
+msgid "API Access"
+msgstr "API Access"
+
+msgid "Bulk Analysis"
+msgstr "Bulk Analysis"
+
+msgid "Integrations"
+msgstr "Integrations"
+
+msgid "Journal Archive"
+msgstr "Journal Archive"
+
+msgid "SDG Researchers"
+msgstr "SDG Researchers"
+
+# Navigation - resources
+msgid "Documentation"
+msgstr "Documentation"
+
+msgid "API Reference"
+msgstr "API Reference"
+
+msgid "Tutorials"
+msgstr "Tutorials"
+
+msgid "Research"
+msgstr "Research"
+
+msgid "Community"
+msgstr "Community"
+
+msgid "Blog"
+msgstr "Blog"
+
+# Navigation - descriptions
+msgid "SDG Analysis Platform"
+msgstr "SDG Analysis Platform"
+
+msgid "About our platform"
+msgstr "About our platform"
+
+msgid "SDG applications"
+msgstr "SDG applications"
+
+msgid "Our team"
+msgstr "Our team"
+
+msgid "Help and support"
+msgstr "Help and support"
+
+msgid "Contact us"
+msgstr "Contact us"
+
+msgid "Search history"
+msgstr "Search history"
+
+msgid "SDG researcher rankings"
+msgstr "SDG researcher rankings"
+
+msgid "API documentation"
+msgstr "API documentation"
+
+msgid "API reference guide"
+msgstr "API reference guide"
+
+msgid "Learning tutorials"
+msgstr "Learning tutorials"
+
+msgid "Research papers"
+msgstr "Research papers"
+
+msgid "Community forum"
+msgstr "Community forum"
+
+msgid "Latest updates"
+msgstr "Latest updates"
+
+msgid "Analytics dashboard"
+msgstr "Analytics dashboard"
+
+msgid "API access management"
+msgstr "API access management"
+
+msgid "Bulk data analysis"
+msgstr "Bulk data analysis"
+
+msgid "Integration tools"
+msgstr "Integration tools"
+
+msgid "Scopus journal archive"
+msgstr "Scopus journal archive"
+
+msgid "List of researchers by SDG"
+msgstr "List of researchers by SDG"
+
+# User account
+msgid "Login"
+msgstr "Login"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "My Account"
+msgstr "My Account"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Analysis History"
+msgstr "Analysis History"
+
+msgid "Main page"
+msgstr "Main page"
+
+# Common UI
+msgid "Search"
+msgstr "Search"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Reset"
+msgstr "Reset"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "View"
+msgstr "View"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Success"
+msgstr "Success"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "No data available"
+msgstr "No data available"
+
+msgid "Try again"
+msgstr "Try again"
+
+msgid "Previous"
+msgstr "Previous"
+
+msgid "Next"
+msgstr "Next"
+
+msgid "Page %d of %d"
+msgstr "Page %d of %d"
+
+msgid "Showing %d results"
+msgstr "Showing %d results"
+
+msgid "Last updated"
+msgstr "Last updated"
+
+msgid "Analyzed on"
+msgstr "Analyzed on"
+
+msgid "Search documentation..."
+msgstr "Search documentation..."
+
+msgid "Search..."
+msgstr "Search..."
+
+msgid "Toggle dark/light theme"
+msgstr "Toggle dark/light theme"
+
+msgid "Select language"
+msgstr "Select language"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "Toggle navigation menu"
+msgstr "Toggle navigation menu"
+
+# Home page
+msgid "Analyze SDG contributions of researchers and journals"
+msgstr "Analyze SDG contributions of researchers and journals"
+
+msgid "Enter ORCID, DOI, or ISSN"
+msgstr "Enter ORCID, DOI, or ISSN"
+
+msgid "Analyze"
+msgstr "Analyze"
+
+msgid "Valid ORCID ID — ready to analyze"
+msgstr "Valid ORCID ID — ready to analyze"
+
+msgid "Valid DOI — ready to analyze article"
+msgstr "Valid DOI — ready to analyze article"
+
+msgid "Valid ISSN — ready to check journal profile"
+msgstr "Valid ISSN — ready to check journal profile"
+
+msgid "Format not recognized. Use ORCID (XXXX-XXXX-XXXX-XXXX), DOI (10.xxxx/xxxxx), or ISSN (XXXX-XXXX)."
+msgstr "Format not recognized. Use ORCID (XXXX-XXXX-XXXX-XXXX), DOI (10.xxxx/xxxxx), or ISSN (XXXX-XXXX)."
+
+# SDG names
+msgid "No Poverty"
+msgstr "No Poverty"
+
+msgid "Zero Hunger"
+msgstr "Zero Hunger"
+
+msgid "Good Health and Well-being"
+msgstr "Good Health and Well-being"
+
+msgid "Quality Education"
+msgstr "Quality Education"
+
+msgid "Gender Equality"
+msgstr "Gender Equality"
+
+msgid "Clean Water and Sanitation"
+msgstr "Clean Water and Sanitation"
+
+msgid "Affordable and Clean Energy"
+msgstr "Affordable and Clean Energy"
+
+msgid "Decent Work and Economic Growth"
+msgstr "Decent Work and Economic Growth"
+
+msgid "Industry Innovation and Infrastructure"
+msgstr "Industry Innovation and Infrastructure"
+
+msgid "Reduced Inequalities"
+msgstr "Reduced Inequalities"
+
+msgid "Sustainable Cities and Communities"
+msgstr "Sustainable Cities and Communities"
+
+msgid "Responsible Consumption and Production"
+msgstr "Responsible Consumption and Production"
+
+msgid "Climate Action"
+msgstr "Climate Action"
+
+msgid "Life Below Water"
+msgstr "Life Below Water"
+
+msgid "Life on Land"
+msgstr "Life on Land"
+
+msgid "Peace Justice and Strong Institutions"
+msgstr "Peace Justice and Strong Institutions"
+
+msgid "Partnerships for the Goals"
+msgstr "Partnerships for the Goals"
+
+# Footer
+msgid "Platform"
+msgstr "Platform"
+
+msgid "Company"
+msgstr "Company"
+
+msgid "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights."
+msgstr "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights."
+
+msgid "Analytics Dashboard"
+msgstr "Analytics Dashboard"
+
+msgid "Integration Tools"
+msgstr "Integration Tools"
+
+msgid "Help Center"
+msgstr "Help Center"
+
+msgid "Forum"
+msgstr "Forum"
+
+msgid "Blog & Updates"
+msgstr "Blog & Updates"
+
+msgid "Partners"
+msgstr "Partners"
+
+msgid "Careers"
+msgstr "Careers"
+
+msgid "About Us"
+msgstr "About Us"
+
+msgid "Press Kit"
+msgstr "Press Kit"
+
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+msgid "Archive"
+msgstr "Archive"
+
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+msgid "Cookie Policy"
+msgstr "Cookie Policy"
+
+msgid "Accessibility"
+msgstr "Accessibility"
+
+msgid "Sitemap"
+msgstr "Sitemap"
+
+msgid "© %d Wizdam by PT. Sangia Research Media and Publishing. All rights reserved."
+msgstr "© %d Wizdam by PT. Sangia Research Media and Publishing. All rights reserved."
+
+msgid "We use cookies to enhance your experience and analyze site usage. By continuing to use this site, you consent to our use of cookies."
+msgstr "We use cookies to enhance your experience and analyze site usage. By continuing to use this site, you consent to our use of cookies."
+
+msgid "Accept All"
+msgstr "Accept All"
+
+msgid "Customize"
+msgstr "Customize"
+
+msgid "Decline"
+msgstr "Decline"
+
+msgid "Back to top"
+msgstr "Back to top"
+
+msgid "Skip to main content"
+msgstr "Skip to main content"
+
+# Header / meta
+msgid "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals."
+msgstr "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals."
