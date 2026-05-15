@@ -1067,24 +1067,6 @@ if (!function_exists('fetchDoiData')) {
     }
 }
 
-function fetchAbstractFromAlternativeSource($doi) {
-    $url = "https://pub.orcid.org/v3.0/{$orcid}/employments";
-    $ch  = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER     => ['Accept: application/json'],
-        CURLOPT_CONNECTTIMEOUT => 3,
-        CURLOPT_TIMEOUT        => 6,
-    ]);
-    $response  = curl_exec($ch);
-    $errno     = curl_errno($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($errno || $http_code != 200) return [];
-    $data = json_decode($response, true);
-    return (json_last_error() === JSON_ERROR_NONE) ? $data : [];
-}
-
 function fetchOrcidEducations($orcid) {
     $url = "https://pub.orcid.org/v3.0/{$orcid}/educations";
     $ch  = curl_init($url);
