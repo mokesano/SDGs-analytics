@@ -11,6 +11,7 @@ session_start();
 
 require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
+require_once PROJECT_ROOT . '/includes/auth.php';
 
 // Always output JSON
 header('Content-Type: application/json');
@@ -77,7 +78,6 @@ function _setLegacySession(PDO $db, string $email, string $name, string $role, ?
 
 // ── Register ──────────────────────────────────────────────────────────────────
 if ($action === 'register') {
-    // CSRF verification
     $token = $_POST['_token'] ?? '';
     if (!verifyCsrfToken($token)) {
         http_response_code(400);
@@ -90,25 +90,19 @@ if ($action === 'register') {
     $password = $_POST['password'] ?? '';
     $confirm  = $_POST['password_confirm'] ?? '';
 
-    // Validation
     $errors = [];
-
     if (strlen($name) < 2 || strlen($name) > 100) {
         $errors[] = 'Name must be between 2 and 100 characters.';
     }
-
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Please enter a valid email address.';
     }
-
     if (strlen($password) < 8) {
         $errors[] = 'Password must be at least 8 characters.';
     }
-
     if ($password !== $confirm) {
         $errors[] = 'Passwords do not match.';
     }
-
     if (!empty($errors)) {
         http_response_code(400);
         echo json_encode(['status' => 'error', 'message' => implode(' ', $errors)]);
@@ -214,7 +208,6 @@ if ($action === 'register') {
 
 // ── Login ─────────────────────────────────────────────────────────────────────
 if ($action === 'login') {
-    // CSRF verification
     $token = $_POST['_token'] ?? '';
     if (!verifyCsrfToken($token)) {
         http_response_code(400);
@@ -273,7 +266,7 @@ if ($action === 'login') {
 
     if (!$user || !password_verify($password, $user['password_hash'])) {
         http_response_code(401);
-        echo json_encode(['status' => 'error', 'message' => 'Email atau password salah.']);
+        echo json_encode(['status' => 'error', 'message' => $result['message']]);
         exit;
     }
 

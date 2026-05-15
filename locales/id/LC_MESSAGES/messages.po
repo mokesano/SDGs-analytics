@@ -1,0 +1,404 @@
+# Indonesian translations for SDGs Analytics / Wizdam AI
+# Copyright (C) PT. Sangia Research Media and Publishing
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: id\n"
+
+# Navigation - primary items
+msgid "Home"
+msgstr "Beranda"
+
+msgid "About"
+msgstr "Tentang"
+
+msgid "Apps"
+msgstr "Aplikasi"
+
+msgid "Teams"
+msgstr "Tim"
+
+msgid "Help"
+msgstr "Bantuan"
+
+msgid "Contact"
+msgstr "Kontak"
+
+msgid "Archived"
+msgstr "Arsip"
+
+msgid "Leaderboard"
+msgstr "Papan Peringkat"
+
+msgid "Resources"
+msgstr "Sumber Daya"
+
+msgid "Tools"
+msgstr "Alat"
+
+msgid "FAQ"
+msgstr "FAQ"
+
+# Navigation - tools/features
+msgid "Analytics"
+msgstr "Analitik"
+
+msgid "API Access"
+msgstr "Akses API"
+
+msgid "Bulk Analysis"
+msgstr "Analisis Massal"
+
+msgid "Integrations"
+msgstr "Integrasi"
+
+msgid "Journal Archive"
+msgstr "Arsip Jurnal"
+
+msgid "SDG Researchers"
+msgstr "Peneliti SDG"
+
+# Navigation - resources
+msgid "Documentation"
+msgstr "Dokumentasi"
+
+msgid "API Reference"
+msgstr "Referensi API"
+
+msgid "Tutorials"
+msgstr "Tutorial"
+
+msgid "Research"
+msgstr "Penelitian"
+
+msgid "Community"
+msgstr "Komunitas"
+
+msgid "Blog"
+msgstr "Blog"
+
+# Navigation - descriptions
+msgid "SDG Analysis Platform"
+msgstr "Platform Analisis SDG"
+
+msgid "About our platform"
+msgstr "Tentang platform kami"
+
+msgid "SDG applications"
+msgstr "Aplikasi SDG"
+
+msgid "Our team"
+msgstr "Tim kami"
+
+msgid "Help and support"
+msgstr "Bantuan dan dukungan"
+
+msgid "Contact us"
+msgstr "Hubungi kami"
+
+msgid "Search history"
+msgstr "Riwayat pencarian"
+
+msgid "SDG researcher rankings"
+msgstr "Peringkat peneliti SDG"
+
+msgid "API documentation"
+msgstr "Dokumentasi API"
+
+msgid "API reference guide"
+msgstr "Panduan referensi API"
+
+msgid "Learning tutorials"
+msgstr "Tutorial pembelajaran"
+
+msgid "Research papers"
+msgstr "Makalah penelitian"
+
+msgid "Community forum"
+msgstr "Forum komunitas"
+
+msgid "Latest updates"
+msgstr "Pembaruan terbaru"
+
+msgid "Analytics dashboard"
+msgstr "Dasbor analitik"
+
+msgid "API access management"
+msgstr "Manajemen akses API"
+
+msgid "Bulk data analysis"
+msgstr "Analisis data massal"
+
+msgid "Integration tools"
+msgstr "Alat integrasi"
+
+msgid "Scopus journal archive"
+msgstr "Arsip jurnal Scopus"
+
+msgid "List of researchers by SDG"
+msgstr "Daftar peneliti per SDG"
+
+# User account
+msgid "Login"
+msgstr "Masuk"
+
+msgid "Register"
+msgstr "Daftar"
+
+msgid "Logout"
+msgstr "Keluar"
+
+msgid "My Account"
+msgstr "Akun Saya"
+
+msgid "Settings"
+msgstr "Pengaturan"
+
+msgid "Dashboard"
+msgstr "Dasbor"
+
+msgid "Analysis History"
+msgstr "Riwayat Analisis"
+
+msgid "Main page"
+msgstr "Halaman utama"
+
+# Common UI
+msgid "Search"
+msgstr "Cari"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Reset"
+msgstr "Reset"
+
+msgid "Submit"
+msgstr "Kirim"
+
+msgid "Cancel"
+msgstr "Batal"
+
+msgid "Save"
+msgstr "Simpan"
+
+msgid "Delete"
+msgstr "Hapus"
+
+msgid "Edit"
+msgstr "Ubah"
+
+msgid "View"
+msgstr "Lihat"
+
+msgid "Download"
+msgstr "Unduh"
+
+msgid "Loading..."
+msgstr "Memuat..."
+
+msgid "Error"
+msgstr "Kesalahan"
+
+msgid "Success"
+msgstr "Berhasil"
+
+msgid "Warning"
+msgstr "Peringatan"
+
+msgid "No data available"
+msgstr "Tidak ada data"
+
+msgid "Try again"
+msgstr "Coba lagi"
+
+msgid "Previous"
+msgstr "Sebelumnya"
+
+msgid "Next"
+msgstr "Berikutnya"
+
+msgid "Page %d of %d"
+msgstr "Halaman %d dari %d"
+
+msgid "Showing %d results"
+msgstr "Menampilkan %d hasil"
+
+msgid "Last updated"
+msgstr "Terakhir diperbarui"
+
+msgid "Analyzed on"
+msgstr "Dianalisis pada"
+
+msgid "Search documentation..."
+msgstr "Cari dokumentasi..."
+
+msgid "Search..."
+msgstr "Cari..."
+
+msgid "Toggle dark/light theme"
+msgstr "Ganti tema gelap/terang"
+
+msgid "Select language"
+msgstr "Pilih bahasa"
+
+msgid "Notifications"
+msgstr "Notifikasi"
+
+msgid "Toggle navigation menu"
+msgstr "Buka/tutup menu navigasi"
+
+# Home page
+msgid "Analyze SDG contributions of researchers and journals"
+msgstr "Analisis kontribusi SDG peneliti dan jurnal"
+
+msgid "Enter ORCID, DOI, or ISSN"
+msgstr "Masukkan ORCID, DOI, atau ISSN"
+
+msgid "Analyze"
+msgstr "Analisis"
+
+msgid "Valid ORCID ID — ready to analyze"
+msgstr "ORCID ID valid — siap dianalisis"
+
+msgid "Valid DOI — ready to analyze article"
+msgstr "DOI valid — siap analisis artikel"
+
+msgid "Valid ISSN — ready to check journal profile"
+msgstr "ISSN valid — siap cek profil jurnal"
+
+msgid "Format not recognized. Use ORCID (XXXX-XXXX-XXXX-XXXX), DOI (10.xxxx/xxxxx), or ISSN (XXXX-XXXX)."
+msgstr "Format tidak dikenali. Gunakan ORCID (XXXX-XXXX-XXXX-XXXX), DOI (10.xxxx/xxxxx), atau ISSN (XXXX-XXXX)."
+
+# SDG names
+msgid "No Poverty"
+msgstr "Tanpa Kemiskinan"
+
+msgid "Zero Hunger"
+msgstr "Tanpa Kelaparan"
+
+msgid "Good Health and Well-being"
+msgstr "Kehidupan Sehat dan Sejahtera"
+
+msgid "Quality Education"
+msgstr "Pendidikan Berkualitas"
+
+msgid "Gender Equality"
+msgstr "Kesetaraan Gender"
+
+msgid "Clean Water and Sanitation"
+msgstr "Air Bersih dan Sanitasi Layak"
+
+msgid "Affordable and Clean Energy"
+msgstr "Energi Bersih dan Terjangkau"
+
+msgid "Decent Work and Economic Growth"
+msgstr "Pekerjaan Layak dan Pertumbuhan Ekonomi"
+
+msgid "Industry Innovation and Infrastructure"
+msgstr "Industri, Inovasi, dan Infrastruktur"
+
+msgid "Reduced Inequalities"
+msgstr "Berkurangnya Kesenjangan"
+
+msgid "Sustainable Cities and Communities"
+msgstr "Kota dan Komunitas Berkelanjutan"
+
+msgid "Responsible Consumption and Production"
+msgstr "Konsumsi dan Produksi yang Bertanggung Jawab"
+
+msgid "Climate Action"
+msgstr "Penanganan Perubahan Iklim"
+
+msgid "Life Below Water"
+msgstr "Ekosistem Lautan"
+
+msgid "Life on Land"
+msgstr "Ekosistem Daratan"
+
+msgid "Peace Justice and Strong Institutions"
+msgstr "Perdamaian, Keadilan, dan Kelembagaan yang Tangguh"
+
+msgid "Partnerships for the Goals"
+msgstr "Kemitraan untuk Mencapai Tujuan"
+
+# Footer
+msgid "Platform"
+msgstr "Platform"
+
+msgid "Company"
+msgstr "Perusahaan"
+
+msgid "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights."
+msgstr "Platform bertenaga AI canggih untuk menganalisis kontribusi penelitian terhadap Tujuan Pembangunan Berkelanjutan. Memberdayakan peneliti dan institusi dengan klasifikasi dan wawasan cerdas."
+
+msgid "Analytics Dashboard"
+msgstr "Dasbor Analitik"
+
+msgid "Integration Tools"
+msgstr "Alat Integrasi"
+
+msgid "Help Center"
+msgstr "Pusat Bantuan"
+
+msgid "Forum"
+msgstr "Forum"
+
+msgid "Blog & Updates"
+msgstr "Blog & Pembaruan"
+
+msgid "Partners"
+msgstr "Mitra"
+
+msgid "Careers"
+msgstr "Karir"
+
+msgid "About Us"
+msgstr "Tentang Kami"
+
+msgid "Press Kit"
+msgstr "Press Kit"
+
+msgid "Privacy Policy"
+msgstr "Kebijakan Privasi"
+
+msgid "Archive"
+msgstr "Arsip"
+
+msgid "Terms of Service"
+msgstr "Ketentuan Layanan"
+
+msgid "Cookie Policy"
+msgstr "Kebijakan Cookie"
+
+msgid "Accessibility"
+msgstr "Aksesibilitas"
+
+msgid "Sitemap"
+msgstr "Peta Situs"
+
+msgid "© %d Wizdam by PT. Sangia Research Media and Publishing. All rights reserved."
+msgstr "© %d Wizdam oleh PT. Sangia Research Media and Publishing. Hak cipta dilindungi."
+
+msgid "We use cookies to enhance your experience and analyze site usage. By continuing to use this site, you consent to our use of cookies."
+msgstr "Kami menggunakan cookie untuk meningkatkan pengalaman Anda dan menganalisis penggunaan situs. Dengan terus menggunakan situs ini, Anda menyetujui penggunaan cookie kami."
+
+msgid "Accept All"
+msgstr "Terima Semua"
+
+msgid "Customize"
+msgstr "Sesuaikan"
+
+msgid "Decline"
+msgstr "Tolak"
+
+msgid "Back to top"
+msgstr "Kembali ke atas"
+
+msgid "Skip to main content"
+msgstr "Lewati ke konten utama"
+
+# Header / meta
+msgid "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals."
+msgstr "Platform bertenaga AI untuk menganalisis kontribusi penelitian terhadap Tujuan Pembangunan Berkelanjutan."
