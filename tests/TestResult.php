@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+namespace Wizdam\Tests;
+
 /**
  * Unit Test Suite for Wizdam AI-SCOLA
  * 

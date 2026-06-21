@@ -3,7 +3,7 @@
         'name' => 'wizdam/sdg-classifier',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => '37f2fd4375ca37dc78600c242fa35b2aace8486c',
+        'reference' => 'f6812ff58eea9725f5e40a2615656543b8f36b8b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -454,7 +454,7 @@
         'wizdam/sdg-classifier' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => '37f2fd4375ca37dc78600c242fa35b2aace8486c',
+            'reference' => 'f6812ff58eea9725f5e40a2615656543b8f36b8b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
