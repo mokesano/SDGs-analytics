@@ -16,9 +16,9 @@ class ComposerStaticInit37e5012e6156bdeff2b262833e503bad
     );
 
     public static $prefixLengthsPsr4 = array (
-        'a' =>
+        'f' =>
         array (
-            'andreskrey\\Readability\\' => 23,
+            'fivefilters\\Readability\\' => 24,
         ),
         'W' =>
         array (
@@ -38,6 +38,14 @@ class ComposerStaticInit37e5012e6156bdeff2b262833e503bad
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\Math\\' => 15,
         ),
+        'M' =>
+        array (
+            'Masterminds\\' => 12,
+        ),
+        'L' =>
+        array (
+            'League\\Uri\\' => 11,
+        ),
         'G' =>
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -55,9 +63,9 @@ class ComposerStaticInit37e5012e6156bdeff2b262833e503bad
     );
 
     public static $prefixDirsPsr4 = array (
-        'andreskrey\\Readability\\' =>
+        'fivefilters\\Readability\\' =>
         array (
-            0 => __DIR__ . '/..' . '/andreskrey/readability.php/src',
+            0 => __DIR__ . '/..' . '/fivefilters/readability.php/src',
         ),
         'Wizdam\\Tests\\' =>
         array (
@@ -73,7 +81,7 @@ class ComposerStaticInit37e5012e6156bdeff2b262833e503bad
         ),
         'Psr\\Log\\' =>
         array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+            0 => __DIR__ . '/..' . '/psr/log/src',
         ),
         'Psr\\Http\\Message\\' =>
         array (
@@ -95,6 +103,15 @@ class ComposerStaticInit37e5012e6156bdeff2b262833e503bad
         'PhpOffice\\Math\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
+        ),
+        'Masterminds\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/masterminds/html5/src',
+        ),
+        'League\\Uri\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'GuzzleHttp\\Psr7\\' =>
         array (
