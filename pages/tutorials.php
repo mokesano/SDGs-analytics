@@ -1,4 +1,15 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/tutorials.php — Step-by-step Tutorials for Wizdam AI SDG Classification
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman tutorial dengan panduan langkah demi langkah untuk menggunakan platform Wizdam AI SDG Classification — dari analisis ORCID pertama hingga penggunaan API.
+ */ 
 $page_title = 'Tutorial';
 $page_description = 'Panduan langkah demi langkah untuk menggunakan platform Wizdam AI SDG Classification — dari analisis ORCID pertama hingga penggunaan API.';
 

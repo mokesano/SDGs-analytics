@@ -1,5 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file pages/home.php — Home Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman utama untuk memulai analisis klasifikasi SDGs
  * Home Page — SDG Classification Analysis
  *
  * Semua proses analisis dilakukan via AJAX (tidak via PHP form submission):

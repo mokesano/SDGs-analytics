@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * bootstrap.php — SQLite Database Initializer
+ * @file includes/bootstrap.php — SQLite Database Initializer
  *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Initializes the SQLite database connection and applies the schema.
  * Opens (or creates) the SQLite database, applies the schema DDL,
  * and exposes a global $db PDO instance plus a getDb() helper.
  *

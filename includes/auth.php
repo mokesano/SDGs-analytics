@@ -1,6 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * includes/auth.php — Auth wrapper
+ * @file includes/auth.php — Auth wrapper
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Authentication wrapper for handling user authentication.
  * Uses delight-im/auth when available, falls back to session-based auth.
  */
 

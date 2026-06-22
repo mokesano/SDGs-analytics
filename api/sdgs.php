@@ -4,6 +4,10 @@ declare(strict_types=1);
 /**
  * @file api/sdgs.php
  * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
  * SDGs Classification AJAX Proxy Endpoint
  *
  * @brief Proxy API untuk klasifikasi SDG berbasis ORCID dan DOI.

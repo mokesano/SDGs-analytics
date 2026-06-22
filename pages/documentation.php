@@ -1,4 +1,15 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/documentation.php — Documentation Page
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Comprehensive documentation for the Wizdam AI SDG Classification platform — quick start guide, ORCID and DOI analysis, understanding results, and data references.
+ */
 $page_title = 'Dokumentasi';
 $page_description = 'Dokumentasi lengkap platform Wizdam AI SDG Classification — panduan memulai, analisis ORCID dan DOI, memahami hasil, dan referensi data.';
 ?>

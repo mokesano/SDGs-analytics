@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/contact.php — Contact Page
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman kontak untuk menghubungi tim Wizdam AI
+ * URL: ?page=contact
+ */
 $page_title = 'Hubungi Kami';
 $page_description = 'Hubungi tim Wizdam AI untuk pertanyaan, laporan bug, permintaan fitur, kemitraan, atau keperluan pers.';
 ?>

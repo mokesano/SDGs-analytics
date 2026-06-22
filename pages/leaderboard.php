@@ -1,8 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * pages/leaderboard.php — Leaderboard Page
+ * @file pages/leaderboard.php — Leaderboard Page
  *
- * Displays top researchers ranked by SDG contribution score.
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Displays top researchers ranked by SDG contribution score.
  * Loaded by public/index.php (header/nav/footer already rendered).
  */
 

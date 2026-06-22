@@ -1,4 +1,17 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/community-forum.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Komunitas Peneliti Wizdam AI — Forum Diskusi & Kolaborasi
+ * URL: ?page=community-forum
+ */
+
 $page_title = 'Komunitas';
 $page_description = 'Bergabunglah dengan komunitas peneliti Wizdam AI — diskusi, berbagi pengalaman, dan kolaborasi seputar SDG dan analisis riset.';
 

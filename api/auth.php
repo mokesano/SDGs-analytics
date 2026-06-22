@@ -4,6 +4,10 @@ declare(strict_types=1);
 /**
  * @file api/auth.php
  * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
  * @brief Authentication API Endpoint.
  * Handles register, login, logout actions via POST requests
  *

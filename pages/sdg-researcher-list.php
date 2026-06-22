@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/sdg-researcher-list.php — SDG Researcher List Page
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman daftar peneliti yang terklasifikasi per SDG dan tipe kontribusi.
+ * Menampilkan grid peneliti dengan filter SDG dan tipe kontribusi (Active/Relevant/Discutor).
+ */
 $valid_sdgs  = array_map(fn($n) => 'SDG'.$n, range(1, 17));
 $valid_types = ['Active Contributor', 'Relevant Contributor', 'Discutor'];
 

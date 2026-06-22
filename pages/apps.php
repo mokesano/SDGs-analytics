@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/apps.php — Applications & Features Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Page showcasing all available applications and features on the Wizdam AI SDG Classification Analysis platform.
+ */
+
 $page_title = 'Aplikasi & Fitur';
 $page_description = 'Jelajahi semua tools dan aplikasi yang tersedia di platform Wizdam AI SDG Classification Analysis.';
 

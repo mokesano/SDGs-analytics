@@ -1,4 +1,17 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/careers.php — Careers Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman karir untuk bergabung dengan tim Wizdam AI
+ * URL: ?page=careers
+ */
+
 $page_title = 'Karir';
 $page_description = 'Bergabunglah dengan tim Wizdam AI dan bantu membangun masa depan analisis riset akademik berbasis SDG di Indonesia.';
 

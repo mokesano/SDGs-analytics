@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/api-reference.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief API Reference for Wizdam AI SDG Classification
+ */
+
 $page_title = 'API Reference';
 $page_description = 'Referensi lengkap endpoint API Wizdam AI SDG Classification — parameter, response schema, dan contoh integrasi JavaScript/PHP.';
 ?>

@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * components/journal-card.php — Reusable Journal Card Component
+ * @file components/journal-card.php — Reusable Journal Card Component
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
  *
+ * @brief Reusable Journal Card Component
  * Expected variables:
  *   $journal  array  with keys: title, issn, eissn, publisher, sjr, quartile, h_index, country, open_access
  */

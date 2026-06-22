@@ -1,4 +1,17 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/blog.php — Blog Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Blog page with upcoming articles and newsletter subscription.
+ * URL: ?page=blog
+ */
+
 $page_title = 'Blog';
 $page_description = 'Blog Wizdam AI — artikel tentang SDG, AI dalam penelitian akademik, dan panduan platform. Segera hadir.';
 

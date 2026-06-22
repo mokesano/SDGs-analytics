@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+
 /**
- * pages/auth/forgot.php — Forgot Password Page
- * Halaman permintaan reset password
+ * @file pages/auth/forgot.php — Forgot Password Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Forgot Password Request Page.
+ * This page allows users to request a password reset link by entering their registered email address.
  */
 
 $page_title = 'Lupa Password';

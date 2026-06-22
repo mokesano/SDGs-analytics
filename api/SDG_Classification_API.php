@@ -2,7 +2,13 @@
 declare(strict_types=1);
 
 /**
- * SDG Classification API
+ * @file api/SDG_Classification_API.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief SDG Classification API
  * Sistem klasifikasi SDG dengan orientasi dampak yang lebih kuat
  *
  * Endpoint Baru (Anti-Timeout / Sequential):

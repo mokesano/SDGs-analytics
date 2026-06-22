@@ -1,4 +1,17 @@
-<?php return array (
+<?php
+declare(strict_types=1);
+
+/**
+ * @file locales/en/LC_MESSAGES/messages.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief English translations for SDG Analytics frontend.
+ */
+
+return array (
   'Home' => 'Home',
   'About' => 'About',
   'Apps' => 'Apps',

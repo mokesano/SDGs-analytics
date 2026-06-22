@@ -4,6 +4,11 @@ declare(strict_types=1);
 /**
  * @file api/SDG_Classification_Extended.php
  *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief SDG Classification Extended API
  * Extends SDG_Classification_API.php with additional abstract and citation
  * sources without modifying the original file.
  *

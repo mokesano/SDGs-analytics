@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * SDG Classification System Configuration
- * Konfigurasi utama sistem
+ * @file config/config.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief SDG Classification System Configuration.
  * 
  * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team

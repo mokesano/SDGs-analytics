@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * routers.php — Application Router & AJAX Proxy Handler
+ * @file includes/routers.php — Application Router & AJAX Proxy Handler
  * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Main application router and AJAX proxy handler.
  * Menangani semua logika routing dan AJAX proxy agar index.php tetap sederhana.
  * File ini mendelegasikan logika kompleks dari index.php.
  * 

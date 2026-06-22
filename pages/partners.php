@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/partners.php — Partnership Page
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman kemitraan untuk institusi akademik, penerbit, dan lembaga pemerintah yang ingin berkolaborasi dengan Wizdam AI dalam memetakan kontribusi SDG dari penelitian mereka.
+ * URL: ?page=partners
+ */
 $page_title = 'Kemitraan';
 $page_description = 'Jalin kemitraan dengan Wizdam AI untuk memperluas dampak penelitian SDG Anda — institusi akademik, penerbit, dan lembaga pemerintah.';
 

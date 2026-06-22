@@ -1,4 +1,17 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/privacy-policy.php — Privacy Policy Page
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman kebijakan privasi untuk pengguna platform Wizdam AI.
+ * Menjelaskan data apa yang dikumpulkan, bagaimana digunakan, dan hak pengguna.
+ * Loaded by public/index.php (header/nav/footer sudah dirender).
+ */
 $page_title = 'Kebijakan Privasi';
 $page_description = 'Kebijakan privasi Wizdam AI — informasi tentang data yang dikumpulkan, cara penggunaannya, dan hak pengguna.';
 ?>

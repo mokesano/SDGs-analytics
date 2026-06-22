@@ -4,6 +4,10 @@ declare(strict_types=1);
 /**
  * @file api/SCOPUS_Journal-Checker_API.php
  * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
  * Scopus Journal Metrics Checker - Enhanced Version
  * 
  * @brief API untuk memeriksa status jurnal di Scopus berdasarkan ISSN.

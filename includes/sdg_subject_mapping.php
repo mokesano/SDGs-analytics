@@ -1,6 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * includes/sdg_subject_mapping.php
+ * @file includes/sdg_subject_mapping.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Subject to SDG Mapping
  * Maps Scopus ASJC subject area strings → UN SDG codes.
  */
 

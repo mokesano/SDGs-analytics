@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * components/sdg-badge.php — Reusable SDG Badge Component
  *

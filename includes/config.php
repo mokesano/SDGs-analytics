@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * SDG Frontend - Configuration File
- * Konfigurasi utama untuk aplikasi SDG Classification Analysis
+ * @file includes/config.php — Main Configuration File
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Main configuration for the SDG Classification Analysis application
  * 
  * @version 1.0.0 (PHP 7.4+ Compatible)
  * @author Rochmady and Wizdam Team
@@ -14,7 +21,7 @@
 
 // Informasi situs
 define('SITE_NAME', 'SDGs Classification Analysis');
-define('SITE_URL', 'https://www.wizdam.sangia.org'); // Sesuaikan domain
+define('SITE_URL', 'https://wizdam.sangia.org'); // Sesuaikan domain
 define('VERSION', '1.0.0');
 define('API_VERSION', 'v1_0_0');
 

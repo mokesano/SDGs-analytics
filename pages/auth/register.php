@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * pages/auth/register.php — Register Page
- * Halaman pendaftaran akun pengguna baru
+ * @file pages/auth/register.php — Register Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Page for registering a new user account.
  */
 
 // Redirect if already logged in

@@ -1,6 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * components/work-card.php — Reusable Work/Publication Card Component
+ * @file components/work-card.php — Reusable Work/Publication Card Component
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ *
+ * @brief Reusable work/publication card component
  *
  * Expected variables (set before including):
  *   $work  array  with keys:

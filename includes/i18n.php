@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file includes/i18n.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Internationalization functions for handling multiple languages
+ */
+
 $GLOBALS['i18n'] = [];
 $GLOBALS['i18n_lang'] = 'en';
 

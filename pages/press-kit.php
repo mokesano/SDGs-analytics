@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/press-kit.php — Press Kit Page
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ *
+ * @brief Press kit Wizdam AI — tentang perusahaan, fakta kunci, aset brand, dan kontak pers untuk media dan jurnalis.
+ * URL: ?page=press-kit
+ */
 $page_title = 'Press Kit';
 $page_description = 'Press kit Wizdam AI — tentang perusahaan, fakta kunci, aset brand, dan kontak pers untuk media dan jurnalis.';
 ?>

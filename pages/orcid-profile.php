@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * pages/orcid-profile.php — ORCID Researcher Profile Page
+ * @file pages/orcid-profile.php — ORCID Researcher Profile Page
  *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman profil peneliti berdasarkan ORCID dengan analisis SDG.
  * Loaded by public/index.php (header/nav/footer already rendered).
  * Requires: ?orcid=XXXX-XXXX-XXXX-XXXX
  */

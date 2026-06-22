@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/analitics-dashboard.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Analytics Dashboard for visualizing SDG distribution, researcher contributions, and publication trends.
+ */
+
 $page_title = 'Analytics Dashboard';
 $page_description = 'Visualize SDG distribution, researcher contributions, and publication trends on the Wizdam AI analytics dashboard.';
 

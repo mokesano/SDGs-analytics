@@ -4,7 +4,11 @@ declare(strict_types=1);
 /**
  * @file api/scopus.php
  * 
- * api/scopus.php — Scopus Journal Proxy Handler
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Scopus Journal Proxy Handler — Scopus Journal Proxy Handler
  * Included by public/index.php POST proxy when _sdg=journal.
  * $_GET['issn'] is set by the proxy before include.
  * 

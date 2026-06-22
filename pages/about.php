@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/about.php — About Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief About Page for providing information about Wizdam AI
+ */
+
 $page_title = 'Tentang Wizdam AI';
 $page_description = 'Wizdam AI — Platform klasifikasi SDG berbasis AI oleh PT. Sangia Research Media and Publishing untuk membantu peneliti memahami kontribusi riset mereka terhadap Tujuan Pembangunan Berkelanjutan.';
 ?>

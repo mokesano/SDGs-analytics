@@ -4,9 +4,11 @@ declare(strict_types=1);
 /**
  * @file api/ORCID_Profile_API.php
  * 
- * @brief Public JSON API: researcher profile by ORCID (High-Performance Version)
- * @version 1.0.0
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
  * 
+ * @brief Public JSON API: researcher profile by ORCID (High-Performance Version)
  * API Data Peneliti dengan ORCID - ORCID_Profile_API.php (High-Performance Version)
  * 
  * API untuk menampilkan karya ilmiah peneliti berdasarkan Data ORCID.

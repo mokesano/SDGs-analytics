@@ -1,6 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * components/researcher-card.php — Reusable Researcher Card Component
+ * @file components/researcher-card.php — Reusable Researcher Card Component
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ *
+ * @brief Reusable researcher card component
  *
  * Expected variables (set before including):
  *   $researcher  array  with keys:

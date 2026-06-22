@@ -1,4 +1,15 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/teams.php — Meet the Team
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman "Tim Kami" yang memperkenalkan para peneliti, engineer, dan akademisi di balik platform Wizdam AI SDG Classification.
+ */ 
 $page_title = 'Tim Kami';
 $page_description = 'Kenali para peneliti, engineer, dan akademisi di balik platform Wizdam AI SDG Classification.';
 

@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/research-papers.php — Research Papers & Citation Guide
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman publikasi, sumber daya riset, dan panduan sitasi untuk peneliti yang menggunakan platform Wizdam AI.
+ * URL: ?page=research-papers
+ */
 $page_title = 'Publikasi & Riset';
 $page_description = 'Publikasi, sitasi, dan sumber daya riset Wizdam AI — referensi untuk peneliti yang menggunakan platform dalam karya akademik mereka.';
 ?>

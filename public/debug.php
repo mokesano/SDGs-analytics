@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 /**
+ * @file debug.php
+ * 
+ * @brief Debug Script for Chatbot CSS Loading Issue
  * Debug Script: Chatbot CSS Loading Issue
  * Script untuk mengidentifikasi mengapa chatbot.css gagal load
  */

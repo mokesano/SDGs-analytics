@@ -1,6 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * SDG Frontend - SDG Definitions
+ * @file includes/sdg_definitions.php
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief SDG Frontend - SDG Definitions.
  * Definisi lengkap 17 Sustainable Development Goals sesuai standar UN
  * 
  * @version 1.0.0 (PHP 7.4+ Compatible)

@@ -1,7 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * pages/auth/login.php — Login Page
- * Halaman masuk akun pengguna
+ * @file pages/auth/login.php — Login Page
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Login Page for user authentication.
  */
 
 // Redirect if already logged in

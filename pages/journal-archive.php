@@ -1,6 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
- * pages/journal-archive.php — Archive of all Scopus journals checked on Wizdam AI
+ * @file pages/journal-archive.php — Archive of all Scopus journals checked on Wizdam AI
+ * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman arsip semua jurnal yang pernah dicek di Wizdam AI.
  * URL: ?page=journal-archive
  */
 

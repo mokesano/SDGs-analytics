@@ -1,4 +1,16 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file pages/help.php — Pusat Bantuan & FAQ
+ *
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
+ * @brief Halaman pusat bantuan dengan FAQ untuk menjawab pertanyaan umum tentang platform Wizdam AI SDG Classification.
+ * URL: ?page=help
+ */
 $page_title = 'Pusat Bantuan';
 $page_description = 'Temukan jawaban atas pertanyaan umum tentang platform Wizdam AI SDG Classification — ORCID, DOI, hasil analisis, dan API.';
 
