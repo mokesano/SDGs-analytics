@@ -1,5 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/ORCID_Profile_API.php
+ * 
+ * @brief Public JSON API: researcher profile by ORCID (High-Performance Version)
+ * @version 1.0.0
+ * 
  * API Data Peneliti dengan ORCID - ORCID_Profile_API.php (High-Performance Version)
  * 
  * API untuk menampilkan karya ilmiah peneliti berdasarkan Data ORCID.
@@ -10,12 +17,10 @@
  */
 
 // -----------------------------------------------------------------
-// BAGIAN #1: PEMERIKSAAN MONITORING (UP/DOWN)
+// PEMERIKSAAN MONITORING (UP/DOWN)
 // -----------------------------------------------------------------
 // Cek apakah TIDAK ADA parameter GET yang dikirim.
 if (empty($_GET)) {
-    
-    // Set header HTTP 200 OK (ini sudah default, tapi baik untuk eksplisit)
     http_response_code(200); 
     
     // Set tipe konten

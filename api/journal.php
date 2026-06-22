@@ -1,6 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
- * api/journal.php — Public JSON API: journal data by ISSN
+ * @file api/journal.php
+ * 
+ * @brief Public JSON API: journal data by ISSN
+ * @version 1.0.0
  *
  * GET /api/journal.php?issn=XXXX-XXXX
  *
@@ -14,6 +19,20 @@
  *   country, discontinued, subject_areas[], sdg_codes[],
  *   last_fetched, source
  */
+
+// -----------------------------------------------------------------
+// MONITORING (UP/DOWN)
+// -----------------------------------------------------------------
+if (empty($_GET)) {
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'up', 
+        'message' => 'Endpoint is operational', 
+        'version' => 'v1.0.0'
+        ]);
+    exit;
+}
 
 define('PROJECT_ROOT', dirname(__DIR__));
 

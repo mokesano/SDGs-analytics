@@ -1,6 +1,8 @@
 <?php
+declare(strict_types=1);
+
 /**
- * api/SDG_Classification_Extended.php
+ * @file api/SDG_Classification_Extended.php
  *
  * Extends SDG_Classification_API.php with additional abstract and citation
  * sources without modifying the original file.

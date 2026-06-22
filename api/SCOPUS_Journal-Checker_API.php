@@ -1,7 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/SCOPUS_Journal-Checker_API.php
+ * 
  * Scopus Journal Metrics Checker - Enhanced Version
  * 
+ * @brief API untuk memeriksa status jurnal di Scopus berdasarkan ISSN.
  * Fitur: CiteScore, Quartile, SJR, SNIP, Subject Areas, Discontinued Status
  * Setup: Ganti YOUR_SCOPUS_API_KEY_HERE dengan API key Scopus Anda
  * Get API Key: https://dev.elsevier.com/
@@ -11,6 +16,20 @@
  * Created: 2025-06-14
  * Last update: 2025-06-16
  */
+
+// -----------------------------------------------------------------
+// MONITORING (UP/DOWN)
+// -----------------------------------------------------------------
+if (empty($_GET)) {
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'up', 
+        'message' => 'Endpoint is operational', 
+        'version' => 'v1.0.0'
+        ]);
+    exit;
+}
 
 // =============================================================================
 // KONFIGURASI

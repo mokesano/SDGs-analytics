@@ -1,6 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
- * api/pdf.php — PDF Upload & Text Extraction Endpoint
+ * @file api/pdf.php
+ * 
+ * @brief PDF Upload & Text Extraction Endpoint
+ * @version 1.0.0
+ *
  * Receives a PDF upload, extracts text, returns JSON for SDG analysis.
  *
  * POST parameters: pdf (file)

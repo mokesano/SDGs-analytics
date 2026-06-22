@@ -1,7 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/sdgs.php
+ * 
  * SDGs Classification AJAX Proxy Endpoint
  *
+ * @brief Proxy API untuk klasifikasi SDG berbasis ORCID dan DOI.
  * Menerima POST dari frontend JavaScript dan meneruskan ke
  * SDG_Classification_API.php via direct include (tanpa HTTP/cURL,
  * aman dari WAF, tanpa overhead network).
@@ -15,6 +20,20 @@
  * @author Rochmady and Wizdam Team
  * @version 1.0
  */
+
+// -----------------------------------------------------------------
+// MONITORING (UP/DOWN)
+// -----------------------------------------------------------------
+if (empty($_GET)) {
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'up', 
+        'message' => 'Endpoint is operational', 
+        'version' => 'v1.0.0'
+        ]);
+    exit;
+}
 
 // Hanya terima POST (AJAX) atau OPTIONS (preflight)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

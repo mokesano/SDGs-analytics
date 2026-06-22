@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
+
 /**
- * api/auth.php — Authentication API Endpoint
+ * @file api/auth.php
+ * 
+ * @brief Authentication API Endpoint.
  * Handles register, login, logout actions via POST requests
  *
  * @version 1.0.0

@@ -1,9 +1,30 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/scopus.php
+ * 
  * api/scopus.php — Scopus Journal Proxy Handler
  * Included by public/index.php POST proxy when _sdg=journal.
  * $_GET['issn'] is set by the proxy before include.
+ * 
+ * @brief Proxy API untuk memeriksa status jurnal di Scopus berdasarkan ISSN.
+ * @version 1.0.0
  */
+
+// -----------------------------------------------------------------
+// MONITORING (UP/DOWN)
+// -----------------------------------------------------------------
+if (empty($_GET)) {
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'up', 
+        'message' => 'Endpoint is operational', 
+        'version' => 'v1.0.0'
+        ]);
+    exit;
+}
 
 require_once dirname(__DIR__) . '/api/SCOPUS_Journal-Checker_API.php';
 require_once dirname(__DIR__) . '/includes/sdg_subject_mapping.php';
@@ -14,7 +35,10 @@ $issn_clean = preg_replace('/[^0-9X]/', '', strtoupper($raw_issn));
 
 if (strlen($issn_clean) !== 8) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Format ISSN tidak valid. Gunakan format: XXXX-XXXX (8 digit)']);
+    echo json_encode([
+        'status' => 'error', 
+        'message' => 'Format ISSN tidak valid. Gunakan format: XXXX-XXXX (8 digit)'
+        ]);
     exit;
 }
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Debug Script: Chatbot CSS Loading Issue
  * Script untuk mengidentifikasi mengapa chatbot.css gagal load
