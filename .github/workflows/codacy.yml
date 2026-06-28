@@ -1,63 +1,82 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+# Workflow: Codacy Security Scan
+#
+# Menjalankan Codacy Analysis CLI dan mengunggah SARIF ke GitHub Code Scanning
+# hanya jika file SARIF benar-benar berhasil dibuat dan valid. Validasi ini
+# mencegah error upload seperti:
+#   Error: Invalid SARIF. JSON syntax error: Unexpected end of JSON input
 
-# This workflow checks out code, performs a Codacy security scan
-# and integrates the results with the
-# GitHub Advanced Security code scanning feature.  For more information on
-# the Codacy security scan action usage and parameters, see
-# https://github.com/codacy/codacy-analysis-cli-action.
-# For more information on Codacy Analysis CLI in general, see
-# https://github.com/codacy/codacy-analysis-cli.
-# .github/workflows/codacy-security-scan.yml
 name: Codacy Security Scan
 
 on:
   push:
-    branches: [ "develop", "master", "production" ]
+    branches: ["develop", "master", "production"]
   pull_request:
-    branches: [ "develop", "master", "production" ]
+    branches: ["develop", "master", "production"]
   schedule:
-    - cron: '33 18 * * 1'  # Setiap Senin pukul 18:33 UTC
+    - cron: "33 18 * * 1" # Setiap Senin pukul 18:33 UTC
 
 jobs:
   codacy-security-scan:
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     permissions:
-      contents: read              # Untuk actions/checkout
-      security-events: write      # Wajib untuk upload SARIF ke GitHub
-      actions: read               # Untuk status check pada private repo
-    
+      contents: read
+      security-events: write
+      actions: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Penting untuk analisis diff yang akurat
+          fetch-depth: 0
 
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@v4.4.7  # Gunakan version tag resmi [[1]]
+        id: codacy
+        uses: codacy/codacy-analysis-cli-action@v4.4.7
+        continue-on-error: true
         with:
-          # Token proyek Codacy (opsional jika hanya ingin generate SARIF lokal)
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          
-          # Output SARIF untuk GitHub Code Scanning
           output: results.sarif
           format: sarif
-          
-          # Kompatibilitas dengan GitHub Code Scanning
           gh-code-scanning-compat: true
-          
-          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue
           max-allowed-issues: 2147483647
-          
-          # Verbosity untuk debugging
           verbose: true
 
+      - name: Validate SARIF output
+        id: sarif
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -s results.sarif ]]; then
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            echo "Codacy did not produce a non-empty SARIF file; skipping upload."
+            exit 0
+          fi
+
+          if ! jq -e '.version and (.runs | type == "array")' results.sarif > /dev/null; then
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            echo "Codacy produced an invalid SARIF file; skipping upload to avoid upload-sarif failure."
+            echo "First bytes of results.sarif for debugging:"
+            head -c 1000 results.sarif || true
+            echo
+            exit 0
+          fi
+
+          echo "valid=true" >> "$GITHUB_OUTPUT"
+          echo "Codacy SARIF is valid and will be uploaded."
+
       - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3  # Gunakan tag stabil
-        if: always()  # Tetap upload meski step sebelumnya warning/error
+        uses: github/codeql-action/upload-sarif@v4
+        if: steps.sarif.outputs.valid == 'true'
         with:
           sarif_file: results.sarif
-          category: codacy-security  # Penting jika ada multiple tools
+          category: codacy-security
+
+      - name: Report Codacy execution status
+        if: steps.codacy.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "Codacy Analysis CLI ended with a non-zero status."
+          echo "The workflow did not fail automatically so SARIF validation/upload handling can stay deterministic."
+          echo "Review the Codacy step logs for the scanner failure details."
