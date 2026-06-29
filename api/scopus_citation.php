@@ -4,6 +4,10 @@ declare(strict_types=1);
 /**
  * @file scopus_citations.php
  * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
  * Mencari kutipan untuk artikel baik yang terindeks maupun tidak terindeks Scopus.
  * 
  */
@@ -36,7 +40,9 @@ if (empty($doi)) {
     exit;
 }
 
-// Konfigurasi API Scopus
+// -----------------------------------------------------------------
+// CONFIG API Scopus
+// -----------------------------------------------------------------
 $api_key = '73e21cba2e777a3093e24a781e0ee1a9'; // Ganti dengan API key Anda
 $headers = array(
     'Accept: application/json',

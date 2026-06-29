@@ -4,6 +4,10 @@ declare(strict_types=1);
 /**
  * @file doi_citation.php
  * 
+ * Copyright (c) 2024 Sangia Wizdam Team
+ * This software is released under the MIT License.
+ * For full license information, see LICENSE file in the project root.
+ * 
  * Script untuk mengambil data kutipan artikel berbasis DOI
  * Versi yang diperbarui dengan pendekatan kredensial dan sumber data tambahan:
  * OpenCitations → Crossref Cited-by → OpenAlex → Semantic Scholar → Dimensions
