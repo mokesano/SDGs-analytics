@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 /**
- * doi_citation.php
+ * @file doi_citation.php
+ * 
  * Script untuk mengambil data kutipan artikel berbasis DOI
  * Versi yang diperbarui dengan pendekatan kredensial dan sumber data tambahan:
  * OpenCitations → Crossref Cited-by → OpenAlex → Semantic Scholar → Dimensions
@@ -13,12 +14,10 @@ declare(strict_types=1);
  * - Penambahan informasi halaman dan ID artikel
  * - Optimalisasi permintaan API
  * - Penanganan kredensial Crossref (username/password yang digunakan untuk deposit)
- * 
- * Kompatibel dengan PHP 5.4+
  */
 
 // -----------------------------------------------------------------
-// BAGIAN #1: MONITORING (UP/DOWN)
+// BAGIAN MONITORING (UP/DOWN)
 // -----------------------------------------------------------------
 if (empty($_GET)) {
     http_response_code(200);
@@ -31,6 +30,9 @@ if (empty($_GET)) {
     exit;
 }
 
+// -----------------------------------------------------------------
+// BAGIAN Contents
+// -----------------------------------------------------------------
 header('Content-Type: application/json');
 
 // Definisikan konfigurasi

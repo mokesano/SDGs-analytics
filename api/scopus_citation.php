@@ -2,13 +2,14 @@
 declare(strict_types=1);
 
 /**
- * scopus_citations_enhanced_php54.php
- * Mencari kutipan untuk artikel baik yang terindeks maupun tidak terindeks Scopus
- * Kode ini kompatibel dengan PHP 5.4
+ * @file scopus_citations.php
+ * 
+ * Mencari kutipan untuk artikel baik yang terindeks maupun tidak terindeks Scopus.
+ * 
  */
 
 // -----------------------------------------------------------------
-// BAGIAN #1: MONITORING (UP/DOWN)
+// BAGIAN MONITORING (UP/DOWN)
 // -----------------------------------------------------------------
 if (empty($_GET)) {
     http_response_code(200);
@@ -21,6 +22,9 @@ if (empty($_GET)) {
     exit;
 }
 
+// -----------------------------------------------------------------
+// BAGIAN Contents
+// -----------------------------------------------------------------
 header('Content-Type: application/json');
 
 // Terima DOI artikel
