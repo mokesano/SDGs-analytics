@@ -84,3 +84,10 @@ npm run build
 
 Arahkan web server Anda ke direktori `public/` (atau gunakan `php -S localhost:8000 -t public`).
 
+---
+
+### Special Thanks
+- **UN SDG Team**: For providing SDG framework and guidelines
+- **ORCID**: For researcher identification infrastructure
+- **Crossref**: For DOI resolution services
+- **Open Source Community**: For tools and libraries used
