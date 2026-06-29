@@ -84,4 +84,3 @@ npm run build
 
 Arahkan web server Anda ke direktori `public/` (atau gunakan `php -S localhost:8000 -t public`).
 
----
