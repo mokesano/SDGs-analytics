@@ -13,8 +13,6 @@ declare(strict_types=1);
  * 
  * API untuk menampilkan karya ilmiah peneliti berdasarkan Data ORCID.
  * @author Rochmady
- * @version 1.0.0 (PHP 7.4+ Compatible)
- * @license none
  * last update 2025-05-29
  */
 
