@@ -9,6 +9,10 @@
             "email": "rochmady@sangia.org"
         }
     ],
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
     "require": {
         "php": "^8.2",
         "delight-im/auth": "^4.0",
