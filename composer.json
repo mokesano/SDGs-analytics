@@ -1,12 +1,12 @@
 {
-    "name": "sangia/analytics",
+    "name": "sangia/chairakha",
     "description": "Publications Researcher Classification & Analytics Application with PSR-4/PSR-12 standards",
     "type": "project",
     "license": "MIT",
     "authors": [
         {
-            "name": "Sangia Wizdam Team",
-            "email": "wizdam@sangia.org"
+            "name": "Rochmady",
+            "email": "rochmady@sangia.org"
         }
     ],
     "require": {
