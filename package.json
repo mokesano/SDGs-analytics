@@ -1,7 +1,7 @@
 {
-    "name": "wizdam-sdgs-analytics",
+    "name": "sangia-analytics",
     "version": "1.0.0",
-    "description": "SDGs Classification & Analysis Frontend — Wizdam Scola",
+    "description": "Publications Researcher Classification & Analytics Frontend — Chairakha",
     "private": true,
     "scripts": {
         "dev": "vite",

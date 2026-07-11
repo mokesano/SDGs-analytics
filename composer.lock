@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d086b79ebc6c0fff0194b4800f9555e",
+    "content-hash": "4b3e2cd540d894c97052f7a8ce331026",
     "packages": [
         {
             "name": "delight-im/auth",

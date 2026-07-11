@@ -1,6 +1,6 @@
 {
-    "name": "wizdam/sdg-classifier",
-    "description": "SDG Classification and Analytics Application with PSR-4/PSR-12 standards",
+    "name": "sangia/analytics",
+    "description": "Publications Researcher Classification & Analytics Application with PSR-4/PSR-12 standards",
     "type": "project",
     "license": "MIT",
     "authors": [
