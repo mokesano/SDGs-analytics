@@ -23,7 +23,7 @@
         "eslint": "^10.3.0",
         "postcss": "^8.4.32",
         "tailwindcss": "^4.2.4",
-        "vite": "^8.0.10"
+        "vite": "^8.1.5"
     },
     "engines": {
         "node": ">=18.0.0"
